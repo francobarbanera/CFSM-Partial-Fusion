@@ -1,0 +1,1316 @@
+%!TEX root = Main-asynchCFSM-multicomp.tex
+
+%Given a transition sequence $\xi$, we now define the subsequence of $\xi$ made only
+%of transitions having a given role as
+%sender or receiver.
+%
+%\begin{definition}
+%Let $\xi$ be a transition sequence for a system S and let $\ttp\in\roles(S)$.\\
+%We define $\restrictup{\xi}{\ttp}\in \textit{Act}^*$  by 
+%$$\restrictup{\xi}{\ttp} = \left\{\begin{array}{ll}
+%                                                \varepsilon & \text{if } \xi=s  \;\; (\text{i.e. } |\xi|=0) \\
+%                                               \restrictup{\xi'}{\ttp}\cdot\elle & 
+%                                                         \text{if } \xi=\xi'\lts{\elle}s \text{ and } [ \elle= \_\ttp?\_  \vee \elle= \ttp\_!\_ ]\\
+%                                               \restrictup{\xi'}{\ttp}  & \text{otherwise}
+%                                               %\text{if } \xi=\xi'\lts{\elle}s \text{ and } [ \elle\neq \_\ttp?\_  \wedge \elle\neq \ttp\_!\_ ]
+%                                      \end{array} \right. 
+%$$
+%\end{definition}
+%
+%Notice that by definitions of $\gateway{\cdot}$ and  $\restrictup{(\cdot)}{(\cdot)}$,  
+%if $\xi$ is a transition sequence leading to an $s\in RS(S)$, then
+% $\restrictup{\xi}{\HH}$ is made (but for its last element, in case $|\restrictup{\xi}{\HH}|$ is odd) of consecutive pairs of elements of $\textit{Act}$  of the form
+%$\KK\HH?a \,\, \HH\tts!a$ or $\tts\HH?a \,\,\HH\KK!a$, with $\tts\neq\KK$.
+%Moreover, in case $|\restrictup{\xi}{\HH}|$ is odd, it ends with an action of the form
+%$\KK\HH?a$ or $\tts\HH?a$, with $\tts\neq\KK$.
+%Similarly for $\restrictup{\xi}{\KK}$.\\
+%
+%We define now two functions, one enabling to map traces of ${M_\HH}$ (i.e. the gateway $\gateway{M^1_\HH, \KK}$)
+%  into the corresponding traces of ${M^1_\HH}$
+%and one enabling to map traces of ${M_\KK}$  (i.e. the gateway $\gateway{M^2_\KK, \HH}$) into the corresponding traces of ${M^2_\KK}$.
+%Traces ending in elements of $\widehat{Q_\HH}$ or $\widehat{Q_\KK}$ will be treated differently
+%for what concerns their last elements.
+%
+%
+%\begin{definition}
+%Given $\varphi\in\textit{Act}^*$, we define $\symb{\HH\KK}{\varphi}\in (\Set{?,!}\times\mathbb{A})^* $  by 
+%$$\symb{\HH\KK}{\varphi} = \left\{\begin{array}{ll}                                             
+%                                                \varepsilon & \text{if }  \varphi  = \varepsilon  \text{ or } \varphi = \tts\HH?\_ \text{ with } \tts\neq\KK    \\
+%                                                !a & \text{if }  \varphi = \KK\HH?a \\
+%                                               ?a\cdot\symb{\HH\KK}{\varphi'} & 
+%                                                      \text{if } \varphi= \tts\HH?a \cdot \HH\KK!a \cdot \varphi' \text{ with } \tts\neq\KK\\
+%                                                !a\cdot\symb{\HH\KK}{\varphi'}   & 
+%                                                         \text{if } \varphi= \KK\HH?a \cdot \HH\tts!a \cdot \varphi'  \text{ with } \tts\neq\KK\\
+%                                               \textit{undefined}  & \text{otherwise } 
+%                                      \end{array} \right. 
+%$$
+%The function $\symb{\KK\HH}{\varphi}$ is defined by simply exchanging the roles of $\HH$ and $\KK$ in the above definition.
+%\end{definition}
+%
+%\begin{lemma}
+%\label{lem:notwomarks}
+%Let $\phi\in\lang{M^1_\HH}^\mC$.\\
+%Then there are no two messages $a,c\in \mathbb{A}$ such that \\
+%$$\phi\cdot !a\in\lang{M^1_\HH}^\mC \mathrm{~and~}  \phi\cdot ?c\in\lang{M^1_\HH}^\mC.$$
+%Similarly for $\lang{M^2_\KK}^\mC$
+%\end{lemma}
+%\begin{proof}
+%Easy, by induction on the length of $\phi$, 
+%using the
+%?!-determinism and no mixed states assumption for
+%$M^1_\HH$ imposed by compatibility.
+%
+%\end{proof}
+
+%\begin{lemma}
+%\label{lem:inlangs}
+%Let $\xi$ be a transition sequence for a system
+%$S={S_{1}}\connect{\HH}{\KK} {S_{2}}$ starting from the initial state. Then
+%$$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC \text{ and }
+%\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in\lang{M^2_\KK}^\mC$$
+%\end{lemma}
+%\begin{proof}
+%We prove only $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC$, since 
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in\lang{M^2_\KK}^\mC$ can be proved in a similar way.
+%Let $\xi$ be\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n$
+%}
+%where $s_i=({\vec{q_i}},{\vec{w_i}})$.\\
+%We can proceed by  induction on $n$.\\
+%\underline{Base case} $n=0$. \\
+%This case is trivial since $\xi = \restrictup{\xi}{\HH}=\varepsilon$. .\\
+%\underline{Inductive case} $n\neq 0$.\\
+%Let $\xi'$ be the sequence $s_0\lts{\elle_1} \ldots \lts{\elle_{n-1}}s_{n-1}$.
+%We distinguish now two possible cases:
+%\begin{description}
+%\item 
+%${q_n}_\HH\in\widehat{Q_\HH}$.\\
+%If  $\elle_n = \KK\HH?a$ then, by definition of $\restrictup{\cdot}{\HH}$,
+%we have that $\restrictup{\xi}{\HH}= \restrictup{\xi'}{\HH}\cdot\KK\HH?a$. 
+%Then, by definition of $\symb{\HH\KK}{\cdot}$, 
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}=\symb{\HH\KK}{\restrictup{\xi'}{\HH}}\cdot !a$ with
+%$\symb{\HH\KK}{\restrictup{\xi'}{\HH}}\in\lang{M^1_\HH}^\mC$ by the induction hypothesis.
+%We can now obtain the thesis since, by definition of $\gateway{\cdot}$, we have that, for a certain $q'$ belonging to the states of $M^1_\HH$, $({q_{n-1}}_\HH, \KK\HH?a, {q_n}_\HH), ({q_{n}}_\HH, \HH\tts!a, q') \in \delta_\HH$ and
+% $({q_{n-1}}_\HH, \HH\tts!a, q') \in \delta^1_\HH$
+% where $\tts \in \roles_1$. Hence $\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}\cdot !a
+%\in \lang{M^1_\HH}^\mC$. \\
+% If  $\elle_n = \tts\HH?a$ then, by definition of $\restrictup{\cdot}{\HH}$ and $\symb{\HH\KK}{\restrictup{\cdot}{\HH}}$, we have that $\symb{\HH\KK}{\restrictup{\xi}{\HH}}=\symb{\HH\KK}{\restrictup{\xi'}{\HH}}$
+% and hence the thesis follows immediately from the induction hypothesis.\\
+% All the other possible forms of $\elle_n$ do not involve $\HH$ and hence $\restrictup{\xi}{\HH}=\restrictup{\xi'}{\HH}$.
+% So the thesis follows immediately from the induction hypothesis.
+%\item
+%${q_n}_\HH\not\in\widehat{Q_\HH}$\\
+%It is possible to proceed similarly to the previous case, distinguishing the possible forms of 
+%$\elle_n$ involving $\HH$.
+%\end{description}
+%\end{proof}
+%
+%
+%
+%The next definition and the subsequent lemma are used to prove Proposition \ref{lem:halfduplex}  and Corollary \ref{lem:prefix} below.
+%In the lemma we shall  check (besides other things) that
+%the application of the function $\symb{\_\,\_}{\cdot}$ on a transition sequence yelds a sequence of messages all
+%prefixed by `?' and that such a sequence does coincide with
+% the content of a buffer. In order to formalize such an equality, we define below a function that inserts a `?' in front
+% of any message in a buffer.
+%\begin{definition}
+%We define $\qm :\messages^* \rightarrow (\Set{?}\times\messages)^*$ by
+%$$\qm(\varepsilon) = \varepsilon \hspace{12mm} \qm(a\cdot w') = ?a\cdot\qm(w')$$
+%\end{definition}
+%
+%
+%
+%\begin{lemma}%\hfill\\
+%\label{lem:prefixaux}
+%Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of
+%$S={S_{1}}\connect{\HH}{\KK} {S_{2}}$, and
+%let $\xi$ be a transition sequence of length $n$ leading to $s\in RS(S)$ from the initial state
+%such that, for all $0\leq i\leq n$, ${w_i}_{\HH\KK}\neq \varepsilon \implies {w_i}_{\KK\HH}= \varepsilon$.
+%\begin{enumerate}[i)]
+%\item
+%\label{lem:prefix-iii}
+%If $w_{\HH\KK}= w_{\KK\HH}=\varepsilon$, then
+% $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}=\symb{\KK\HH}{\restrictup{\xi}{\KK}}$;
+%
+%\item
+%\label{lem:prefix-i}
+%
+%If $w_{\HH\KK}\neq\varepsilon$  then 
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+%\item
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = \qm({{w}_{\HH\KK}})$.
+%\end{enumerate}
+%
+%\item
+%\label{lem:prefix-ii}
+%
+%If $w_{\KK\HH}\neq\varepsilon$ then 
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}$
+% is a strict prefix of
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}$;
+%
+%\item
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\setminus \Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}
+% = \qm({{w}_{\KK\HH}})$
+%\end{enumerate}
+%\end{enumerate}
+%\end{lemma}
+%
+%\begin{proof}
+%Let $\xi$ be the following transition sequence leading to $s\in RS(S)$ from the initial state\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$}
+%where $s_i=(\vec{q_i},\vec{w_i})$.\\
+%We show  (\ref{lem:prefix-iii}), (\ref{lem:prefix-i}) and (\ref{lem:prefix-ii}) by simultaneous
+% induction over $|\xi|$.\\
+%\underline{Base case} $|\xi|=n=0$. \\
+%It is immediate to check that  ${w_0}_{\KK\HH}={w_0}_{\HH\KK}=\varepsilon$
+%and $\restrictup{\xi}{\HH}=\restrictup{\xi}{\KK}=\varepsilon$. 
+%
+%Then (\ref{lem:prefix-iii}) trivially holds,
+%whereas (\ref{lem:prefix-i}) and (\ref{lem:prefix-ii}) are vacuously satisfied.\\
+%\underline{Inductive case} $|\xi|=n\neq 0$.\\
+%In case the action $\elle_n$ does not involve neither $\HH$ nor $\KK$, the thesis descends immediately
+%from the induction hypothesis on $\xi' \equiv
+%s_0\lts{\elle_1} \ldots \lts{\elle_{n-1}}s_{n-1}$, since $ {w_{n-1}}_{\HH\KK}  = w_{\HH\KK}$,
+%$ {w_{n-1}}_{\KK\HH}  = w_{\KK\HH}$,  $\symb{\KK\HH}{\restrictup{\xi'}{\KK}}= \symb{\KK\HH}{\restrictup{\xi}{\KK}}$
+% and $\symb{\HH\KK}{\restrictup{\xi'}{\HH}}= \symb{\HH\KK}{\restrictup{\xi}{\HH}}$.\\
+%Otherwise, we distinguish two cases: either $\elle_n$ corresponds to an action performed by $\HH$ or
+%by an action  performed by $\KK$. Let us consider only the first case, since the second one can be treated in the same way.\\
+%Now we need to consider the following further possibilities concerning the form
+%of $\elle_n$.
+%
+%
+%\begin{description}
+%\item
+%$\elle_n =\HH\KK!a$.\\
+%In such a case, we can infer that ${w_n}_{\HH\KK}= {w_{n-1}}_{\HH\KK}\cdot  a\neq\varepsilon$.
+%In this case, (\ref{lem:prefix-iii}) and also  (\ref{lem:prefix-ii}), since by assumption ${w_{n}}_{\KK\HH} = \varepsilon$, when ${w_{n}}_{\HH\KK} \neq \varepsilon$,
+% are vacuously satisfied and only item (\ref{lem:prefix-i}) has to be proved.\\
+%
+%Since $\elle_n =\HH\KK!a$, we have that g
+%\begin{equation}
+%\label{eq:weq}
+%\restrictup{\xi'}{\KK}=\restrictup{\xi}{\KK}
+%\end{equation}
+%and hence $\symb{\KK\HH}{\restrictup{\xi'}{\KK}} = \symb{\KK\HH}{\restrictup{\xi}{\KK}}$. 
+%Moreover, by definition of $\gateway{\cdot}$ and $\symb{\HH\KK}{\cdot}$, 
+%\begin{equation}
+%\label{eq:xipxi}
+%\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}\cdot ?a
+%\end{equation}
+%
+%
+%
+%By the hypothesis
+% $\forall 0\leq i\leq n. {w_i}_{\HH\KK}\neq \varepsilon \implies {w_i}_{\KK\HH}= \varepsilon$,
+%we have to consider only the following subcases:
+%\begin{description}
+%\item
+%      ${w_{n-1}}_{\HH\KK} = {w_{n-1}}_{\KK\HH} = \varepsilon$ and ${w_n}_{\HH\KK} = a$.\\
+%By the induction hypothesis for (\ref{lem:prefix-iii}),we get
+%$$\Dual{\symb{\HH\KK}{\restrictup{\xi'}{\HH}}}=\symb{\KK\HH}{\restrictup{\xi'}{\KK}} = \symb{\KK\HH}{\restrictup{\xi}{\KK}} $$
+%Hence, 
+%$$\symb{\HH\KK}{\restrictup{\xi'}{\HH}} = \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$$
+%Then, by (\ref{eq:xipxi}), we get
+%$$\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}\cdot ?a = 
+% \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} \cdot ?a$$
+%Thus we obtain the thesis, namely
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+%\item
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = ?a = \qm(a) = \qm({{w_n}_{\HH\KK}})$
+%\end{enumerate}
+%
+%\item
+%      ${w_{n-1}}_{\HH\KK}\neq\varepsilon$ and ${w_{n}}_{\HH\KK}= {w_{n-1}}_{\HH\KK}\cdot a$\\
+%Let us hence assume ${w_{n-1}}_{\HH\KK}$ to be of the form $\phi\cdot b$.\\
+%By the induction hypothesis for (\ref{lem:prefix-i}) we have
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi'}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi'}{\HH}}$;
+%\item
+%$\symb{\HH\KK}{\restrictup{\xi'}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi'}{\KK}}}) = \qm({{w_{n-1}}_{\HH\KK}})$
+%\end{enumerate}
+%
+%     By the above, by (\ref{eq:weq}) and (\ref{eq:xipxi}) and by the fact that
+% ${{w_{n}}_{\HH\KK}}= {{w_{n-1}}_{\HH\KK}}\cdot a$ we obtain
+% \begin{itemize}
+%\item[c)]
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\mathsf{init}(\symb{\HH\KK}{\restrictup{\xi}{\HH}})$ with $\mathsf{last}(\symb{\HH\KK}{\restrictup{\xi}{\HH}}) = ?a$;
+%\item[d)]
+%$\mathsf{init}(\symb{\HH\KK}{\restrictup{\xi}{\HH}})\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = \qm(\mathsf{init}({\vec{w_{n}}_{\HH\KK}}))$  with $\mathsf{last}({\vec{w_{n}}_{\HH\KK}}) = ?a $
+%\end{itemize}
+%Out of the above the thesis descends immediately.
+%\end{description}
+%
+%
+%\item
+%       $\elle_n =\HH\tts!a$ with $\tts \in \roles_1$ (hence $\tts\neq\KK$).\\
+%Since $\elle_n =\HH\tts!a$, we have  
+%\begin{equation}
+%\label{eq:weq2}
+%\restrictup{\xi'}{\KK}=\restrictup{\xi}{\KK}
+%\end{equation}
+%and 
+%\begin{equation}
+%\label{eq:weqw}
+%{w_{n-1}}_{\KK\HH} = {w_{n}}_{\KK\HH} \text{ and } {w_{n-1}}_{\HH\KK} = {w_{n}}_{\HH\KK}
+%\end{equation}
+%
+%Moreover, by definition of $\gateway{\cdot}$ and $\symb{\HH\KK}{\cdot}$, 
+%\begin{equation}
+%\label{eq:xipxi2}
+%\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}
+%\end{equation}
+%
+%The thesis hence follows by the induction hypothesis.
+%
+%
+%\item
+%       $\elle_n =\KK\HH?a$\\
+%Since $\elle_n =\KK\HH?a$, we have 
+%\begin{equation}
+%\label{eq:weq3}
+%\restrictup{\xi'}{\KK}=\restrictup{\xi}{\KK}
+%\end{equation}
+%Moreover, by definition of $\gateway{\cdot}$ and $\symb{\HH\KK}{\cdot}$, 
+%\begin{equation}
+%\label{eq:xipxi3}
+%\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}\cdot !a
+%\end{equation}
+%
+%By the hypothesis
+% $\forall 0\leq i\leq n. {w_i}_{\HH\KK}\neq \varepsilon \implies {w_i}_{\KK\HH}= \varepsilon$,
+%we have to consider only the following subcases:
+%
+%\begin{description}
+%\item
+%      ${w_{n-1}}_{\KK\HH} = a\cdot {w_{n}}_{\KK\HH}$ with ${w_{n}}_{\KK\HH}\neq \varepsilon$\\
+%In this case, (\ref{lem:prefix-iii}) and (\ref{lem:prefix-i}) are vacuously satisfied. For what concerns
+%(\ref{lem:prefix-ii}),
+%by the induction hypothesis we have
+%\begin{enumerate}[a)]
+%\item 
+%\label{l:aa}
+%$\Dual{\symb{\HH\KK}{\restrictup{\xi'}{\HH}}}$
+% is a strict prefix of
+%$\symb{\KK\HH}{\restrictup{\xi'}{\KK}}$;
+%\item
+%\label{l:bb}
+%$\symb{\KK\HH}{\restrictup{\xi'}{\KK}}\setminus \Dual{\symb{\HH\KK}{\restrictup{\xi'}{\HH}}} = \qm({{w_{n-1}}_{\KK\HH}})$
+%\end{enumerate}
+%
+%     By the above, using  (\ref{eq:weq3}), (\ref{eq:xipxi3}), we  get
+%\begin{itemize}
+%\item[c)]
+%\label{l:cc}
+%$\Dual{\init(\symb{\HH\KK}{\restrictup{\xi}{\HH}})}
+%\text{ is a strict prefix of }
+%\symb{\KK\HH}{\restrictup{\xi}{\KK}}$
+%with $\last(\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}})= ?a$;
+%\item[d)]
+%\label{l:dd}
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\setminus \Dual{\init(\symb{\HH\KK}{\restrictup{\xi}{\HH}})} =  \qm({w_{n-1}}_{\KK\HH}) =?a\cdot\qm({{w_{n}}_{\KK\HH}})$
+%\end{itemize}
+%
+%and then, by c) and  d) above  the thesis descends immediately.
+%
+%\item
+%      ${w_{n-1}}_{\KK\HH} = a\cdot {w_{n}}_{\KK\HH}$ with ${w_{n}}_{\KK\HH}={w_{n}}_{\HH\KK} = \varepsilon$\\
+%In this case, (\ref{lem:prefix-i})  and (\ref{lem:prefix-ii}) are vacuously satisfied. For what concerns
+%(\ref{lem:prefix-iii}),
+%by the induction hypothesis for (\ref{lem:prefix-ii}) we have
+%\begin{enumerate}[a)]
+%\item 
+%\label{l:aa}
+%$\Dual{\symb{\HH\KK}{\restrictup{\xi'}{\HH}}}$
+% is a strict prefix of
+%$\symb{\KK\HH}{\restrictup{\xi'}{\KK}}$;
+%\item
+%\label{l:bb}
+%$\symb{\KK\HH}{\restrictup{\xi'}{\KK}}\setminus \Dual{\symb{\HH\KK}{\restrictup{\xi'}{\HH}}} = \qm({{w_{n-1}}_{\KK\HH}}) = ?a$
+%\end{enumerate}
+%     By the above, using  (\ref{eq:weq3}), (\ref{eq:xipxi3}), we  get
+%\begin{itemize}
+%\item[c)]
+%\label{l:ccc}
+%$\Dual{\init(\symb{\HH\KK}{\restrictup{\xi}{\HH}})}
+%\text{ is a strict prefix of }
+%\symb{\KK\HH}{\restrictup{\xi}{\KK}}$ 
+%with $\last(\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}})= ?a$;
+%\item[d)]
+%\label{l:ddd}
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\setminus\Dual{\init(\symb{\HH\KK}{\restrictup{\xi}{\HH}})} =  ?a$
+%\end{itemize}
+%and then, by c) and  d) above we can infer the thesis, namely
+%$$\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}} = 
+%\symb{\KK\HH}{\restrictup{\xi}{\KK}}$$
+%
+%\end{description}
+%
+%
+%\item
+%       $\elle_n =\tts\HH?a$ with  $\tts \in \roles_1$ (hence $\tts\neq\KK$)\\
+%Since $\elle_n = \tts\HH?a$, we have  
+%\begin{equation}
+%\label{eq:weq2}
+%\restrictup{\xi'}{\KK}=\restrictup{\xi}{\KK}
+%\end{equation}
+%and 
+%\begin{equation}
+%\label{eq:weqw}
+%{w_{n-1}}_{\KK\HH}= {w_{n}}_{\KK\HH} \text{ and } {w_{n-1}}_{\HH\KK}= {w_{n}}_{\HH\KK}
+%\end{equation}
+%
+%Moreover, by definition of $\gateway{\cdot}$ and $\symb{\HH\KK}{\cdot}$, 
+%\begin{equation}
+%\label{eq:xipxi2}
+%\symb{\HH\KK}{\restrictup{\xi}{\HH}} = \symb{\HH\KK}{\restrictup{\xi'}{\HH}}
+%\end{equation}
+%
+%The thesis hence follows by the induction hypothesis.
+%
+%\end{description}
+%
+%\end{proof}
+%
+%
+%The following proposition essentially shows that in gateway-connected systems any pair of FIFO channels  connecting
+%gateways is such that in each reachable configuration at least one of the two buffers is empty, that is they
+% can be replaced by a half-duplex channel.
+%
+%\begin{proposition}%\hfill\\
+%\label{lem:halfduplex}
+%Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of
+%$S={S_{1}}\connect{\HH}{\KK} {S_{2}}$.
+%Then $w_{\HH\KK}$ and  $w_{\KK\HH}$ cannot be both non-empty. That is
+%$${w}_{\HH\KK}\neq \varepsilon \implies {w}_{\KK\HH}= \varepsilon$$
+%\end{proposition}
+%
+%\begin{proof}
+%Towards a contradiction, we assume the thesis not to hold.
+%We then take, among all the transition sequences $\zeta$ leading (from the initial state) to a state $s_{\zeta}= (\vec{q_\zeta},\vec{w_\zeta}) \in RS(S)$
+%such that 
+%\begin{equation}
+%\label{tchyp}
+%{w_\zeta}_{\HH\KK}\neq \varepsilon  \text{ and } {w_\zeta}_{\KK\HH} \neq \varepsilon,
+%\end{equation}
+%a sequence having a minimal length.
+% Let the following sequence $\xi$ be such a sequence.
+%$$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n$$
+%where $s_i=({\vec{q_i}},{\vec{w_i}})$. And let $s_{\xi}$ be $s=(\vec{q},\vec{w}) \in RS(S)$.
+%Since ${w_0}_{\HH\KK} = {w_0}_{\KK\HH} = \varepsilon$, we have that  $|\xi| > 0$.
+%\\
+%By the minimality of $|\xi |$, we can infer that one of the following two cases necessarily holds:
+%either    ${w_{n-1}}_{\KK\HH} = \varepsilon$ or ${w_{n-1}}_{\HH\KK} = \varepsilon$.
+%%We can assume the first case to hold since the other one can be treated similarly.
+%Without loss of generality, assume
+%  $w_{{n-1}_{\KK\HH}} = \varepsilon$.\\
+%In this case, as a consequence of (\ref{tchyp}), we have that ${w_{n-1}}_{\HH\KK}= {w_\xi}_{\HH\KK} \neq \varepsilon$.\\
+%So we are assuming that 
+%\begin{equation}
+%\label{allnonbothnonempty}
+%{w_i}_{\HH\KK}\neq \varepsilon \implies {w_i}_{\KK\HH}= \varepsilon \text{~~ for all } 0\leq i \leq n-1
+%\end{equation}
+%and
+%\begin{equation}
+%\label{ngetsnonempty}
+%{{w_{n-1}}}_{\HH\KK} \neq\varepsilon  \text{ and } {{w_{n-1}}}_{\KK\HH} = \varepsilon \text{ and } {w_{n}}_{\KK\HH}\neq \varepsilon
+%\end{equation}
+%
+%
+%To get a contradiction, the idea is the following: First, since ${{w_{n-1}}}_{\HH\KK} \neq\varepsilon$,
+%\ref{lem:prefixaux}(\ref{lem:prefix-i})  implies, that the next action of  $M_\KK$ in configuration 
+%$s_{n-1}$ can only be the consumption of an element $c$ of the channel ${w_{n-1}}_{\HH\KK}$.
+% On the other hand, since ${w_{n-1}}_{\KK\HH}= \varepsilon$ and  ${w_{n}}_{\KK\HH} \neq \varepsilon$, to progress from $s_{n-1}$ to $s_n$  $M_\KK$ must put an element $a$ into the buffer ${w_{n-1}}_{\KK\HH}$. But both is not possible.
+%Let us now do the formal proof of the contradiction. \\
+%By Lemma \ref{lem:inlangs}, 
+%$\symb{\HH\KK}{\restrictup{(\upto{\xi}{n-1})}{\HH}}\in \lang{M^1_\HH}^\mC$ and 
+%$\symb{\KK\HH}{\restrictup{(\upto{\xi}{n-1})}{\KK}} \in \lang{M^2_\KK}^\mC$.\\
+%Moreover, since we have (\ref{allnonbothnonempty}) and (\ref{ngetsnonempty}), by Lemma \ref{lem:prefixaux} we can infer that  
+%\begin{enumerate}[a)]
+%\item 
+%\label{en:a}
+%$\Dual{\symb{\KK\HH}{\restrictup{\upto{\xi}{n-1}}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\upto{\xi}{n-1}}{\HH}}$;
+%\item
+%\label{en:b}
+%$\symb{\HH\KK}{\restrictup{\upto{\xi}{n-1}}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\upto{\xi}{n-1}}{\KK}}} = \qm({{w_{n-1}}_{\HH\KK}})$.
+%\end{enumerate}
+%
+%Recall that by definitions of $\gateway{\cdot}$ and  $\restrictup{(\cdot)}{(\cdot)}$,  
+% we have that $\restrictup{\xi}{\HH}$ is made (but for its last element, in case $|\restrictup{\xi}{\HH}|$ is odd) of consecutive pairs of elements of $\textit{Act}$ either of the form
+%$\KK\HH?a \,\, \HH\tts!a$, with $\tts\neq\KK$, or $\tts\HH?a \,\,\HH\KK!a$, with $\tts\neq\KK$.
+%Moreover, in case $|\restrictup{\xi}{\HH}|$ is odd, it ends with an action either of the form
+%$\KK\HH?a$ or $\tts\HH?a$, with $\tts\neq\KK$.
+%Similarly for $\restrictup{\xi}{\KK}$.\\
+%
+%
+%Hence, as a consequence of (\ref{en:a}) and (\ref{en:b}) above, there exists a message $c$ such that 
+%$$\Dual{\symb{\KK\HH}{\restrictup{\upto{\xi}{n-1}}{\KK}}}\cdot ?c \in \lang{M^1_\HH}^\mC$$
+%Now, from (\ref{ngetsnonempty}) (in particular ${w_{n-1}}_{\KK\HH} = \varepsilon$ and ${w_{n}}_{\KK\HH} \neq \varepsilon$), we can infer also that, for a certain message $a$,
+%$$\symb{\KK\HH}{\restrictup{(\upto{\xi}{n-1})}{\KK}}\cdot ?a \in \lang{M^2_\KK}^\mC.$$
+%By definition of compatibility we have $\lang{M^1_\HH}^\mC = \Dual{\lang{M^2_\KK}^\mC}$ and hence
+% $$\Dual{\symb{\KK\HH}{\restrictup{(\upto{\xi}{n-1})}{\KK}}\cdot ?a} = \Dual{\symb{\KK\HH}{\restrictup{(\upto{\xi}{n-1})}{\KK}}}\cdot !a \in \lang{M^1_\HH}^\mC$$
+% So we have both $\Dual{\symb{\KK\HH}{\restrictup{\upto{\xi}{n-1}}{\KK}}}\cdot ?c \in \lang{M^1_\HH}^\mC$
+% and $ \Dual{\symb{\KK\HH}{\restrictup{(\upto{\xi}{n-1})}{\KK}}}\cdot !a \in \lang{M^1_\HH}^\mC$, which, by Lemma \ref{lem:notwomarks}
+% is a contradiction.
+%\end{proof}
+
+%The next corollary is an immediate consequence of Lemma \ref{lem:prefixaux}  and Proposition \ref{lem:halfduplex}. It is the key for getting our preservation results in the next section.
+%
+%\begin{corollary}%\hfill\\
+%\label{lem:prefix}
+%Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of
+%$S={S_{1}}\connect{\HH}{\KK} {S_{2}}$, and
+%let $\xi$ be a transition sequence leading to $s\in RS(S)$ from the initial state.
+%\begin{enumerate}[i)]
+%\item
+%\label{lem:prefixcor-iii}
+%If $w_{\KK\HH}= w_{\HH\KK}=\varepsilon$, then
+% $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}=\symb{\KK\HH}{\restrictup{\xi}{\KK}}$;
+%
+%\item
+%\label{lem:prefixcor-i}
+%
+%If $w_{\HH\KK}\neq\varepsilon$  then 
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+%\item
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = \qm({{w}_{\HH\KK}})$.
+%\end{enumerate}
+%
+%\item
+%\label{lem:prefixcor-ii}
+%
+%If $w_{\KK\HH}\neq\varepsilon$ then 
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}$
+% is a strict prefix of
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}$;
+%
+%\item
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\setminus \Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}
+% = \qm({{w}_{\KK\HH}})$
+%\end{enumerate}
+%\end{enumerate}
+%\end{corollary}
+%\begin{proof}
+%Immediate by Lemma \ref{lem:prefixaux} and Proposition \ref{lem:halfduplex}.
+%\end{proof}
+
+
+
+
+
+
+
+
+
+
+\subsection{No-orphan-message preservation}
+
+
+% \begin{lemma}
+%\label{lem:wempty}
+%%Let $S={S_{1}}\connect{\HH}{\KK} {S_{2}}$.
+%If $s= (\vec{q},\vec{w}) \in RS(S)$ is a reachable configuration of $S={S_{1}}\connect{\HH}{\KK} {S_{2}}$ 
+%such that ${q}_\KK$ is final, then ${w}_{\HH\KK} = \varepsilon$.
+%%both  states $\vec{q}_\HH$ and $\vec{q}_\KK$ are final, then $\vec{w}_{\HH\KK} = \vec{w}_{\KK\HH} = \varepsilon$.
+%The same holds by exchanging $\HH$ and $\KK$.
+%\end{lemma}
+%
+%\begin{proof}
+%By Fact. \ref{fact:uniquesending}(\ref{fact:uniquesending-i}), 
+%%$q_\HH\notin \widehat{Q_\HH}$ and 
+%$q_\KK\notin \widehat{Q_\KK}$.
+%Let now $\xi$ be a transitions sequence leading to $s\in RS(S)$ from the initial state, say\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$
+%}
+%Towards a contradiction, let us assume $\vec{w}_{\HH\KK}\neq \varepsilon$ 
+%%(the case  $\vec{w}_{\KK\HH}\neq \varepsilon$ can be treated similarly). 
+%Hence, by Corollary \ref{lem:prefix} we get
+%\begin{enumerate}[a)]
+%\item 
+%\label{l:aaaa}
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+%\item
+%\label{l:bbbb}
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = \qm({{w}_{\HH\KK}})$.
+%\end{enumerate}
+%Now, by ?!-determinism of 
+%%$M^1_\HH$ and 
+%$M^2_\KK$ and by 
+%%$q_\HH\notin \widehat{Q_\HH}$ and 
+%$q_\KK\notin \widehat{Q_\KK}$, we have that $\vec{q}_\KK$ is the unique state of $M^2_\KK$ recognising the string 
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in \lang{M^2_\KK}^\mC$.\\
+%% Let now $q$ be the unique state of $M^2_\KK$ 
+%%recognizing the string $\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$.\\
+%Now, by (\ref{l:aaaa}) and (\ref{l:bbbb}) above and knowing, by Lemma \ref{lem:inlangs}, that $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC $, 
+%there exists a message $a$ such that
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}\cdot ?a \in \lang{M^1_\HH}^\mC$.
+%Hence, by compatibility, $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !a \in \lang{M^2_\KK}^\mC$.
+%Contradiction, since $\vec{q}_\KK$ is final.
+%\end{proof}
+
+
+
+\begin{lemma}%\hfill\\
+\label{lem:restrRSom}
+%Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ and 
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be an orphan-message configuration of $S$.
+Then either
+\begin{itemize}
+\item
+ there exists $i\in I$ such that $\restrict{s}{i}\in \RS(S)$ and $\restrict{s}{i}$ is an  orphan-message configuration of $S_i$;
+or 
+\item
+$\restrict{s}{\cs}\in \RS(\cs)$ and $\restrict{s}{\cs}$ is an  orphan-message configuration of $\cs$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be an orphan-message configuration of $S$, 
+that is $\vec{q}$ is final and $\vec{w}\neq \vec{\varepsilon}$.
+Since $\vec{q}$ is final we get, by  \cref{fact:uniquesending}(\ref{fact:uniquesending-i},  that, 
+for each $i\in I$, $q_{\HH_i}\not\in \widehat{Q_{\HH_i}}$.
+So, by~\cref{lem:nohatrestrict}, $\restrict{s}{\cs}\in \RS(\cs)$
+and $\restrict{s}{i}\in \RS(S_i)$ for each $i\in I$. 
+We have to consider now only the following two cases:
+\begin{description}
+\item
+$\exists i\in I.\exists \ttp,\ttq\in \roles_i$ such that  $w_{\ttp\ttq}\neq\varepsilon$.\\
+In such a case we immediately get, by definition of projection, that $\restrict{s}{i}$ is an  orphan-message configuration of $S_i$.
+\item
+$\exists \ttu,\ttv\in \Set{\HH_i}_{i\in I} \cup \rolescsint$ with  $w_{\ttu\ttv}\neq\varepsilon$ \\
+Let $\restrict{s}{\cs}=({\vec{q'}},{\vec{w'}})$. Since $\vec{q}$ is final,
+by definition of projection (\cref{def:projectedconf}), $\vec{q'}$ is final as well.
+Moreover, for each pair $\ttu,\ttv\in \roles_{\cs}$ with $\ttu\neq\ttv$, 
+we have that $w'_{\ttu\ttv} = w_{\tilde{\tilde{\ttu}}\tilde{\tilde{\ttv}}}$.
+%$w'_{\KK_j\KK_v} = w_{\HH_j\HH_v}$, for each ${j,v\in I}$ with $j\neq v$.
+This implies that $\vec{w'}\neq \vec{\varepsilon}$.
+Hence, $\restrict{s}{\cs}$ is an orphan-message configuration of $\cs$.
+\end{description}
+
+%
+%OLD proof
+%
+%By hypothesis,  let $s= (\vec{q},\vec{w}) \in RS(S)$ be an orphan-message configuration for $S$, 
+%that is $\vec{q}$ is final and $\vec{w}\neq \vec{\varepsilon}$.
+%Since $\vec{q}$ is final we get, by Fact \ref{fact:uniquesending},  that, 
+%for each $j\in I$, $q_{\HH_j}\not\in \widehat{Q_{\HH_j}}$.
+%So, by Lemma \ref{lem:nohatrestrict}, $\restrict{s}{\cs}\in RS(\cs)$
+%and, for each $v\in I$, $\restrict{s}{v}\in RS(S_v)$ .
+%
+%We have to consider now only the following two cases.
+%\begin{description}
+%\item
+%$\exists v\in I.\exists \ttp,\ttq\in \roles_v$ such that  $w_{\ttp\ttq}\neq\varepsilon$\\
+%In such a case we immediately get that $\restrict{s}{v}$ is an  orphan-message configuration of $S_v$.
+%\item
+%$\exists \ttp,\ttq\in \Set{\HH_i}_{i\in I}$ with  $w_{\ttp\ttq}\neq\varepsilon$ \\
+%If $\restrict{s}{\cs}=({\vec{q}\,'},{\vec{w}'})$,
+%by definition of projections we have that 
+%$w'_{\KK_j\KK_v} = w_{\HH_j\HH_v}$, for each ${j,v\in I}$ such that $j\neq v$.
+%This implies that $\vec{w}'\neq \vec{\varepsilon}$.
+%That is $\restrict{s}{\cs}$ is an orphan-message configuration for $\cs$.
+%\end{description}
+\end{proof}
+
+
+\begin{corollary}[Preservation of orphan-message-freedom]%\hfill\\
+\label{prop:nomPreservation}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that, for each $i\in I$, 
+$S_i$ is orphan-message free and also $\cs$ is orphan-message free.
+% $\RS(S_{i})$ has no orphan-message configuration and also $\cs$
+%has no orphan-message configuration. 
+Then $S$ is orphan-message free.
+%$\RS(S)$ has no orphan-message configuration.
+\end{corollary}
+\begin{proof}
+By contradiction, let us assume there is an $s\in \RS(S)$ which is an orphan-message configuration. Then we get
+a contradiction by Lemma \ref{lem:restrRSom}.
+\end{proof}
+
+
+\subsection{Preservation of no unspecified reception}
+
+%The following lemma is crucial for proving our preservation results for absence of unspecified receptions and progress.
+%
+%
+%\begin{lemma}%\hfill\\
+%\label{lem:getright}
+%Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of
+%$S={S_{1}}\connect{\HH}{\KK} {S_{2}}$ such that 
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$.
+%Then
+%$$w_{\HH\KK}= a\cdot w' \implies  \exists (q_\KK,\HH\KK?a,\_)\in\delta_\KK$$
+%The same property holds by exchanging $\HH$ and $\KK$.
+% \end{lemma}
+% 
+% \begin{proof}
+%Let $\xi$ be a transition sequence leading to $s$ from the initial state, in particular let $\xi$ be\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$
+%}
+%where $s_i=({\vec{q_i}},{\vec{w_i}})$.\\
+%Moreover, let us assume $w_{\HH\KK}= a\cdot w'$.
+%Now, by Corollary \ref{lem:prefix}(\ref{lem:prefixcor-i}) 
+%we have that
+%\begin{enumerate}[a)]
+%\item 
+%$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+% is a strict prefix of
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+%\item
+%$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}
+%= \qm({w_{\HH\KK}}) = ?a\cdot  \qm({w'}) $.
+%\end{enumerate}
+%Moreover $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC$ and
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in\lang{M^2_\KK}^\mC$ by Lemma \ref{lem:inlangs}.
+%
+%Now, let $j$ be the greatest index such that ${q_j}_\HH\not\in\widehat{Q_\HH}$ and 
+%$\symb{\HH\KK}{\restrictup{\upto{\xi}{j}}{\HH}} = \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$.
+%Then necessarily $s_j\lts{\tts\HH?a} s_{j+1}$.
+%% and  $s_{j'}\lts{\HH\KK!a} s_{j'+1}$ for a $j'$ such that $j<j'\leq n$. 
+%Now, by ?!-determinism of $M^1_\HH$ and $M^2_\KK$, we have that ${q_j}_\HH$ is the unique state of $M^1_\HH$ recognising the string 
+%$\symb{\HH\KK}{\restrictup{\upto{\xi}{j}}{\HH}}$ and ${q}_\KK$ is the unique state of $M^2_\KK$ 
+%recognising the string $\symb{\KK\HH}{\restrictup{\xi}{\KK}} = \Dual{\symb{\HH\KK}{\restrictup{\upto{\xi}{j}}{\HH}}}$.
+%Obviously, $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !a =
+%\Dual{\symb{\HH\KK}{\restrictup{\upto{\xi}{j}}{\HH}}\cdot ?a}$. Because 
+% $\symb{\HH\KK}{\restrictup{\upto{\xi}{j}}{\HH}}\cdot ?a \in \lang{M^1_\HH}^\mC$
+%and, by compatibility,  $\lang{M^1_\HH}^\mC=  \Dual{\lang{M^2_\KK}^\mC}$ we then know that 
+%$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !a \in \lang{M^2_\KK}^\mC$.
+%Hence, by definition of $\symb{\KK\HH}{\cdot}$, $\exists ({q}_\KK,\HH\KK?a,\_)\in\delta_\KK$.\\
+% The very same argument can be used to show the statement with $\HH$ and $\KK$ exchanged. 
+% \end{proof}
+% 
+% We are now ready to prove preservation of no unspecified reception.
+%Intuitively this holds, since, by Lemma~\ref{lem:getright}, no ``wrong'' elements can be put
+%in a gateway-connecting channel, if the interface machines are compatible.   
+ 
+%Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that the interfaces of each $S_i$,
+%i.e.\ the CFSMs $M_{h_i}$ in $S_i$, have no mixed state.
+
+\begin{proposition}[Preservation of reception-error freedom]%\hfill\\
+\label{prop:nurPreservation}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that, for each $i\in I$, no element in $\RS(S_{i})$ and also no element in
+$\RS(\cs)$ is an unspecified reception configuration.
+Moreover, let the interfaces of each $S_i$,
+i.e.\ the CFSMs $M_{\hh_i}$ in $S_i$, have no mixed state.
+Then there is no unspecified reception configuration in $\RS(S)$.
+% OLD version
+%Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that
+%\bfr the interfaces of the $S_i$'s have no mixed state. \efr
+%Moreover, for each $i\in I$, let no element in $RS(S_{i})$ be
+%an unspecified reception configuration, and let that hold for $RS(\cs)$ as well.
+%Then there is no unspecified reception configuration in $RS(S)$.
+\end{proposition}
+
+
+
+\begin{proof}
+By contradiction, let us assume there is an $s= (\vec{q},\vec{w})\in \RS(S)$ which is an unspecified reception configuration.
+So, let $\ttr \in \roles$ and let ${q}_\ttr$  be the receiving state of $M_\ttr$ prevented from 
+receiving any message from any of its buffers, which all are not empty (Definition \ref{def:safeness}(\ref{def:safeness-ur})).
+We consider two main cases $\ttr \not\in\rolescsint$ and  $\ttr\in\rolescsint$.\\[2mm]
+$\bullet$ $\ttr \not\in\rolescsint$\\
+In particular, let $z\in I$ such that $\ttr \in \roles_z$. Now we  take into account the following possible cases where, for the sake of readability,
+we set $\HH=\HH_z$:
+
+\begin{description}
+\item 
+${q}_\HH\not\in \widehat{Q_\HH}$.\\ 
+By~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-a}) we get $\restrict{s}{z}\in \RS(S_z)$.
+% and $\restrict{s}{\cs}\in RS(\cs)$.
+We distinguish now two further subcases.
+\begin{description}
+\item 
+$\ttr \neq \HH$\\
+Then $\restrict{s}{z}\in \RS(S_z)$ is an unspecified reception configuration of
+$S_z$. Contradiction!
+\item 
+$\ttr = \HH$\\
+Since ${q}_\ttr(= {q}_\HH)$ is a receiving state,
+by definition of gateway it follows that
+ the set
+of all outgoing transitions from $q_\HH$ in $\delta_\HH$ is of the form 
+$$\Set{({q}_\HH,\tts_j\HH?\msg[a]_j,\widehat{q_j})}_{j=1..m}$$
+where $\widehat{q_j}\in  \widehat{Q_\HH}$ and 
+ $\tts_j \in \roles_z \cup \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint.$
+%$\tts_j \in \roles_z \cup \{\HH_i\}_{i \in I}, \tts_j \neq \HH.$ 
+
+By definition of unspecified reception configuration,  we have hence that for all $j=1..m$, 
+\begin{equation} \label{eq:wur}
+\mid w_{\tts_j\HH}\mid > 0 
+\text{ and } w_{\tts_j\HH}\not\in  \msg[a]_j \cdot \mathbb{A}^*  %\mathbb{A}^*\cdot a_j
+\end{equation}
+Now, due to the no-mixed-state assumption, it suffices to
+consider the following two possibilities:\\
+
+\begin{description}
+\item
+\underline{$\diamond$}
+{\it For each  $j=1..m$, $\tts_j \not\in \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint$}\\ %\{\HH_i\}_{i \in I}.$}\\
+In this case we can infer from~\cref{fact:uniquesending}\ref{fact:uniquesending-iiib}) that, for each $j=1..m$, there exists $q'_j \in Q_{\HH}$
+such that $(q_\HH,\tts_j\HH?\msg[a]_j,q'_j)\in\delta^z_\HH.$
+ By definition of projection (\cref{def:projectedconf}) it follows that, for all $j=1..m$,
+$w'_{\tts_j\hh}=w_{\tts_j\hh}$, where 
+$\restrict{s}{z}=(\vec{q'},\vec{w'})$. 
+ This implies that $\restrict{s}{z}\in \RS(S_z)$ is an  unspecified reception configuration of $S_z$. Contradiction!\\
+%
+\item
+\underline{$\diamond$} {\it  For each  $j=1..m$,
+ $\tts_j\in \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint$.  
+%$v_j\in I$ such that $\tts_j = \HH_{v_j}$
+} \\
+In this case, by~\cref{fact:uniquesending}\ref{fact:uniquesending-iiia}), we have that, for each $j=1..m$, 
+$$(q_\HH,\tts_j\HH?\msg[a]_j,\widehat{q_j}), (\widehat{q_j},\HH\ttw_j!\msg[a]_j,q'_j)\in\delta_\HH $$
+where $\ttw_j \in \roles_z, q'_j \in Q_\HH$ and 
+$(q_{\HH},\HH\ttw_j!\msg[a]_j,q'_j)\in\delta^z_\HH.$
+
+Moreover, again by~\cref{fact:uniquesending}\ref{fact:uniquesending-iiia}), %by definition of multi-composition w.r.t.\ connection policy $\cs$, 
+we have that, for each $j=1..m$,
+$$(\dot{q}_\HH,\widetilde{\tts_j}\KK_z?\msg[a]_j,\dot{q'_j})\in\delta^\cs_{\KK_z} $$
+We consider now the possible two subcases.\\
+$-$ ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I$.\\
+Then, by~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-b}) we get $\restrict{s}{\cs}\in \RS(\cs)$. 
+If $\restrict{s}{\cs} = (\vec{p},\vec{w'})$, by definition of projection we have that,
+ for each $i \in   I$, $p_{\kk_i} = \dot{q_{\HH_i}}$  and,
+ for each $\ttu \in   \rolescsint$, $p_{\pu} = q_{\pu}$. Moreover,
+  for each pair $\ttp,\ttq\in \roles_{\cs}$ with $\ttp\neq\ttq$, 
+ $w'_{\ttp\ttq} = w_{\tilde{\tilde{\ttp}}\tilde{\tilde{\ttq}}}$.
+
+%$p_{\KK_z}=\dot{q}_\HH$ and $w'_{\KK_x\KK_y} = w_{\HH_x\HH_y}$ for each $x,y\in I$ such that $x\neq y$.
+The last equalities and  (\ref{eq:wur}) imply that, for each $j = 1..m$,
+$$
+\mid w_{\widetilde{\tts_j}\KK_z}\mid > 0 
+\text{ and } w_{\widetilde{\tts_j}\KK_z}\not\in  \msg[a]_j \cdot\mathbb{A}^*.
+$$
+ Thus $\restrict{s}{\cs} \in \RS(\cs)$ is an unspecified reception configuration of $\cs$. Contradiction!\\
+ $-$ There exists $k\in I$ such that ${q}_{\HH_k}\in\widehat{Q_{\HH_k}}$.\\
+ By Lemma \ref{lem:addendum}, there exists $s'= (\vec{q''},\vec{w''})\in \RS(S)$ 
+ such that $s \to^* s'$,
+ $|w_{\ttp\ttq}| \leq |w''_{\ttp\ttq}|$ for all $\ttp\ttq \in C$ and
+$q''_{\HH_j}\not\in\widehat{Q_{\HH_j}}$ for each $j\in I$. 
+Moreover, $q''_{\HH}=q_{\HH}$ since we have assumed ${q}_\HH\not\in \widehat{Q_\HH}$.
+By~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-b}) we get $\restrict{s'}{\cs}\in \RS(\cs)$. By reasoning as in the previous case, we get that 
+$\restrict{s'}{\cs}$ is an unspecified reception configuration of $\cs$. Contradiction!
+\end{description}
+\end{description}
+\item 
+${q}_\HH\in \widehat{Q_\HH}$.\\ 
+Then, by \cref{fact:uniquesending}(\ref{fact:uniquesending-i}),
+${q}_\HH\in \widehat{Q_\HH}$ is a sending state such that $({q}_\HH,\HH\tts!\msg[a],q'_\HH)\in{\delta}_\HH$ with $q'_\HH \in Q_{\HH}$ and 
+$\tts \in \roles_z \cup \Set{\HH_i}_{i\in I\setminus\Set{z}}\cup\rolescsint$. 
+Since $q_\ttr$ is a receiving state, it is impossible that $\ttr=\HH$.
+So, let $\ttr\neq\HH$. We recall that we are dealing with the case when also $\ttr\not\in\rolescsint$.
+It is now immediate to check that  there exists $s'\in \RS(S)$ such that
+$s\lts{\HH\tts!\msg[a]}s'=(\vec{q'},\vec{w'})$ with $q'_\HH$ and $\tts$ as above.
+Since $q'_\HH\not\in \widehat{Q_\HH}$ it
+follows, by~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-a}), that $\restrict{s'}{z} \in \RS(S_z)$.
+Moreover, we have that 
+\begin{enumerate}[a)]
+\item
+\label{l:aa}
+$\forall \ttp\neq\HH.\ q'_\ttp = {q}_\ttp$ and,
+in particular, $q'_\ttr = {q}_\ttr$;
+\item
+\label{l:bb}
+$\forall \ttp\ttq \neq \HH\tts.\ w'_{\ttp\ttq} = {w}_{\ttp\ttq}$;
+\item
+\label{l:cc}
+$w'_{\HH\tts} = {w}_{\HH\tts}\cdot \msg[a]$.
+\end{enumerate}
+We consider now the following two possible subcases:
+\begin{description}
+\item
+ $\tts \in\Set{\HH_v}_{v\in I\setminus\Set{z}}\cup\rolescsint$.  \\
+%$\tts = \HH_v$ for some $v\in I$ with $v \neq z$.\\
+Then $\tts \neq \ttr$, since $\ttr \in \roles_z$.
+From ($\ref{l:aa}$) and ($\ref{l:bb}$) above it follows that  $q'_\ttr = {q}_\ttr$
+and, since  $\tts \neq \ttr$, $w'_{\ttp\ttr} = {w}_{\ttp\ttr}$ for all $\ttp \in \roles_z.$ Consequently, $\restrict{s'}{z} \in \RS(S_z)$ is an unspecified reception configuration of $S_z$. Contradiction!
+\item
+%$\tts=\ttr$ (and hence $\tts \in \roles_1$)\\
+$\tts \in \roles_z$\\
+If $\tts \neq \ttr$ we get a contradiction as in the previous case.\\
+If $\tts = \ttr$, then $\HH$ sends the message $\msg[a]$ to the buffer $w_{\HH\ttr}$. Since $q_\ttr$ is the receiving state of $M_\ttr$ prevented from receiving any message from any of its buffers, which all are not empty in configuration $s$, the sending of $\msg[a]$ extends $w_{\HH\ttr}$ which still has a wrong element on its first position. Then, by ($\ref{l:aa}$) and ($\ref{l:bb}$) above $\restrict{s'}{z}$ is an unspecified reception configuration of $S_z$.  Contradiction!
+\end{description}
+\end{description}
+We can now proceed with the second of the two main cases, namely\\[2mm]
+$\bullet$ $\ttr \in\rolescsint$\\
+We consider the two following possible subcases:
+\begin{description}
+\item
+$q_{\hh_i}\not\in\widehat{Q_{\hh_i}}$ for each $i\in I$.\\
+Then $\restrict{s}{\cs}$ is defined and $\restrict{s}{\cs} \in \RS(\cs)$. 
+Let $\restrict{s}{\cs} = (\vec{p},\vec{w'})$.
+By definition of projection (\cref{def:projectedconf}) it follows that, for each $\ttu\in\rolescsint$,
+$p_{\ttu} = q_{\ttu}$ and, for each $\ttu\in\roles_{\cs}$ with $\ttu\neq\ttr$,   $w'_{\ttu\ttr} = w_{\tilde{\tilde{\ttu}}\tilde{\tilde{\ttr}}}= w_{\tilde{\tilde{\ttu}}\ttr}$ (the last equality holds by definition of $\widetilde{\widetilde{\cdot}}$). Consequently, $\restrict{s'}{\cs} \in \RS(\cs)$ is an unspecified reception configuration of $\cs$ for the participant $\ttr$. Contradiction!
+\item
+
+$q_{\hh_i}\in\widehat{Q_{\hh_i}}$ for some $i\in I$.\\
+ By Lemma \ref{lem:addendum}, there exists $s'= (\vec{q''},\vec{w''})\in \RS(S)$ 
+ such that $s \to^* s'$,
+ $|w_{\ttp\ttq}| \leq |w''_{\ttp\ttq}|$ for all $\ttp\ttq \in C$ and
+$q''_{\HH_j}\not\in\widehat{Q_{\HH_j}}$ for each $j\in I$. 
+Now, since $\ttr\in\rolescsint$ and also $s'$ is necessarily a unspecified reception configuration of $S$ for the participant $\ttr$, we can proceed as in the previous case.
+\end{description}
+\end{proof}
+
+
+% OLD proof
+%\begin{proof}
+%By contradiction, let us assume there is an $s= (\vec{q},\vec{w})\in RS(S)$ which is an unspecified reception configuration.
+%So, let $\ttr \in \roles$ and let ${q}_\ttr$  be the receiving state of $M_\ttr$ prevented from 
+%receiving any message from any of its buffers (Definition \ref{def:safeness}(\ref{def:safeness-ur})).
+%In particular, let $z\in I$ such that $\ttr \in \roles_z$. \\
+%Now we  take into account the following possible cases where, for the sake of readability,
+%we set $\HH=\HH_z$:
+%
+%\begin{description}
+%\item 
+%${q}_\HH=\widehat{q}\not\in \widehat{Q_\HH}$.\\ 
+%By~\cref{lem:nohatrestrict} we get $\restrict{s}{z}\in RS(S_z)$ and $\restrict{s}{\cs}\in RS(\cs)$.
+%\brc The latter is not true with the current formulation of ~\cref{lem:nohatrestrict}(ii) because we need as an assumption $({q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I)$ and not only ${q}_\HH=\widehat{q}\not\in \widehat{Q_\HH}$.
+%To repair this, I think we must remove the assumption $({q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I)$ and we can do this (as you have already remarked one time.). Of course, the proof must then be reconsidered.
+%\erc
+%We distinguish now two further subcases.
+%\begin{description}
+%\item 
+%$\ttr \neq \HH$\\
+%We get a contradiction by the hypothesis that $RS(S_{z})$ does not contain any unspecified reception configuration.
+%\item 
+%$\ttr = \HH$\\
+%Since ${q}_\ttr(= {q}_\HH)$ is a receiving state,
+%by definition of gateway it follows that
+% the set
+%of all the outgoing transitions from $q_\HH$ in $\delta_\HH$ is of the form 
+%$$\Set{({q}_\HH,\tts_j\HH?a_j,\widehat{q_j})}_{j=1..m}$$
+%By definition of unspecified reception configuration,  we have hence that for all $j=1..m$, 
+%\begin{equation} \label{eq:wur}
+%\mid w_{\tts_j\HH}\mid > 0 
+%\text{ and } w_{\tts_j\HH}\not\in \bmr \msg[a]_j \cdot \mathbb{A}^* \emr %\mathbb{A}^*\cdot a_j
+%\end{equation}
+%Now, the following further possibilities have to be taken into account\\
+%\underline{$\diamond$} {\it  $\tts_j\neq\HH_v$ for each $j=1..m$ and each $v\in I$.}\\
+%By Fact \ref{fact:uniquesending}(\ref{fact:uniquesending-iii}) and definition of gateway, we have that  
+%$$[(q_\HH,\tts_j\HH?a_j,\widehat{q_j})\in\delta_\HH  ~~\wedge ~~
+%\forall v\in I. \tts_j\neq\HH_v] \iff  
+%(q_\HH,\tts_j\HH?a_j,q_j)\in\bmr\delta^z_\HH\emr$$
+% This implies $\restrict{s}{z}$ to be an  unspecified reception configuration for $S_z$. Contradiction.\\
+%\underline{$\diamond$} {\it  For each  $j=1..m$, there exists $v\in I$ such that $\tts_j = \HH_{v_j}$} \\
+%In this case, by definition of gateway, we can infer that 
+%$$(q_\HH,\HH_{v_j}\HH?a_j,\widehat{q_j}), (\widehat{q_j},\HH\ttu_j!a_j,q'_j)\in\delta_\HH $$
+%Moreover, by definition of connection policy, we have that
+%$$(\dot{q}_\HH,\KK_{v_j}\KK_z?a_j,\dot{q'_j})\in\delta^\cs_{\KK_z} $$
+%We consider now the possible two subcases.\\
+%$-$ ${q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.\\ 
+%If $\restrict{s}{\cs} = (\vec{p},\vec{w}')$, by definition of projection we have that
+%$p_{\KK_v}=\dot{q}_\HH$
+%\brc should be $p_{\KK_z}$ \erc
+%and $w'_{\KK_x\KK_y} = w_{\HH_x\HH_y}$ for each $x,y\in I$ such that
+%$x\neq y$. This last equality and  (\ref{eq:wur}) imply that, for each $j = 1..m$,
+%$$
+%\mid w_{\KK_{v_j}\KK_z}\mid > 0 
+%\text{ and } w_{\KK_{v_j}\KK_z}\not\in \bmr \msg[a]_j \cdot\mathbb{A}^*.\emr%\mathbb{A}^*\cdot a_j.
+%$$
+% So $\restrict{s}{\cs}$ is an unspecified reception configuration for $\cs$
+% by Lemma \ref{lem:nohatrestrict}. Contradiction.\\
+% $-$ There exists $k\in I$ such that ${q}_{\HH_k}\in\widehat{Q_{\HH_k}}$.\\
+% By Lemma \ref{lem:addendum}, there exists $s'= (\vec{q}\,'',\vec{w}'')$ 
+% such that $s \lts{}^* s'$ (so $s'\in RS(S)$) and
+%${q''}_{\HH_j}\not\in\widehat{Q_{\HH_j}}$ for each $j\in I$.
+%Hence, by Lemma \ref{lem:nohatrestrict}, we get $\restrict{s'}{\cs}\in RS(\cs)$ with
+%$q''_{\HH}=q_{\HH}$.
+%\brc
+%We need additionally that the channels in s' are the same or extensions of
+%those in s. 
+%\erc
+%By reasoning as in the previous case, we get that 
+%$\restrict{s'}{\cs}$ is an unspecified reception configuration for $\cs$. Contradiction.
+%\\
+%\underline{$\diamond$} 
+%No other case is possible because of the no mixed state condition.
+%%which is part of the compositionality condition. 
+%% do get a contradiction by Lemma \ref{lem:getright}.
+%\end{description}
+%%
+%\item 
+%${q}_\HH=\widehat{q}\in \widehat{Q_\HH}$.\\ 
+%By Fact \ref{fact:uniquesending}(\ref{fact:uniquesending-i}),
+%${q}_\HH\in \widehat{Q_\HH}$ is a sending state such that $({q}_\HH,\HH\tts!a,{q'}_\HH)\in{\delta}_\HH$. Hence it is impossible that $\ttr=\HH$.
+%So, let $\ttr\neq\HH$.
+%It is now immediate to check that  there exists an element $s'\in RS(S)$ such that
+%$s\lts{\HH\tts!a}s'=(\vec{q'},\vec{w'})$ with ${q'}_\HH\not\in \widehat{Q_\HH}$
+%and $\tts \in \roles_z \cup \Set{\HH_i}_{i\in I}$.
+%It hence follows, by Lemma \ref{lem:nohatrestrict}, that $\restrict{s'}{z} \in RS(S_z)$.
+%Moreover, we have that 
+%\begin{enumerate}[a)]
+%\item
+%\label{l:aa}
+%$\forall \ttp\neq\HH.\ {q'}_\ttp = {q}_\ttp$;
+%\item
+%\label{l:bb}
+%$\forall \ttp\ttq \neq \HH\tts.\ {w'}_{\ttp\ttq} = {w}_{\ttp\ttq}$;
+%\item
+%\label{l:cc}
+%${w'}_{\HH\tts} = a\cdot{w}_{\HH\tts}$.
+%\end{enumerate}
+%We consider now the following two possible subcases:
+%\begin{description}
+%\item
+%%$\tts\neq\ttr$ (and hence $\tts = \KK$)\\
+%$\tts = \HH_v$ for some $v\in I$.\\
+%By ($\ref{l:aa}$) and ($\ref{l:bb}$) above it follows that  also $\restrict{s'}{z} \in RS(S_z)$ is an unspecified reception configuration. Contradiction.
+%\item
+%%$\tts=\ttr$ (and hence $\tts \in \roles_1$)\\
+%$\tts \in \roles_z$\\
+%If $\tts \neq \ttr$, by ($\ref{l:aa}$) and ($\ref{l:bb}$) above it follows that  also $\restrict{s'}{z} \in RS(S_z)$ is an unspecified reception configuration. Contradiction.\\
+%If $\tts = \ttr$, then $\HH$ sends the message $a$ to the buffer $w_{\HH\ttr}$. Since $q_\ttr$ is the receiving state of $M_\ttr$ prevented from receiving any message from any of its buffers, which all are not empty in configuration $s$, the sending of $a$ extends $w_{\HH\ttr}$ which still has a wrong element on its first position. Then, by ($\ref{l:aa}$) and ($\ref{l:bb}$) above $\restrict{s'}{z}$ is an unspecified reception configuration of $S_z$.  Contradiction.
+%\end{proof}
+
+%$\spadesuit\spadesuit\spadesuit\spadesuit\spadesuit\spadesuit$
+
+\subsection{Progress preservation}
+
+%For ensuring the progress property for $S = \MC(\Set{S_i}_{i\in I}, \cs)$ it is not enough that
+%$\cs$ and each $S_i$ (for $i\in I$) do enjoy the progress property.
+%In fact we can simply get 
+%[[Insert counterexample: $\cs$ with 4 participants; two continuously exchanging messages and the
+%other two stuck]]
+
+\begin{proposition}[Progress preservation]%\hfill\\
+\label{lem:restrRS}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that $\cs$ and each $S_i$ (for all $i\in I$) satisfy 
+%do enjoy 
+the progress property. 
+ Moreover, let the interfaces of each $S_i$,
+i.e.\ the CFSMs $M_{\hh_i}$ in $S_i$, have no mixed state.
+Then also $S$ satisfies the progress property. 
+\end{proposition}
+
+\begin{proof}
+The proof is by contradiction.
+Let us assume $S$ does not enjoy the progress property, namely that there exists 
+ $s= (\vec{q},\vec{w}) \in \RS(S)$ such that
+ \begin{equation}
+ \label{eq:snotprogr}
+ \text{$s\notlts{}\hspace{2mm}$ and $\hspace{2mm}\vec{q}$ is not final, i.e.\
+ $\exists \ttr\in\roles. ~ q_\ttr \text{ is not final in } M_\ttr$.}
+\end{equation}
+We distinguish between the two following cases $\ttr\not\in\rolesorch_{\cs}$ and $\ttr\in\rolesorch_{\cs}$:\\[2mm]
+$\bullet$ $\ttr\not\in\rolesorch_{\cs}$.\\
+In particular, there exists $z \in I$ and $\ttr \in \roles_z$ such that $q_\ttr$ is not final in $M_\ttr$.
+
+
+By $s\notlts{}$  and by \cref{fact:uniquesending}(\ref{fact:uniquesending-i}), we have that
+for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$. Otherwise
+there would be an output transition from some $q_{\HH_i}$, contradicting $s\notlts{}$.
+So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in I$, as well as $\restrict{s}{\cs}\in \RS(\cs)$. 
+In particular, $\restrict{s}{z}\in \RS(S_z).$
+
+Now we distinguish two cases:
+\begin{description}
+\item \emph{Case 1: $q_{\HH_z}$ is final in $M_{\HH_z}$.}\\
+Then $q_{\HH_z}$ is final in $M^z_{\HH_z}$.
+Consequently, $s\notlts{}$ and $\restrict{s}{z}\in \RS(S_z)$ implies $\restrict{s}{z}\notlts{}$. Moreover, we know that $q_\ttr$ is not final in $M_\ttr$ which is
+an element of the system $S_z$. Hence, $S_z$ does not enjoy the progress property. Contradiction!
+
+\item \emph{Case 2: $q_{\HH_z}$ is not final in $M_{\HH_z}$.}\\
+From above we know  $q_{\HH_z}\not\in\widehat{Q_{\HH_z}}$ and hence,
+by construction of gateways,
+there must be an input transition in $M_{\HH_z}$ starting in $q_{\HH_z}$.
+We distinguish two subcases:
+
+\begin{description}
+\item \emph{Case 2.1:
+There exists a transition from $q_{\HH_z}$ in $\delta_{\HH_{z}}$ of the form
+$(q_{\HH_z},\tts\HH_z?\_,\_)$ with $\tts\in\roles_z$.}\\
+By the no-mixed-state assumption and by construction of gateways
+it follows that all transitions in $\delta_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form.
+%\brr ALSO here I must be more careful in the following part.
+%I inserted the modified part after that.\\
+%Since $s\notlts{}$ and $\restrict{s}{z}\in RS(S_z)$, we have $\restrict{s}{z}\notlts{}$. Moreover, $q_{\HH_z}$ is not final in $M_{\HH_z}$ and $q_{\HH_z}\not\in\widehat{Q_{\HH_z}}$.
+%Therefore $q_{\HH_z}$ is also not final in $M^z_{\HH_z}$. 
+%Thus $S_z$ does not enjoy the progress property. Contradiction!
+%\err
+Then (i) also all transitions in $\delta^z_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form and (ii) there exists at least one such transition.
+Since $s\notlts{}$ and $\restrict{s}{z}\in \RS(S_z)$ we obtain, as a consequence of (i), that $\restrict{s}{z}\notlts{}$. As a consequence of (ii) $q_{\HH_z}$ is also not final in $M^z_{\HH_z}$. 
+Thus $S_z$ does not enjoy the progress property. Contradiction!
+%
+\item \emph{Case 2.2:
+There exists a transition from $q_{\HH_z}$ in $\delta_{\HH_{z}}$ of the form
+$(q_{\HH_z},\ttu\HH_z?\_,\_)$ with $\ttu\in\Set{\hh_i}_{ \in I\setminus\Set{z}}\cup\rolesorch_{\cs}$.}\\
+By the no-mixed-state assumption and by construction of gateways
+it follows that all transitions in $\delta_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form. 
+Then, by definition of gateway and orchestrated connection policy, all transitions
+in $\delta^{\cs}_{\KK_{z}}$ have the form
+$(\dot{q}_{\KK_z},\widetilde{\ttu}\KK_z?\_,\_)$ and there exists at least one such
+transition.
+Let now $\restrict{\vec{s}}{\cs}= (\vec{q'},\vec{w'})$.
+By definition of projection,
+$w'_{\ttv\KK_{z}}=w_{\widetilde{\widetilde{\ttv}}\HH_{z}}$  for each $\ttv\in\roles_{\cs}$.
+So, since  $s \notlts{}$ and $\restrict{s}{\cs}\in \RS(\cs)$, we can infer that $\restrict{s}{\cs}\notlts{}$.
+Moreover, $\dot{q}_{\KK_z}$ is not final in $M_{\KK_z}$.
+Thus $S_{\cs}$ does not enjoy the progress property. Contradiction!
+\end{description}
+\end{description}
+ 
+$\bullet$ $\ttr\in\rolesorch_{\cs}$.\\
+As in the previous case, $s\notlts{}$  and \cref{fact:uniquesending}(\ref{fact:uniquesending-i})
+implies that, for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$. Otherwise
+there would be an output transition from some $q_{\HH_i}$, contradicting $s\notlts{}$.
+So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{\cs}\in \RS(\cs)$.
+We now proceed by considering the following two possible cases.
+\begin{description}
+\item
+{\em There exists a $j\in I$ such that $q_{\hh_j}$ is not final in $M_{\hh_j}$}\\
+Trivially $\hh_j\in\roles_j$. We can hence simply proceed as in the first main case, where it is shown that we can get to a contradiction by assuming $s\notlts{}$ and the 
+presence of a participant belonging to $\roles_j$, for some $j$, in a non final state.  
+ \item
+{\em For all $j\in I$, $q_{\hh_j}$ is final in $M_{\hh_j}$}\\
+By definition of projection, it immediately follows that $q_{\ttr}$ is not final in $\cs$.
+We can hence get a contradiction with the progress property of $\cs$ since we can show that
+$\restrict{s}{\cs}\notlts{}$. Toward a contradiction, let
+$\restrict{s}{\cs}\lts{\elle}$ for some $\elle$. 
+By definition of gateways and from the hypothesis of the present case 
+we have that for all $j\in I$, $\dot{q_{\kk_j}}$ is final in $M^{\cs}_{\kk_j}$.
+Hence, necessarily, $\elle=\ttu\ttr?\_$ where $\ttu\in\rolesorch_{\cs}$, i.e. 
+$\ttu\not\in\Set{\kk}_{i\in I}$. 
+This would then imply,  by definitions of projection, composition and transition,  that
+$s\lts{\elle}$, so contradicting $s\notlts{}$.
+\end{description}
+
+\end{proof}
+
+
+%%%%%%%%%%%%OLD PROOF%%%%%%%%%%%%%%%%
+%\begin{proof}
+%By contraposition, let us assume $S$ not to enjoy the progress property, namely that there exists 
+% $s= (\vec{q},\vec{w}) \in RS(S)$ such that
+% \begin{equation}
+% \label{eq:snotprogr}
+% \text{$s\notlts{}\hspace{2mm}$ and $\hspace{2mm}\vec{q}$ is not final.}
+%\end{equation}
+%%It is immediate to check that this can be equivalently rephrased as
+%%\begin{equation}
+%% \label{eq:snotprogrequiv}
+%%\text{$\vec{q}$ is not final and  $\exists\ttr\in\roles$ such that $\vec{q}_\ttr$ is a receiving state of $M_\ttr$}
+%%\end{equation}
+%
+%
+%By $s\notlts{}$  and by Fact \ref{fact:uniquesending}(\ref{fact:uniquesending-i}), we have that
+%for each $v\in I$ $q_{\HH_v}\not\in\widehat{Q_\HH}$. Otherwise
+%there will be an output transition from each $q_{\HH_v}$, contradicting $s\notlts{}$.
+%So, by Lemma \ref{lem:nohatrestrict}, we get $\restrict{s}{v}\in RS(S_v)$ for each $v\in I$,
+%as well as $\restrict{s}{\cs}\in RS(\cs)$.
+%We show in the following that either
+%
+%\begin{equation}
+% \label{eq:snotprogr1}
+%\text{$\exists z\in I.\ \restrict{\vec{s}}{z}\notlts{}\hspace{2mm}$ and $\hspace{2mm}\restrict{\vec{q}}{z}$ is not final;}
+%\end{equation}
+%or 
+%\begin{equation}
+% \label{eq:snotprogr2}
+%\text{$\restrict{\vec{s}}{\cs}\notlts{}\hspace{2mm}$ and $\hspace{2mm}\restrict{\vec{q}}{\cs}$ is not final.}
+%\end{equation}
+%
+%Once we have shown (\ref{eq:snotprogr1}) or (\ref{eq:snotprogr2}) either $S_v$ or $\cs$ does not enjoy the progress property and we are done.
+%
+%
+%\noindent
+% We distinguish now the following possible cases according to  whether the $q_{\HH_v}$'s are final or not.
+% \begin{description}
+%\item For each $v\in I$ $q_{\HH_v}$ is final in $M_{\HH_v}$, and hence in $M^v_\HH$: \\
+%Then from $s\notlts{}$ it immediately follows that, for each $v\in I$, $\restrict{s}{v}\notlts{}$. Moreover, since there exists $\ttr\in\roles$ such that $q_\ttr$ is not final,
+% we can infer that there exists $\ttr\in\roles_z$, for a certain $z\in I$,
+% such that $\ttr\neq{\HH_z}$ and $q_\ttr$ is not final, contradicting the progress property of $S_z$.
+%% or there exists $\ttr\in\roles_2$ such that $\ttr\neq\KK$ and $q_r$ is not final.
+%% a receiving state of $M^1_\ttr$.
+%% This means that either  $\restrict{s}{1}$  is a deadlock state of  $S_1$ or  $\restrict{s}{2}$  is a deadlock state of  $S_2$ (or both).
+%%
+%\item There exists $v\in I$ such that $q_{\HH_v}$ is not final in $M_{\HH_v}$, and hence in $M^v_\HH$.\\
+%Now, let $\Set{v_j}_{j=1..m}$ be all the indexes in $I$ such that
+%$q_{\HH_{v_j}}$ is not final in $M_{\HH_{v_j}}$.
+%In such a case, by definition of gateway and 
+%by the no mixed state condition on $M^v_{\HH_v}$,
+%%imposed by composability,
+% we need  to 
+%take into account only the following   subcases concerning the shapes of the transitions from the $q_{\HH_{v_j}}$'s  in the $\delta_{\HH_{v_{j}}}$'s.
+%
+%\underline{$\diamond$} 
+%{\em  For each $j=1..m$, the transitions from $q_{\HH_{v_j}}$ in $\delta_{\HH_{v_j}}$ are of the form 
+%$(q_{\HH_{v_j}},\HH_{k}\HH_{v_j}?\_,\_)$.}\\
+%In such a case, by definition of connection policy and gateway also 
+%the transitions from $\dot q_{\KK_{v_j}}$ in $\delta^\cs_{\KK_{v_j}}$ have the shape.
+%$(\dot q_{\KK_{v_j}},\KK_{k}\KK_{v_j}?\_,\_)$
+% Let now $\restrict{\vec{s}}{\cs}= (\vec{q}',\vec{w}')$.
+%We  have that, by definition of projection,
+% $w'_{\KK_l\KK_{l'}}=w_{\HH_l\HH_{l'}}$  for each pair $l,l'\in I$.
+%So, since  $s \notlts{}$, we can infer that $\restrict{\vec{s}}{\cs}\notlts{}$ and 
+%hence (\ref{eq:snotprogr2}) holds.
+%
+%\underline{$\diamond$} 
+%{\em  There exists $j\in\set{1,..,m}$, such that the transitions from $q_{\HH_{v_j}}$
+%in $\delta_{\HH_{v_j}}$ are of the form 
+%$(q_{\HH_{\tts_j}},\tts_k\HH_{v_j}?\_,\_)$ with $\tts\in\roles\HH_{v_j}$.}\\
+%By definition of gateway we have that also the transitions from $q_{\HH_{v_j}}$ in $\delta^{v_j}_{\HH_{v_j}}$ have the same form.
+%Moreover,
+%by letting $\restrict{\vec{s}}{v_j}= (\vec{q}',\vec{w}') \in RS(S)$,
+%we have that, by definition of projection,  
+%$w'_{\ttp\ttq}=w_{\ttp\ttq}$ for each pair of participants $\ttp,\ttq\in\roles\HH_{v_j}$.
+%So, since  $\notlts{}$, we have also that $\restrict{\vec{s}}{v_j}\notlts{}$ and 
+%hence (\ref{eq:snotprogr1}) holds for $z=v_j$.
+
+%
+%=============
+%
+% \item Both $q_\HH$ and $q_\KK$ are non final: \\
+%In such a case, by definition of $\gateway{\cdot}$ and by the no mixed state condition on $M^1_\HH$ and $M^2_\KK$
+%imposed by compatibility,  we need  to 
+%take into account only the following  further possible subcases concerning the shapes of the transitions from  $q_\HH$  in $\delta_\HH$ and from  $q_\KK$ in $\delta_\KK$.
+%
+%\underline{$\diamond$} 
+%{\em  All the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\KK\HH?\_,\_)$ and
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts \in \roles_2$ (and hence $\tts\neq\HH$).}\\
+%Since all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts \in \roles_2$ (and hence $\tts\neq\HH$),
+%  we can infer, from the definition of  $\gateway{\cdot}$, that also  all the transitions from $q_\KK$ in $\delta^2_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$. Hence from $s\notlts{}$ we can  
+%obtain that $\restrict{s}{2}\notlts{}$ as well and then  (\ref{eq:snotprogr2}).
+%%that $\restrict{s}{2}$ is a deadlock state.
+%(Notice that, instead, $\restrict{s}{1}\lts{}$, since, by definition of $\gateway{\cdot}$, all the transitions from 
+%$q_\HH$ in $\delta^1_\HH$ are of the form $(q_\HH,\HH\_!\_,\_)$)\!
+%\footnote{This fact clearly prevents us from having the preservation of progress in the case where, instead of connecting roles of
+%different systems, we connect roles belonging to the same system. This ``self connection'' is equivalent to having multiple connections 
+%(see discussion in Section \ref{sec:mulconn}). }
+%.
+%
+%\underline{$\diamond$} 
+%{\em All the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\tts\HH?\_,\_)$ with $\tts \in \roles_1$ (and hence $\tts\neq\KK$). and
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$.}\\
+%This case can be treated similarly to the previous one.
+%
+%
+%\underline{$\diamond$} 
+%{\em  All the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\tts\HH?\_,\_)$ with $\tts\in\roles_1$ and
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts\in\roles_2$.}\\
+%This case can be treated similarly to the previous ones.
+%
+%
+%\underline{$\diamond$}
+%{\em  All the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\KK\HH?\_,\_)$. and
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$.}\\
+%We now consider the possible shapes of $w_{\HH\KK}$ and $w_{\KK\HH}$.
+%\begin{description}
+%\item
+% $w_{\HH\KK}=w_{\KK\HH}=\varepsilon$.\\
+%This subcase cannot occur. Towards a contradiction, let us assume it to be possible.\\
+%Let now $\xi$ be a transition sequence leading to $s\in RS(S)$ from the initial state, in particular let $\xi$ be\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$
+%}
+% By Lemma \ref{lem:inlangs},
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC $ and $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in\lang{M^2_\KK}^\mC$. Moreover, by Corollary \ref{lem:prefix}(\ref{lem:prefixcor-iii}),
+%  $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}=\symb{\KK\HH}{\restrictup{\xi}{\KK}}$.
+%  Since all the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\KK\HH?\_,\_)$. and
+%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$,
+%we can infer, by definition of $\gateway{\cdot}$, that  $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot !a\in\lang{M^1_\HH}^\mC $ and $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !b\in\lang{M^2_\KK}^\mC$ for certain $a$ and $b$.
+%
+%We have then that $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?b} = {\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !b} \in\lang{M^2_\KK}^\mC$
+%and hence, since by compatibility $\Dual{\lang{M^1_\HH}^\mC} = \lang{M^2_\KK}^\mC$, also that
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?b\in \lang{M^1_\HH}^\mC$.\\
+% To have both $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot !a\in\lang{M^1_\HH}^\mC $ and 
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?b\in \lang{M^1_\HH}^\mC$
+%does contradict the no mixed state condition of compatibility since,
+% by ?!-determinism of $M^1_\HH$, ${q}_\HH$ is the unique state of $M^1_\HH$ 
+%recognising the string $\symb{\HH\KK}{\restrictup{\xi}{\HH}}$. 
+%
+%\item 
+%$w_{\HH\KK}\neq\varepsilon$.\\
+%This subcase cannot occur, otherwise, by Lemma \ref{lem:getright}, we would get $s\lts{}$.
+%
+%\item 
+%$w_{\KK\HH}\neq\varepsilon$.\\
+%This subcase cannot occur, otherwise, by Lemma \ref{lem:getright}, we would get $s\lts{}$.
+%\end{description}
+%
+%
+%\item $q_\HH$ is final and $q_\KK$ is non final: \\
+%By the no mixed state condition imposed by compatibility, we need to take into account two further subcases.\\
+%\underline{$\diamond$} 
+%{\em  All the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts\neq\HH$}.\\
+%As done in a previous case,  we can infer, from the definition of  $\gateway{\cdot}$, that also  all the transitions from $q_\KK$ in $\delta^2_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$. Hence from $s\notlts{}$ we can  
+%obtain that $\restrict{s}{2}\notlts{}$ as well, and then  (\ref{eq:snotprogr2}).\\
+%\underline{$\diamond$} 
+%{\em  All the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$}.\\
+%Since $\vec{q}_\HH$ is final, by Lemma \ref{lem:wempty}, $\vec{w}_{\KK\HH} = \varepsilon$. Thus, it remains to consider the following two subcases:
+% \begin{description}
+% \item
+% ${w}_{\HH\KK}=\varepsilon$.\\
+% This case cannot occur. Towards a contradiction, let us assume it to be possible.\\
+%Let $\xi$ be a transition sequence leading to $s\in RS(S)$ from the initial state, in particular let $\xi$ be\\
+%\centerline{
+%$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$
+%}
+% By Lemma \ref{lem:inlangs},
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC $ and $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in\lang{M^2_\KK}^\mC$. \\
+% Moreover, by Corollary \ref{lem:prefix}(\ref{lem:prefixcor-iii}),
+%  $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}}=\symb{\KK\HH}{\restrictup{\xi}{\KK}}$.
+%  Since all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\HH\KK?\_,\_)$,
+%we can infer, by definition of $\gateway{\cdot}$, that  $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !a\in\lang{M^2_\KK}^\mC$ for a certain $a$.
+%
+%We have then that $\Dual{\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?a}\in\lang{M^2_\KK}^\mC$
+%and hence, since by compatibility $\Dual{\lang{M^1_\HH}^\mC} = \lang{M^2_\KK}^\mC$, also that
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?a\in \lang{M^1_\HH}^\mC$.\\
+% To have both $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\cdot ?a\in\lang{M^1_\HH}^\mC $ and 
+% $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in \lang{M^1_\HH}^\mC$
+%does contradict $q_\HH$ to be final, since,
+% by ?!-determinism of $M^1_\HH$, ${q}_\HH$ is the unique state of $M^1_\HH$ 
+%recognising the string $\symb{\HH\KK}{\restrictup{\xi}{\HH}}$. 
+% \item
+% $w_{\HH\KK}\neq\varepsilon$.\\
+%Then, by Lemma \ref{lem:getright}, we get $s \lts{}$. Contradiction to the assumption of no progress in $s$.
+%\end{description}
+%
+%
+%\item $q_\KK$ is final and $q_\HH$ is non final: \\
+%The same argument of the previous case does apply.
+%\end{description}
+%\end{proof}
+
+
+
+
+
+
+
+
+
+

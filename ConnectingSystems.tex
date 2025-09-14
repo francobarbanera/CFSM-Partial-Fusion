@@ -1,0 +1,3258 @@
+%!TEX root = Main-JLAMP-asynchCFSM-multicomp.tex
+\section{PaI Orchestrated Multicomposition of Communicating Systems}
+\label{sec:opensys}
+
+As described in~\cref{sec:pai-multicomp}, the PaI approach to multicomposition of systems 
+consists in replacing, in each to-be-composed system, one participant 
+identified as an interface by a  forwarder (that we dub ``gateway'').
+Any participant in a system,  say $\hh$, can be considered as an interface.
+This means that we can look  at the CFSM $\hh$  
+as an
+abstract description of what the system expects   
+from a number of ``outer'' systems (the environment) through their respective interfaces.
+Hence, any message received by $\hh$ from another participant $\ttp$ of the system (to which $\hh$ belongs)
+is  interpreted as a message to be forwarded either to some other interface $\hh'$ among the available ones, or to an orchestrating participant. Conversely, any message sent from $\hh$ to another participant $\ttp$
+of the system (to which $\hh$ belongs)
+is  interpreted as a message to be received either from some other interface $\hh'$ or from an orchestrating participant and to be forwarded to $\ttp$.
+
+ 
+ In order to clarify the notions introduced in this section, 
+ we present below an example from \cite{BDGY23} that we  subsequently ``implement'' here  in the CFSM formalism.
+
+\begin{example}[Running example] \label{ex:simplewe}
+{\em 
+Let us consider the following four  systems\footnote{ For the sake of simplicity,  the example considers only systems with two  or three  participants. 
+ Our definitions and results are of course 
+% but all our development is 
+independent of the number of participants in the single systems. }: 
+
+\begin{description}
+\item 
+{\em System-1} with participants $\HH_1$ and $\ttp$.\\
+Participant $\HH_1$ controls the entrance of customers in a mall via some sensor ($\includegraphics[scale=0.1]{PICTURES/sensor2}$)\footnote{The following drawings use some icons from {\tt Flaticon.com}}.
+As soon as a customer enters,
+$\HH_1$ sends a message $\msg[start]$ to the participant $\ttp$ which controls a display for
+advertisements ($\includegraphics[scale=0.06]{PICTURES/adv-panel}$). On receiving the start message, $\ttp$ displays a general advertising image.  
+Participant 
+$\ttp$ does also control a sensor  ($\includegraphics[scale=0.05]{PICTURES/sensor}$) detecting emotional reactions, as well  as  a RFID card reader ($\includegraphics[scale=0.12]{PICTURES/card-reader-rfid}$) distinguishing regular from new customers. Such information, through the messages $\msg[react]$, $\msg[rc]$ and $\msg[nc]$ is sent  to $\HH_1$. Using that information $\HH_1$ sends to $\ttp$
+a customised image, depending on the kind of the customer, through message $\msg[img]$.
+\centerline{
+$
+\begin{tikzpicture}[mycfsm]
+       %
+       %
+       % Participant h1
+        \node (square-h1)  [state, initial, initial where = below, initial text={$\ptp[\hh_1]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor) {$\includegraphics[scale=0.16]{PICTURES/sensor2}$};
+        \end{tikzpicture}$};
+         %
+         %
+         % Participant p         
+        \node (square-p)  [state, initial, initial where = below, initial text={$\ptp[\ttp]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left of = square-h1] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (panel-p) [xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+		  %
+		  \node[state, draw=none] (sensor-p) [above right of=panel-p,xshift=-24pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+		  %
+		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+            \end{tikzpicture}$};
+        %
+         %
+         % Doors      
+        \node (door)  [state, draw = none, right of = square-h1, xshift=-16pt] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.14]{PICTURES/doors}$};
+        \end{tikzpicture}$};
+\end{tikzpicture}
+$
+}
+%
+\item 
+{\em System-2} with participants $\HH_2$ and $\ttq$.\\
+ Participant $\HH_2$ controls an image display  ($\includegraphics[scale=0.06]{PICTURES/adv-panel}$). Images, $\msg[img]$, are provided by participant $\ttq$
+ according to some parameters, $\msg[pars]$, sent by % with sender 
+ $\HH_2$ itself and depending on  the reaction  acquired by a sensor ($\includegraphics[scale=0.05]{PICTURES/sensor}$)
+ driven by $\ttq$. Images are chosen also in terms of 
+ the kind of customers, on the basis of their cards, read by an RFID card reader ($\includegraphics[scale=0.12]{PICTURES/card-reader-rfid}$). Participant $\ttq$ is able to receive a 
+ $\msg[reset]$ message too, even if $\HH_2$ cannot ever send it.\\
+ \centerline{
+$
+\begin{tikzpicture}[mycfsm]
+       %
+        %
+        % Participant h2
+        \node (square-h2) [state, initial, initial where = below, initial text={$\ptp[\hh_2]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h1, yshift=-30pt] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (panel-p) [xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+		  %
+		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+            \end{tikzpicture}$};
+        %
+        %
+        %  Participant q
+       \node (square-q) [state, initial, initial where = below, initial text={$\ttq$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm,left  of = square-h2] 
+       {$\begin{tikzpicture}[mycfsm]
+           \node[state, draw=none] (sensor-q)  {$\includegraphics[scale=0.1]{PICTURES/sensor}$};
+		\end{tikzpicture}$};
+\end{tikzpicture}
+$
+}       
+ %
+ \item 
+{\em System-3} with participants $\HH_3$, $\ttr$ and $\ttr'$.\\
+Participant $\ttr$ controls a sensor ($\includegraphics[scale=0.1]{PICTURES/sensor2}$) detecting the entrance of people from a door.
+Once someone enters, a message  $\msg[start]$ is sent by $\ttr$ to participant $\HH_3$
+which turns a light ($\includegraphics[scale=0.06]{PICTURES/lights}$) on.
+The reaction of who enters, detected by a sensor  ($\includegraphics[scale=0.05]{PICTURES/sensor}$) driven by $\HH_3$,  is sent back to
+$\ttr $ which, according to the reaction, communicates to $\ttr'$ the
+greeting to be  broadcasted from the loudspeakers ($\includegraphics[scale=0.06]{PICTURES/loudspeakers}$).\\
+ \centerline{
+$
+\begin{tikzpicture}[mycfsm]
+         %
+         %
+         % Doors2      
+        \node (doors2)  [state, draw = none, right of = square-h2, xshift=16pt] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.14]{PICTURES/doors}$};
+        \end{tikzpicture}$};
+       %
+       %
+       % Participant r
+        \node (square-r) [state, initial, initial where = below, initial text={$\ptp[\ttr]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = doors2,xshift=-16pt] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (sensor-r)  {$\includegraphics[scale=0.15]{PICTURES/sensor2}$};
+		  %
+            \end{tikzpicture}$};
+        %
+        %
+        % Participant h3
+        \node (square-h3) [state, initial, initial where = below, initial text={$\ptp[\hh_3]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-r] 
+        {$\begin{tikzpicture}[mycfsm]
+         \node[state, draw=none] (lights)  {$\includegraphics[scale=0.1]{PICTURES/lights}$};
+		\node[state, draw=none] (sensor-h3) [below  of=lights,yshift=32pt]  {$\includegraphics[scale=0.08]{PICTURES/sensor}$};     
+        \end{tikzpicture}$};
+
+       %
+       %
+       % Participant r'
+        \node (square-r') [state, initial, initial where = below, initial text={$\ttr'$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h3] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (speakers-r')  {$\includegraphics[scale=0.12]{PICTURES/loudspeakers}$};
+		  %
+            \end{tikzpicture}$};
+\end{tikzpicture}
+$
+}    
+%
+ \item 
+{\em System-4}  with participants $\HH_4$ and $\tts$.\\
+ Some sensors ($\includegraphics[scale=0.05]{PICTURES/sensor}$) driven by participant $\HH_4$ acquire the first reactions of people getting into
+a hall adorned by several Christmas  lights. Such reactions, sent to participant $\tts$ through a message $\msg[react]$, enable $\tts$ to send to $\HH_4$ a
+set of parameters $(\msg[pars])$ allowing the latter to adjust the lights ($\includegraphics[scale=0.06]{PICTURES/lights}$)  of the hall.
+Notice that participant $\tts$ does not manage any device.\\
+ \centerline{
+$
+\begin{tikzpicture}[mycfsm]
+         %
+         %
+         % Doors3      
+        \node (doors3)  [state, draw = none, right of = square-h2, xshift=16pt] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.14]{PICTURES/doors}$};
+        \end{tikzpicture}$};
+       %
+        %
+        % Participant h4
+        \node (square-h4) [state, initial, initial where = below, initial text={$\hh_4$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = doors3,xshift=-16pt] 
+        {$\begin{tikzpicture}[mycfsm]
+         \node[state, draw=none] (lights)  {$\includegraphics[scale=0.1]{PICTURES/lights}$};
+		\node[state, draw=none] (sensor-h4) [below  of=lights,yshift=32pt]  {$\includegraphics[scale=0.08]{PICTURES/sensor}$};          
+        \end{tikzpicture}$};
+        %
+        %
+        % Participant s
+        \node (square-s) [state, initial, initial where = below, initial text={$\tts$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h4] 
+        {};
+        \end{tikzpicture}
+$
+}   
+\end{description}
+%
+The composition, obtained by replacing the interfaces $\Set{\hh_i}_{i=1..4}$ by gateways
+suitably forwarding messages, looks as in the following diagram. In it the removal of some devices is 
+obviously due to the fact that some controllers have been replaced by gateways in the composition.
+%%%%%%%%%%%%%%%%
+%%%%% COMPOSITION %%%%
+%%%%%%%%%%%%%%%%
+$$
+\begin{tikzpicture}[mycfsm]
+       %
+       %
+       % Participant h1
+        \node (square-h1) at (-0.5,0) [state, initial, initial where = above, initial text={$\ptp[\hh_1]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm] 
+        {\bf \large gw};
+        %
+        %
+        % Participant h4
+        \node (square-h4) [state, initial, initial where = above, initial text={$\ptp[\hh_4]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h1,xshift=62pt] 
+        {\bf \large gw};
+       %
+       %
+       % Participant r'
+        \node (square-r') [state, initial, initial where = above, initial text={$\tts$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h4] 
+        {};
+         %
+         %
+         % Participant p         
+        \node (square-p)  [state, initial, initial where = above, initial text={$\ptp[\ttp]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left of = square-h1] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (panel-p) [xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+		  %
+		  \node[state, draw=none] (sensor-p) [above right of=panel-p,xshift=-24pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+		  %
+		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+            \end{tikzpicture}$};
+        %
+        %
+        % Participant h2
+        \node (square-h2) [state, initial, initial where = below, initial text={$\ptp[\hh_2]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h1] 
+        {\bf \large gw};
+        %
+        %
+        %  Participant q
+       \node (square-q) [state, initial, initial where = below, initial text={$\ttq$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left  of = square-h2] 
+       {$\begin{tikzpicture}[mycfsm]
+           \node[state, draw=none] (sensor-q)  {$\includegraphics[scale=0.1]{PICTURES/sensor}$};
+		\end{tikzpicture}$};
+        %
+        %
+        % Participant h3
+        \node (square-h3) [state, initial, initial where = below, initial text={$\hh_3$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h4] 
+        {\bf \large gw};
+        % Participant r
+        \node (square-r) [state, initial, initial where = below, initial text={$\ptp[\ttr]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm,  right of = square-h3] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (sensor-r)  {$\includegraphics[scale=0.15]{PICTURES/sensor2}$};
+            \end{tikzpicture}$};
+        %
+         %
+         % Doors      
+        \node (door)  [state, draw = none, below left of = square-h3, xshift=-19pt, yshift=4pt] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.2]{PICTURES/doors}$};
+        \end{tikzpicture}$};
+        %
+        %
+        % Participant s
+        \node (square-s) [state, initial, initial where = below, initial text={$\ttr'$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-r] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (speakers-r')  {$\includegraphics[scale=0.12]{PICTURES/loudspeakers}$};
+		  %
+            \end{tikzpicture}$};
+         %
+        %
+        % X-arrows
+        \node (X-arrows) [state, draw=none,below  right of = square-h1,xshift=20pt,yshift=12pt] 
+        {$\includegraphics[scale=0.7]{PICTURES/X-arrows}$};
+%        \path   (square-h1) [bend left = 25]   edge node {$\msg[rc]$} (square-h2);
+%        \path (square-h4)   edge node[above]  {$\msg[pars]$} (square-h2) ;
+%        \path   (square-h1)[->,bend right = 45]  edge node[above] {$\msg[react]$} (square-h4)
+%                   (square-h2)[bend right = -45]  edge node[above] {$\msg[react]$} (square-h3)
+%                   (square-h3)[bend right = 0]  edge node[above] {$\msg[start]$} (square-h1)
+%                 ;
+%        \path (square-h1) [bend left = 45]  edge node {$\msg[nc]$}  (square-h2); %carrying NC from h1 to h2
+%        \path (0.5,-0.2)  edge node {$\msg[img]$}  (-0.5,-0.2); %carrying IMG from h1 to h2
+        %
+        %
+    \end{tikzpicture}
+$$
+In the composed system above, some messages driving the shown devices come from participants
+belonging to some other systems.
+The $\msg[start]$ message, which makes $\ttp$ display a general advertising image,
+is now the one produced by the sensor driven by $\ttr$ and sent through the gateways.
+The $\msg[react]$ produced by $\ttp$ arrives to $\tts$ passing through the gateways.
+This enables  $\tts$ to produce $\msg[pars]$. This message arrives to $\ttq$, which
+produces a customised image received and displayed by $\ttp$ thanks to the gateways. 
+The production of the image by $\ttq$ depends also on the message $\msg[rc]$ or $\msg[nc]$ which is now the one produced by the RFID card reader of $\ttp$ and arriving to $\ttq$ through the gateways.
+The reaction  $\msg[react]$ generated
+by $\ttq$ arrives instead to $\ttr$ which, in function of that, generates the greeting for the loudspeakers.
+\smallskip
+
+How the gateways are defined and how they precisely interact, in order to get the
+overall behaviour hinted at above, will be formally described later on.
+What it is worth noticing now is that  the above scenario includes the presence of two different
+reaction sensors: one influencing the customised image displayed by $\ttp$, and the other
+the greetings for the loudspeakers. 
+Such a possibility, however, may be undesirable in some cases -- for instance, when both the image and the greetings should depend on the very same 
+reaction\footnote{The possible undesirability of such a scenario was pointed out by a referee of
+the ICE'24 version of the present paper, so leading to the orchestrated approach investigated here.}.
+A first way to avoid that consists in an ad-hoc implementation of the gateways which would then 
+not act as simple forwarders; they should perform also some extra actions: 
+disregarding the $\msg[react]$ message coming  from  $\ttq$ and duplicating the one from $\ttp$.
+ This solution would impair, however, the uniform approach to gateways generation, as well as SoC, as hinted at in the introduction. %\cref{sec:pai-multicomp}.
+A second way out might consists in having some new participants, say $\ttb$ and $\ttd$ to perform the extra actions required. These participants (whose set of names will be called $\rolesorch$ later on) would hence form a sort of ``orchestrating'' 
+communicating system. The resulting composed system would hence roughly look as
+below.
+% in \cref{fig:skcomp}.
+%%%%%%%%%%%%%%%%
+%%%%% ORCHESTRATED COMPOSITION %%%%
+%%%%%%%%%%%%%%%%
+%\begin{figure}[h]
+%    \centering{\small
+    $$
+\begin{tikzpicture}[mycfsm]\usetikzlibrary {arrows.meta}
+       %
+       %
+       % Participant h1
+        \node (square-h1) at (-0.5,0) [state, initial, initial where = above, initial text={$\ptp[\hh_1]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm] 
+        {\bf \large gw};
+        %
+        %
+        % Participant h4
+        \node (square-h4) [state, initial, initial where = above, initial text={$\ptp[\hh_4]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h1,xshift=92pt] 
+        {\bf \large gw};
+       %
+       %
+         % Participant p         
+        \node (square-p)  [state, initial, initial where = above, initial text={$\ptp[\ttp]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left of = square-h1] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (panel-p) [xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+		  %
+		  \node[state, draw=none] (sensor-p) [above right of=panel-p,xshift=-24pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+		  %
+		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+            \end{tikzpicture}$};
+        %
+        %
+        % Participant h2
+        \node (square-h2) [state, initial, initial where = below, initial text={$\ptp[\hh_2]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h1] 
+        {\bf \large gw};
+        %
+        %
+        %  Participant q
+       \node (square-q) [state, initial, initial where = below, initial text={$\ttq$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left  of = square-h2] 
+       {$\begin{tikzpicture}[mycfsm]
+           \node[state, draw=none] (sensor-q)  {$\includegraphics[scale=0.1]{PICTURES/sensor}$};
+		\end{tikzpicture}$};
+        %
+       %
+         % Doors      
+        \node (door)  [state, draw = none, below left of = square-h3, xshift=-3pt] 
+        {$\begin{tikzpicture}[mycfsm]
+        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.2]{PICTURES/doors}$};
+        \end{tikzpicture}$};
+        %
+        %
+        % Participant h3
+        \node (square-h3) [state, initial, initial where = below, initial text={$\hh_3$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h4] 
+        {\bf \large gw};
+        %
+        %
+        % Participant r
+        \node (square-r) [state, initial, initial where = below, initial text={$\ptp[\ttr]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm,  right of = square-h3] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (sensor-r)  {$\includegraphics[scale=0.15]{PICTURES/sensor2}$};
+            \end{tikzpicture}$};
+        %
+        %
+         % Participant r'
+        \node (square-r') [state, initial, initial where = below, initial text={$\ttr'$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-r] 
+        {$\begin{tikzpicture}[mycfsm]
+		 \node[state, draw=none] (speakers-r')  {$\includegraphics[scale=0.12]{PICTURES/loudspeakers}$};
+		  %
+            \end{tikzpicture}$};
+         %
+         %
+        % Participant s
+        \node (square-s) [state, initial, initial where = above, initial text={$\tts$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h4] 
+        {};
+        %
+        %
+        % Participants b-d
+        \node (circle-bd) [state,draw, dashed, below right of = square-h1, xshift=36pt,yshift=10pt] 
+        {$\begin{tikzpicture}[mycfsm]
+             \node (square-b) [state, initial, initial where = left, initial text={$\ttb$},draw, rectangle, dashed, minimum width=1cm,minimum height=1cm] {};
+             \node (square-s) [state, initial, initial where = right, initial text={$\ttd$},draw, rectangle, dashed, minimum width=1cm,minimum height=1cm, below of = square-b, yshift=18pt] {};
+           \end{tikzpicture}$};
+           %
+           %
+           % Participant P-orch
+        \node (P-orch) [state, draw=none, above of = circle-bd, yshift=-8pt] 
+        {\large $\rolesorch$};
+        % 
+        \draw (circle-bd) [{Implies}-{Implies}, double, double distance=3pt]  -- (square-h1);
+        \draw (circle-bd) [{Implies}-{Implies}, double, double distance=3pt]  -- (square-h2);
+        \draw (circle-bd) [{Implies}-{Implies}, double, double distance=3pt]  -- (square-h4);
+        \draw (circle-bd) [{Implies}-{Implies}, double, double distance=3pt]  -- (square-h3);
+        %
+    \end{tikzpicture}
+ $$
+% \caption{\label{fig:skcomp} Sketch of the PaI multicomposition of systems of \cref{ex:simplewe}.}
+% }
+%\end{figure}
+%=============
+%
+%According to the interaction policy we assume to have between the gateways, the $\msg[start]$ message, produced as soon as a customer enters, is  sent as usual by $\ttr$ to $\hh_3$
+%which is now a gateway and forwards it to  $\hh_1$, which in turn send it to 
+%$\ttp$ which controls the display for advertisements. 
+%On receiving the start message, $\ttp$ displays a general advertising image.  
+%$\ttp$ hence sends to $\HH_1$ the message $\msg[react]$ concerning the emotional reactions
+%(produced by the sensor) and then either message $\msg[rc]$ or message $\msg[nc]$ 
+%(produced by the RFID card reader).
+%Let us see separately what happens after the sending of $\msg[react]$ and
+%after the sending of either $\msg[rc]$ or $\msg[nc]$:\\
+%$\bullet$ Message $\msg[react]$ is forwarded by the gateway $\HH_1$ to $\HH_4$ which sends it to $\tts$,
+%so enabling it to produce the message $\msg[pars]$ and to send it to $\HH_4$.
+% 
+%Such a gateway forwards $\msg[pars]$ to $\HH_2$, which sends the message to $\ttq$.
+%This participant, using the received parameters, together with the information produced by
+%the sensor it drives, produces an image $\msg[img]$, which is hence sent to  $\HH_2$.
+%The image $\msg[img]$ is forwarded$\HH_2$  to $\HH_1$ which immediately send it
+%to  $\ttp$ in order to be displayed.\\
+%$\bullet$ Message $\msg[rc]$ or  $\msg[nc]$ is  forwarded by the gateway $\HH_1$ to $\HH_2$,
+%which in turn sends it to $\ttq$, enabling it to choose an image. The image is sent to
+%$\HH_2$ and forwarded to $\HH_1$, which sends it to $\ttp$ for its displaying.
+%
+%This informal overall description of the interactions among gateways will be made precise later on in xyz. 
+%
+%
+% distinguishing regular from new customers. Such information, through the messages $\msg[react]$, $\msg[rc]$ and $\msg[nc]$ is sent  to $\HH_1$. Using that information $\HH_1$ sends to $\ttp$
+%a customised image, depending on the kind of the customer, through message $\msg[img]$.
+%to 
+
+
+%\brc
+%In this drawing h3 is top right and h4 is bottom right while in Figure \ref{eq:JK}
+%it is just the other way round. Perhaps change the order of the above graphics
+%accordingly.
+%Moreover, in this drawing r seems to belong to S2 while in Figure \ref{eq:JK}
+%r belongs to S3?? 
+%\erc
+The behaviours of the participants of the systems 
+of 
+our running example (\cref{ex:simplewe})
+-- assuming an asynchronous model of communication -- can be formalised as CFSMs.
+%So the systems above can  be formalised as the following communicating systems % CSs
+$$
+S_1=(M_{\ttx})_{\ttx\in\Set{\HH_1,\ttp}} \quad S_2=(M_{\ttx})_{\ttx\in\Set{\HH_2,\ttq}}\quad S_3=(M_{\ttx})_{\ttx\in\Set{\HH_3,\ttr,\ttr'}} \quad S_4=(M_{\ttx})_{\ttx\in\Set{\HH_4,\tts}}
+$$
+as described, anticlockwise, in Figure \ref{eq:JK}.
+}
+ \finex
+\end{example}
+
+ \begin{figure}[h] 
+    \centering{\small
+   % \vspace{-2mm}
+    $
+    \begin{array}{@{\hspace{-10mm}}c@{\hspace{-10mm}}}
+    \begin{array}{c}
+  \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\HH_1]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+ \hspace{1mm}
+\begin{array}{c}
+ \\
+ \\
+| \\
+| \\
+|\\
+|\\
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c}
+\begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\HH_4$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[h_4][s][][react]$} (one)
+      (one) edge[bend left] node[above] {$\ain[s][h_4][][pars]$} (zero)
+      ;
+  \end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$};
+            \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\tts$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\ain[h_4][s][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[s][h_4][][pars]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ \\[12mm]
+\hspace{24mm}- - - -    \hspace{8mm}- - - - -  \\[-8mm]
+\begin{array}{@{\hspace{10mm}}c}
+\\[4mm]
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttq]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[q][h_2][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_2][q][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_2][q][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge  node[below] {$\ain[h_2][q][][reset]$} (0)
+		  ;
+		\end{tikzpicture}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\HH_2]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[q][h_2][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[q][h_2][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+ \hspace{-0.5mm}
+\begin{array}{c}
+ \\[-12mm]
+| \\
+| \\
+| \\
+|
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c}
+ \\[-2mm]
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\HH_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\ain[r][h_3][][start]$} (one)
+      (one) edge[bend left] node[above] {$\aout[h_3][r][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+  \quad
+  \begin{array}{c}
+  \\[2mm]
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-6mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=6mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\ttr$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[r][h_3][][start]$} (one)
+      (one) edge[bend left] node[below] {$\ain[h_3][r][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[r][r'][][greet]$} (zero)
+      ;
+  \end{tikzpicture}
+   \\
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      %\node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\ttr'$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[loop right,looseness=40]  node[above] {$\ain[r][\ttr'][][greet]$} (zero)
+      %(zero) edge[bend right] node[below] {$\aout[h_4][r][][react]$} (one)
+      ;
+  \end{tikzpicture}
+  \end{array}
+ \end{array}
+ \\[-2mm]
+ \end{array}
+ $
+ }
+ \caption{ The four communicating systems formalising the systems of \cref{ex:simplewe} }
+\label{eq:JK}
+ \end{figure}
+ 
+ 
+ {\bf Notation:} We use the following notation to denote the above set of communicating systems:  \\ $\Set{S_i}_{i\in\Set{1,2,3,4}}$ where $S_i=(M_{\ttx})_{\ttx\in\roles_i}$ with
+$\roles_1=\Set{\HH_1,\ttp}$, $\roles_2=\Set{\HH_2,\ttq}$, $\roles_3=\Set{\HH_3,\ttr,\ttr'}$
+and $\roles_4=\Set{\HH_4,\tts}$.\\
+
+We proceed now to the formalisation, in the setting of CFSM, of the notions related to the PaI orchestrated multicomposition.
+  
+\medskip
+\noindent
+The composition of a set of systems relies on a selection of participants,
+one for each system,  considered as interfaces.
+ 
+ 
+ 
+ \begin{definition}[Interfaces]\label{def:interfaces}
+ Let $\Set{S_i}_{i\in I}$ be a set of communicating systems such that, for each $i\in I$, 
+ $S_i=(M_{\ttx})_{\ttx\in\roles_i}$,  where the $\roles_i$s are pairwise disjoint. 
+ A set of participants $H = \Set{\hh_i}_{i\in I}\subseteq \bigcup_{i\in I}\roles_i$
+ is a {\em set of interfaces} for $\Set{S_i}_{i\in I}$ whenever,
+for each $i\in  I$, $\hh_i \in \roles_i$.
+ An interface $\hh_i$ has \emph{no mixed states} if the CFSM $M_{\hh_i}$ in $S_i$
+has no mixed states. 
+ \end{definition}
+ 
+
+ 
+ \begin{example}
+ {\em  We choose $\Set{\hh_i}_{i\in \Set{1,2,3,4}}$ as set of interfaces for the communicating systems of Figure~\ref{eq:JK}.\finex} 
+ \end{example}
+
+\smallskip
+
+ 
+
+%\brc
+%There are some subtle points concerning~\cref{def:cm} (connection model)
+%and~\cref{def:intset} (interfacing set) which I would like to discuss:\\
+%Let $\msg[a]\in\inn{M_{\hh}}$ ($\msg[a]\in\outt{M_{\hh}}$ is analogous).
+%Then there are two cases:
+%
+%Case (a): There is no $\hh' \in H$ such that $\msg[a]\in\outt{M_{\hh'}}$.
+%\bfc
+% The preservation results state that if the CFMSs all enjoy property P and
+%so does the connection policy, then also the composition enjoys P.
+%The only condition on the interfacing policy is that it has to enjoy property P.
+%So, the motivation under the ``loose'' definition of connection model
+%is not to rule out connection policies that could result in sound compositions.
+%For instance, even if we had what described in Case (a) above,
+%it could be the case that the transition with $\msg[a]$ would never be fired
+%and the CFSM and the connection policy could nevertheless enjoy P.
+%
+%However, I see your point. I just wanted to explain the reason underlying 
+%the possibility of ``loose'' connection models in my definition. 
+%Said that, I have no problem to make the definition of connection model
+%stricter as you suggest. We shall just have to add some sentences in the results section
+%remarking that they hold also in case one takes into account any connection
+%policy.
+%\efc\\
+%In this case, the definition of $\IS {M_\hh}\cm$ in~\cref{def:intset}
+%looks intuitively not appropriate to me. 
+%Because if there is a transition
+%$q \lts{\ttr\HH?\msg[a]} q' \in \delta$, then the def. requires that there
+%must be a transition
+%$\dot q \lts{\dot\HH\ttp!\msg[a]} \dot{q}'\in \dot\delta$ with $\ttp \in H\setminus\{h\}$.
+%But in this case (a) it is already clear that the gateway for $p$ can never receive $\msg[a]$.
+%I think this case should be treated differently such that it is not possible
+%that the gateway for $\hh$ can send $\msg[a]$ to the gateway for $\ttp$.
+%Otherwise the system composition will have an orphan message whenever $\dot{q}'$ is reached
+%(and perhaps also an unspecified reception).
+%A possibility to avoid such a situation is to require
+%that for all $\msg[a]\in\inn{M_{\hh}}$
+%there exists a $\hh' \in H\setminus\{h\}$ such that $\msg[a]\in\outt{M_{\hh'}}$.
+%The simplest way to do this is to require that\\
+%(\#) whenever $\msg[a]\in\inn{M_{\hh}}$
+%there is a connection $(\hh, \msg[a],\hh')$ (in the connection model) to some $\hh' \in H\setminus\{h\}$. 
+%Case (a) is not really related to connection models but it is also relevant for the previous def. of an interfacing set. 
+%
+%Case (b): There exists a $\hh' \in H\setminus\{h\}$ such that $\msg[a]\in\outt{M_{\hh'}}$
+%but there is no $\hh' \in H\setminus{h}$ such that  $(\hh, \msg[a],\hh') \in \cm$.\\
+%Then the def. of $\IS {M_\hh}\cm$ requires again that there must be a transition
+%$\dot q \lts{\dot\HH\ttp!\msg[a]} \dot{q}'\in \dot\delta$ with $\ttp \in H\setminus\{h\}$.
+%But then the connection model is disregarded because it does
+%not allow a connection for message $\msg[a]$ outgoing from $\hh$. Such a situation
+%could be avoided if we would require again condition (\#) from above.
+%
+%As a consequence of the discussion in (a) and (b) above I would suggest to replace
+%the condition (i) in~\cref{def:cm} by condition (ii) in~\cref{def:cm} and omitting ``strong''. All our examples satisfy this and also the handwritten example of Franco satisfies this.
+%On the other hand, for a strong connection model I would suggest to require
+%uniqueness of $\hh'$. This would not be the case for Franco's handwritten example
+%and also not for the examples in the introduction, but it would be satisfied for
+%the working example. I believe that this discrimination is the interesiting one.
+%So, for a strong connection model I would require now:
+% \begin{itemize}[--]
+% \item
+% $\msg[a]\in\inn{M_{\hh}}$ implies $\exists_1\ \hh'\in H$ s.t. $(\hh, \msg[a],\hh')\in \cm$;
+% \item
+% $\msg[a]\in\outt{M_{\hh}}$ implies $\exists_1\ \hh'\in H$ s.t. $(\hh', \msg[a],\hh)\in \cm$.
+% \end{itemize} 
+%\erc
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%$$
+%\begin{tikzpicture}[mycfsm]
+%       %
+%       %
+%       % Participant h1
+%        \node (square-h1) at (-1,0) [state, initial, initial where = above, initial text={$\ptp[\hh_1]$},draw, rectangle, dashed, minimum width=1cm,minimum height=1cm] 
+%        {$\begin{tikzpicture}[mycfsm]
+%		 \node[state, draw=none] (panel-p) [xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+%		  %
+%		  \node[state, draw=none] (sensor-p) [above right of=panel-p,xshift=-24pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+%		  %
+%		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+%            \end{tikzpicture}$};
+%         %
+%         %
+%         % Doors2      
+%        \node (doors2)  [state, draw = none, right of = square-h2, xshift=16pt] 
+%        {$\begin{tikzpicture}[mycfsm]
+%        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.14]{PICTURES/doors}$};
+%        \end{tikzpicture}$};
+%       %
+%       %
+%       % Participant r
+%        \node (square-r) [state, initial, initial where = above, initial text={$\ptp[\ttr]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = doors2,xshift=-16pt] 
+%        {$\begin{tikzpicture}[mycfsm]
+%		 \node[state, draw=none] (sensor-r)  {$\includegraphics[scale=0.15]{PICTURES/sensor2}$};
+%		  %
+%            \end{tikzpicture}$};
+%        %
+%        %
+%        % Participant h3
+%        \node (square-h3) [state, initial, initial where = above, initial text={$\ptp[\hh_3]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-r] 
+%        {$\begin{tikzpicture}[mycfsm]
+%         \node[state, draw=none] (lights)  {$\includegraphics[scale=0.1]{PICTURES/lights}$};
+%		\node[state, draw=none] (sensor-h3) [below  of=lights,yshift=32pt]  {$\includegraphics[scale=0.08]{PICTURES/sensor}$};     
+%        \end{tikzpicture}$};
+%       %
+%       %
+%       % Participant r'
+%        \node (square-r') [state, initial, initial where = above, initial text={$\ttr'$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h3] 
+%        {$\begin{tikzpicture}[mycfsm]
+%		 \node[state, draw=none] (speakers-r')  {$\includegraphics[scale=0.12]{PICTURES/loudspeakers}$};
+%		  %
+%            \end{tikzpicture}$};
+%        %
+%        %
+%        % Participant h2
+%        \node (square-h2) [state, initial, initial where = above, initial text={$\ptp[\hh_2]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, below of = square-h1, yshift=-30pt] 
+%        {$\begin{tikzpicture}[mycfsm]
+%         \node[state, draw=none] (panel-h2) [right of=panel-p,xshift=84pt]  {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};        
+%        \end{tikzpicture}$};
+%         %
+%         %
+%         % Participant p         
+%        \node (square-p)  [state, initial, initial where = above, initial text={$\ptp[\ttp]$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, left of = square-h1] 
+%        {$\begin{tikzpicture}[mycfsm]
+%        \node[state, draw=none] (sensor) {$\includegraphics[scale=0.16]{PICTURES/sensor2}$};
+%        \end{tikzpicture}$};
+%        %
+%         %
+%         % Doors      
+%        \node (door)  [state, draw = none, left of = square-p, xshift=16pt] 
+%        {$\begin{tikzpicture}[mycfsm]
+%        \node[state, draw=none] (sensor)  {$\includegraphics[scale=0.14]{PICTURES/doors}$};
+%        \end{tikzpicture}$};
+%        %
+%        %
+%        %  Participant q
+%       \node (square-q) [state, initial, initial where = above, initial text={$\ttq$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm,left  of = square-h2] 
+%       {$\begin{tikzpicture}[mycfsm]
+%           \node[state, draw=none] (sensor-q)  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+%		\node[state, draw=none] (rfid1) [below  of=sensor-q,yshift=36pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+%       \end{tikzpicture}$};
+%        %
+%        %
+%        % Participant h4
+%        \node (square-h4) [state, initial, initial where = above, initial text={$\hh_4$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h2,xshift=112pt] 
+%        {$\begin{tikzpicture}[mycfsm]
+%         \node[state, draw=none] (lights)  {$\includegraphics[scale=0.1]{PICTURES/lights}$};
+%		\node[state, draw=none] (sensor-h4) [below  of=lights,yshift=32pt]  {$\includegraphics[scale=0.08]{PICTURES/sensor}$};          
+%        \end{tikzpicture}$};
+%        %
+%        %
+%        % Participant s
+%        \node (square-s) [state, initial, initial where = above, initial text={$\tts$},draw, rectangle, dashed, minimum width=1.4cm,minimum height=1.4cm, right of = square-h4] 
+%        {};
+%    \end{tikzpicture}
+%$$
+
+
+
+
+
+
+%$$
+% \begin{tikzpicture}[mycfsm]
+%		  % participant p
+%		  \node[state, draw=none] (doors) {$\includegraphics[scale=0.1]{PICTURES/doors}$};
+%		  %
+%		  \node[state, draw=none] (rfid1) [below right of=doors,xshift=-20pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/sensor2}$};
+%		  %
+%		  %participant h1
+%		  \node[state, draw=none] (panel-p) [right of=doors, xshift=20pt]   {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+%		  %
+%		  \node[state, draw=none] (sensor-p) [above right of=panel-p,xshift=-24pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+%		  %
+%		  \node[state, draw=none] (rfid1) [below right of=panel-p,xshift=-24pt,yshift=27pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+%		  %
+%		  % participant h2
+%		  \node[state, draw=none] (panel-h2) [right of=panel-p,xshift=84pt]  {$\includegraphics[scale=0.2]{PICTURES/adv-panel}$};
+%		  %
+%		  %participant q
+%		  \node[state, draw=none] (sensor-q) [above right of=panel-h2,xshift=14pt,yshift=-26pt]  {$\includegraphics[scale=0.07]{PICTURES/sensor}$};
+%		  %
+%		  \node[state, draw=none] (rfid1) [below  of=sensor-q,yshift=16pt]  {$\includegraphics[scale=0.16]{PICTURES/card-reader-rfid}$};
+%		  %
+%		  
+%%		  \node[state] (2) [below left of=1]   {$2$};
+%%		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+%%		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+%		  
+%		\end{tikzpicture}
+%$$
+
+Both the notions of {\em orchestrated connection model} and {\em orchestrated connection policy}
+describe -- at different levels of abstraction -- how gateways interact among themselves and among orchestrating participants.
+In order to specify such interactions maintaining a reference to the interfaces of the systems 
+we wish to connect,
+we use ``virtual participants'' possessing dotted names. Given an interface $\hh$, the
+virtual participant $\dot\hh$ describes how the gateway will forward the messages
+once substituted for the interface $\hh$ in the composition. Of course only interface participants can have a dotted counterpart. \\
+
+
+
+ We introduce now the notion of {\em orchestrated connection model}\footnote{Disregarding the orchestration, such a notion was informally introduced in \cite{BDGY23}
+in the setting of MultiParty Session Types.}, formalising what we have informally described
+for the left diagram of \cref{fig:orchint} (or what, for the unorchestrated case, we have described as  ``choice of partners'' in~\cref{sec:pai-multicomp}).
+%
+A connection model is intended to  specify  the structural
+(architectural)  aspects of possible ``reasonable'' connections  among interfaces of systems. 
+% 
+Connection models should be provided before systems are composed since they can help the
+system designer to avoid blatantly unreasonable compositions.
+Formally, a connection model is a set of {\em connections}, i.e. triples 
+ of the form $(\ttp, \msg[a],\ttp')$, where $\ttp$ and $\ttp'$ are either a
+ dotted name of an interface or one of the ``orchestrating'' participants.  
+ \cref{fig:orchint} is actually the graphical representation  of the connection model
+ $$
+ \Set{(\dot\hh_1, \msg[a],\ttd),(\dot\hh_4, \msg[c],\dot\hh_2),(\ttd, \msg[a],\dot\hh_2),(\dot\hh_2, \msg[b],\dot\hh_3),
+         (\ttd, \msg[a],\dot\hh_4),(\dot\hh_4, \msg[b],\dot\hh_3),(\dot\hh_3, \msg[a],\tte)}.
+$$
+
+
+ 
+An actual orchestrated composition relies on gateways (forwarders)
+ built out of the interfaces and the connection policy complying with 
+the connection model taken into account. 
+Let $\hh$ and $\hh'$ be interfaces, respectively, for systems $S$ and $S'$, and let
+$\tto$ be an orchestrating participant.
+The presence of $(\dot\hh, \msg[a],\tto)$ in the connection model
+hence represent the fact that  $\msg[a]$ is received by $\hh$ from the ``inside'' of $S$
+and that the gateway replacing $\hh$ in the composition has to forward $\msg[a]$ to $\tto$ 
+after its reception.
+The forwarding would be towards the gateway replacing $\hh'$ in $S'$ in case we had
+$(\dot\hh, \msg[a],\dot\hh')$. This represents also the fact that in $S'$ the  interface $\hh'$
+sends $\msg[a]$ to some participant of $S'$.
+A similar  discussion applies, dually, for triples  of the form $(\tto, \msg[a],\dot\hh)$ in the connection model.
+
+%Formally, a connection model is a set of {\em connections}, where a connection is a triple 
+% of the form $(\hh, \msg[a],\ttu)$ or $(\ttu, \msg[a],\hh)$ where $\hh$ is an
+% interface of one system and $\ttu$ is either an interface of another system or
+% one of the participants we intend to add for ``orchestrating'' the communications among the gateways in the composed system.  
+% Besides, $\msg[a]$ is a message sent from $\hh$ to $\ttu$ in the first case and from $\ttu$ to $\hh$ in the second.
+%A connection $(\hh, \msg[a],\ttu)$ states that in the composed system,
+%$\msg[a]$ is intended to be an output from the gateway that will replace the interface $\hh$.
+%This means that $\msg[a]$ is an input for the interface $\hh$. 
+%In particular, this interface is supposed to receive $\msg[a]$ from the ``inside'' of the system $S$
+%the interface $\hh$ belongs to, i.e.\ from another participant of $S$.
+%As previously mentioned, PaI orchestrated multicomposition relies on the idea
+%that $\msg[a]$ can be forwarded by the gateway either directly to the interface of some other system
+%or to some other participants added for orchestrating the composition.
+%The connection $(\hh, \msg[a],\ttu)$ hence specifies that  
+%$\ttu$ is one of the possible participants $\msg[a]$ can be forwarded to in the composed system.
+
+%An actual orchestrated composition should then rely on gateways (forwarders) which comply with 
+%the connection model taken into account.
+
+\smallskip
+
+The following definition, besides being handy in the subsequent definitions of  
+connection model, policy-model compliance and gateway,
+will be used later on in order to get a more compact definition of
+ configuration projection on a sub-system (see \cref{def:projectedconf}) as well as to simplify some proofs. 
+We define two functions linking interface names to their dotted version. 
+ Roughly, the function $\widetilde{(\cdot)}$ ``puts dots'' on interface names,
+ leaving unaltered other participants' names. Dually 
+ the function $\widetilde{\widetilde{(\cdot)}}$ ``erases'' dots, when present.
+\begin{definition}Let $\roles$ be a set of participants such that  $H\subseteq\roles$ for a set of interfaces $H=\Set{\hh_i}_{i\in I}$.
+\begin{enumerate}[i)]
+\item
+ 
+ %$\cs=(M_{\ttu})_{\ttu\in \roles_{\cs} = }\Set{\kk_i}_{i\in I}\cup\rolescsint}$
+ % be a connection system for a set of interfaces $H$.
+ We define $\widetilde{(\_)}_{H,\roles} : \roles \rightarrow \Set{\kk_i}_{i \in I}\cup(\roles\setminus H)$ as follows:
+$$\widetilde{(\ttu)}_{H,\roles} = \left\{\begin{array}{l@{\quad}l}
+                                                                \kk & \text{if }\ \ttu=\hh\in\Set{\HH_i}_{i \in I}\\
+                                                                \ttu & \text{otherwise}
+                                          \end{array}\right.$$ 
+We write simply $\widetilde{\ttu}$ for $\widetilde{(\ttu)}_{H,\roles}$ when $H$ and $\roles$ are clear from the context.
+\item
+Let $K=\Set{\kk_i}_{i\in I}= \Set{\dot{\hh_i}}_{i\in I}$
+We define $\widetilde{\widetilde{(\_)}}_{K,\roles} : K\cup(\roles\setminus H) \rightarrow \roles$ as follows:
+$$\widetilde{\widetilde{(\ttu)}}_{K,\roles} = \left\{\begin{array}{l@{\quad}l}
+                                                                \hh & \text{if }\ \ttu=\kk\in\Set{\kk_i}_{i \in I}\\
+                                                                \ttu & \text{otherwise}
+                                          \end{array}\right.$$ 
+We write simply $\widetilde{\widetilde{\ttu}}$ for $\widetilde{\widetilde{(\ttu)}}_{K,\roles}$ when $K$ and $\roles$ are clear from the context.
+\end{enumerate}                                         
+\end{definition}
+
+\begin{definition}[Orchestrated connection model]\label{def:cm}
+%\brc I would use a lower case letter for ``connection``\erc
+Let $H$ be a set of interfaces for a set $\Set{S_i}_{i\in I}$ of communicating systems,
+and let $\roles^{\mathrm{orch}}$ be a set of participants (the intended orchestrating participants).
+ 
+ \begin{enumerate}[i)]
+ \item
+ An {\em  orchestrated connection model for} $H=\Set{\hh_i}_{i\in I}$ (connection model for short) is a ternary relation\  \
+ $\cm\subseteq (\Set{\dot\hh_i}_{i\in I}\cup\roles^{\mathrm{orch}})\times\mathbb{A}_\mathfrak{U}\times (\Set{\dot\hh_i}_{i\in I}\cup\roles^{\mathrm{orch}})$\ \
+ such that,   for each $\hh\in H$  and $\msg[a] \in \mathbb{A}_\mathfrak{U}$, 
+  \begin{itemize}
+ \item
+ \label{it:first}
+ $\msg[a]\in\inn{\hh}$ iff~ $\exists\ \ttu\in \Set{\dot\hh_i}_{i\in I}\cup\roles^{\mathrm{orch}}$ s.t. 
+ $(\dot\hh, \msg[a],\ttu)\in \cm$ and $(\widetilde{\widetilde\ttu}\in H \Rightarrow\msg[a]\in\outt{\widetilde{\widetilde\ttu}})$;
+ 
+ \item
+ $\msg[a]\in\outt{\hh}$ iff~ $\exists\ \ttu\in \Set{\dot\hh_i}_{i\in I}\cup\roles^{\mathrm{orch}}$ s.t. $(\ttu, \msg[a],\hh)\in \cm$ and
+ $(\widetilde{\widetilde\ttu}\in H \Rightarrow \msg[a]\in\inn{\widetilde{\widetilde\ttu}})$;
+ \end{itemize}
+ 
+ where  $\dot\hh\neq\ttu$. \\
+%\bfr Besides,  for each $\ttu\in \roles^{\mathrm{orch}}$  and $\msg[a] \in \mathbb{A}_\mathfrak{U}$, 
+%  \begin{itemize}
+% \item
+% \label{it:first}
+% $\msg[a]\in\inn{\ttu}$ iff~ $\exists\ \ttv\in H\cup\roles^{\mathrm{orch}}$ s.t. 
+% $(\ttv, \msg[a],\ttu)\in \cm$ and $(\ttv\in H \Rightarrow \msg[a]\in\inn{\ttu})$;
+% 
+% \item
+% $\msg[a]\in\outt{\ttu}$ iff~ $\exists\ \ttv\in H\cup\roles^{\mathrm{orch}}$ s.t. 
+% $(\ttu, \msg[a],\ttv)\in \cm$  and $(\ttv\in H \Rightarrow\msg[a]\in\outt{\ttu})$.
+% 
+% \end{itemize}
+% 
+% where  $\ttu\neq\ttv$. \\
+% \efr
+ Elements of $\cm$ are called {\em connections}. In particular,
+ $(\hh, \msg[a],\ttu)\in \cm$ is called {\em connection for $\msg[a]$ (from  $\hh$ to $\ttu$)}.
+ We also define $\Msgs{\cm}=\Set{\msg[a] \mid (\_, \msg[a],\_)\in \cm}$.
+ \item
+ An orchestrated connection model $\cm$ for $H$ is {\em strong\/} if the conditions for
+ item (\ref{it:first}) above keep holding also in case the existential quantifier `\,$\exists$'
+ is replaced by `\,$\exists!$', i.e. the unique existential quantifier 
+standing for ``there exists exactly one''.
+ \end{enumerate}
+ \end{definition}
+
+%\begin{definition}[Orchestrated connection model]\label{def:cm}
+%%\brc I would use a lower case letter for ``connection``\erc
+%Let $H$ be a set of interfaces for a set $\Set{S_i}_{i\in I}$ of communicating systems,
+%and let $\roles^{\mathrm{orch}}$ be a set of participants (the intended orchestrating participants).
+% 
+% \begin{enumerate}[i)]
+% \item
+% An {\em  orchestrated connection model for} $H$ (connection model for short) is a ternary relation\  \
+% $\cm\subseteq (H\cup\roles^{\mathrm{orch}})\times\mathbb{A}_\mathfrak{U}\times (H\cup\roles^{\mathrm{orch}})$\ \
+% such that,   for each $\hh\in H$  and $\msg[a] \in \mathbb{A}_\mathfrak{U}$, 
+%  \begin{itemize}
+% \item
+% \label{it:first}
+% $\msg[a]\in\inn{\hh}$ iff~ $\exists\ \ttu\in H\cup\roles^{\mathrm{orch}}$ s.t. 
+% $(\hh, \msg[a],\ttu)\in \cm$ and $(\ttu\in H \Rightarrow\msg[a]\in\outt{\ttu})$;
+% 
+% \item
+% $\msg[a]\in\outt{\hh}$ iff~ $\exists\ \ttu\in H\cup\roles^{\mathrm{orch}}$ s.t. $(\ttu, \msg[a],\hh)\in \cm$ \bfr  and \efr
+% $(\ttu\in H \Rightarrow \msg[a]\in\inn{\ttu})$.
+% \end{itemize}
+% 
+% where  $\hh\neq\ttu$. \\
+%\bfr Besides,  for each $\ttu\in \roles^{\mathrm{orch}}$  and $\msg[a] \in \mathbb{A}_\mathfrak{U}$, 
+%  \begin{itemize}
+% \item
+% \label{it:first}
+% $\msg[a]\in\inn{\ttu}$ iff~ $\exists\ \ttv\in H\cup\roles^{\mathrm{orch}}$ s.t. 
+% $(\ttv, \msg[a],\ttu)\in \cm$ and $(\ttv\in H \Rightarrow \msg[a]\in\inn{\ttu})$;
+% 
+% \item
+% $\msg[a]\in\outt{\ttu}$ iff~ $\exists\ \ttv\in H\cup\roles^{\mathrm{orch}}$ s.t. 
+% $(\ttu, \msg[a],\ttv)\in \cm$  and $(\ttv\in H \Rightarrow\msg[a]\in\outt{\ttu})$.
+% 
+% \end{itemize}
+% 
+% where  $\ttu\neq\ttv$. \\
+% \efr
+% \bfc
+% We did not previously considered the possibility of connection models with interacting
+% orchestrating participants. Do we wish to drop such a possibility?
+% \efc
+% \\
+% Elements of $\cm$ are called {\em connections}. In particular,
+% $(\hh, \msg[a],\ttu)\in \cm$ is called {\em connection for $\msg[a]$ (from  $\hh$ to $\ttu$)}.
+% We also define $\Msgs{\cm}=\Set{\msg[a] \mid (\_, \msg[a],\_)\in \cm}$.
+% \item
+% An orchestrated connection model $\cm$ for $H$ is {\em strong\/} if the conditions for
+% item (\ref{it:first}) above keep holding also in case the existential quantifier `\,$\exists$'
+% is replaced by `\,$\exists!$', i.e. the unique existential quantifier 
+%standing for ``there exists exactly one''.
+% \end{enumerate}
+% \end{definition}
+ 
+ 
+ \noindent
+Connection models can be graphically represented by diagrams, like those used in \cref{fig:twocm}. \\
+
+Using strong connection models makes connection policies  %gateways 
+uniquely determined (see \cref{lem:ud} and \cref{def:gatewaycs} below). 
+
+
+\begin{example}[Some connection models]\label{ex:scm}
+{\em
+Let $H=\Set{\hh_i}_{i\in \Set{1,2,3,4}}$ be the set of interfaces for the systems $\Set{S_i}_{i\in\Set{1,2,3,4}}$ % of Fig. \ref{fig:foursys} 
+in~\cref{sec:pai-multicomp}. 
+\cref{fig:twocm} %Fig. \ref{fig:twocm} 
+represents the following connection models for $H$ and $\rolesorch=\emptyset$:
+$$
+\begin{array}{rcl}
+\cm_{\text{A}}& = &\{ 
+(\dot\hh_1,\msg[a],\dot\hh_4), (\dot\hh_3,\msg[a],\dot\hh_2),(\dot\hh_4,\msg[c],\dot\hh_1),(\dot\hh_2,\msg[b],\dot\hh_3), (\dot\hh_4,\msg[b],\dot\hh_3) \}\\
+\cm_{\text{B}} & = &\{ 
+(\dot\hh,\msg[a],\dot\hh_2), (\dot\hh_3,\msg[a],\dot\hh_4),(\dot\hh_4,\msg[c],\dot\hh_1),(\dot\hh_2,\msg[b],\dot\hh_3), (\dot\hh_4,\msg[b],\dot\hh_3)
+\}
+\end{array}
+$$
+ Obviously, both connection models 
+are not strong, because of the presence of the connections $(\dot\hh_2,\msg[b],\dot\hh_3)$ and $(\dot\hh_4,\msg[b],\dot\hh_3)$. 
+
+\smallskip
+
+ Let us now provide a connection model for the systems in Fig.\ \ref{eq:JK}
+with set of interfaces $H = \Set{\hh_i}_{i\in \Set{1,2,3,4}}$ and $\rolesorch=\emptyset$. 
+%For a further example of connection model, let now 
+%$H = \Set{\hh_i}_{i\in \Set{1,2,3,4}}$ be the set of interfaces for the systems of Fig. \ref{eq:JK}.
+First we determine $\inn{\hh_1} = \{\msg[react], \msg[nc], \msg[rc]\}$,
+$\outt{\hh_1} = \{\msg[img], \msg[start]\}$,
+$\inn{\hh_2} = \{\msg[react], \msg[img]\}$,\linebreak
+$\outt{\hh_2} = \{\msg[nc], \msg[rc], \msg[pars]\}$,
+$\inn{\hh_3} = \{\msg[start]\}$,
+$\outt{\hh_3} = \{\msg[react]\}$, and
+$\inn{\hh_4} = \{\msg[pars]\}$,
+$\outt{\hh_4} = \{\msg[react]\}$.  \\
+A connection model for $H$ is\\[1mm]
+$$
+\begin{array}{rcl}
+\cm_{\emptyset} & = &\{ 
+\dot(\hh_1,\msg[react],\dot\hh_4), (\dot\hh_3,\msg[start],\dot\hh_1),(\dot\hh_2,\msg[img],\dot\hh_1), 
+(\dot\hh_1,\msg[nc],\dot\hh_2), \\
+& & \hspace{2mm} (\dot\hh_1,\msg[rc],\dot\hh_2), (\dot\hh_4,\msg[pars],\dot\hh_2), 
+(\dot\hh_2,\msg[react],\dot\hh_3)
+\}
+\end{array}
+$$
+The representation of $\cm_{\emptyset}$ is as in \cref{fig:compsyst}.
+Obviously, this connection model is strong.
+
+\begin{figure*}[h]\centering
+ \hspace{0mm}$
+\begin{tikzpicture}[mycfsm]
+       %
+        \node (square-h1) at (-1,0) [draw,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_1$};
+        %
+        \node (square-h2) at (1,0) [draw,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_2$};
+        %
+        \node (square-h3) at (-3,0) [draw,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_3$};
+        %
+       \node (square-h4) at (3,0) [draw,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_4$};
+        \path   (square-h1) [bend left = 25]   edge node {$\msg[rc]$} (square-h2);
+        \path (square-h4)   edge node[above]  {$\msg[pars]$} (square-h2) ;
+        \path   (square-h1)[->,bend right = 45]  edge node[above] {$\msg[react]$} (square-h4)
+                   (square-h2)[bend right = -45]  edge node[above] {$\msg[react]$} (square-h3)
+                   (square-h3)[bend right = 0]  edge node[above] {$\msg[start]$} (square-h1)
+                 ;
+        \path (square-h1) [bend left = 45]  edge node {$\msg[nc]$}  (square-h2); %carrying NC from h1 to h2
+        \path (0.5,-0.2)  edge node {$\msg[img]$}  (-0.5,-0.2); %carrying IMG from h1 to h2
+        %
+        %
+    \end{tikzpicture}
+$
+   \caption{\label{fig:compsyst}A connection model for the interfaces of \cref{eq:JK} and $\rolesorch=\emptyset$.}
+\end{figure*}
+
+A connection model for the systems in \cref{eq:JK}
+with set of interfaces $H = \Set{\hh_i}_{i\in \Set{1,2,3,4}}$ and $\rolesorch=\Set{\ttb,\ttd}$
+is as follows.
+$$
+\begin{array}{rcl}
+\cm_{\Set{\ttb,\ttd}} & = &\{ 
+(\dot\hh_1,\msg[react],\ttb), (\dot\hh_3,\msg[start],\dot\hh_1),(\dot\hh_2,\msg[img],\dot\hh_1), 
+(\dot\hh_1,\msg[nc],\hh_2), (\dot\hh_1,\msg[rc],\dot\hh_2), \\
+& & \hspace{2mm} (\dot\hh_4,\msg[pars],\dot\hh_2), 
+(\dot\hh_2,\msg[react],\ttd), (\ttd,\msg[react],\dot \hh_3),(\ttd,\msg[react], \dot\hh_4)
+\}
+\end{array}
+$$
+The representation of $\cm_{\Set{\ttb,\ttd}}$ is as in~\cref{fig:compsystext} (where dashed lines are used to distinguish participants in $H$ from participants in $\rolesorch$).
+}
+\finex
+ \end{example}
+
+
+\begin{figure*}[t]\centering
+ \hspace{0mm}$
+\begin{tikzpicture}[mycfsm]
+       %
+        \node (square-h1) at (-1,0) [draw,dashed,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_1$};
+        %
+        \node (square-h2) at (1,0) [draw,dashed,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_2$};
+        %
+        \node (square-h3) at (-3,0) [draw,dashed,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_3$};
+        %
+       \node (square-h4) at (3,0) [draw,dashed,minimum width=1cm,minimum height=1cm] {\large $\dot\hh_4$};
+       %
+       \node (square-b) at (-1,-2) [draw,minimum width=1cm,minimum height=1cm] {\large $\ttb$};
+       % b stands for ``blocking''
+       %
+       \node (square-d) at (1,-2) [draw,minimum width=1cm,minimum height=1cm] {\large $\ttd$};
+       % d stands for ``duplicator''
+       %
+       %
+        \path   (square-h1) [bend left = 25]   edge node {$\msg[rc]$} (square-h2);
+        \path (square-h4)   edge node[above]  {$\msg[pars]$} (square-h2) ;
+        \path   (square-h1)[->,bend right = 0]  edge node[above] {$\msg[react]$} (square-b)
+                   (square-h2)[bend right = -0]  edge node[above] {$\msg[react]$} (square-d)
+                   (square-h3)[bend right = 0]  edge node[above] {$\msg[start]$} (square-h1)
+                   (square-d)[bend right = -72]  edge node[below] {$\msg[react]$} (square-h3)
+                                   [bend left = -90]  edge node[below] {$\msg[react]$} (square-h4)
+                 ;
+        \path (square-h1) [bend left = 45]  edge node {$\msg[nc]$}  (square-h2); %carrying NC from h1 to h2
+        \path (0.5,-0.2)  edge node {$\msg[img]$}  (-0.5,-0.2); %carrying IMG from h1 to h2
+        %
+        %
+    \end{tikzpicture}
+$
+   \caption{\label{fig:compsystext}An orchestrated connection model for the interfaces of \cref{eq:JK} and $\rolesorch=\Set{\ttb,\ttd}$.}
+\end{figure*}
+
+
+In order to produce  gateways out of interfaces, we need to decide 
+which connection model we wish to take into account and how 
+the interfaces (and possibly orchestrating participants) do actually interact. 
+ Once a connection model is selected, the forwarding strategy of the gateway
+is still not uniquely determined  if the connection model is not strong. 
+ The reason is that in the case of at least two connectors with the same source or the same target, like $(\dot\hh_2,\msg[b],\dot\hh_3)$ and $(\dot\hh_4,\msg[b],\dot\hh_3)$ in~\cref{ex:scm}, the gateway for $\hh_3$
+has a dynamic choice when to accept message $\msg[b]$ from $\hh_2$
+and when from $\hh_4$. Therefore we need further (dynamic) information
+which will be provided by {\em orchestrated connection policies\/}. 
+An orchestrated connection policy is itself a communicating system which describes the dynamic choice of partners and orchestrating participants.
+%among the possible gateways
+%by respecting the constraints of (that is, complying with) the orchestrated connection model.   
+%Technically, we first associate a set of CFSMs (the ``local connection policy set'') to each interface. 
+%Any element of this set specifies which communications to the ``outside'' are allowed in which state. Technically these communications are dual to the communications of its corresponding interface. 
+Technically, the communications in an orchestrated connection policy are dual to the communications used in interfaces. 
+
+ 
+
+
+ \begin{definition}[Orchestrated connection policy]\label{def:cs}
+% \brc Isn't this an orchestrated connection policy?
+% \erc
+Let $H$ be a set of interfaces for a set $\Set{S_i}_{i\in I}$ of communicating systems
+and let $\roles^{\mathrm{orch}}$ be a set of participants (the intended orchestrating participants).
+%\brc I have added ``for a set $\Set{S_i}_{i\in I}$ of communicating systems``
+%since you refer to $\roles_i$ below. But now I have also included disjointness
+%from $\rolesorch$ below. I think this doesn't hurt and is more intuitive and anyway required later.
+%\erc  
+%Let $H=\Set{\hh_i}_{i\in I}$ be a set of interfaces and $\rolesorch$ a set of participants.
+ An {\em orchestrated connection policy}
+ ({\em connection policy} for short)  
+for $H$ and $\rolesorch$ is a communicating system 
+ $$\cs = (M_\ttu)_{\ttu\in \roles_{\cs}}$$
+ \begin{tabular}{lc@{\hspace{2mm}}l}
+ such that & $\bullet$  & $\roles_{\cs} = \Set{\dot{\hh_i}}_{i\in I}\cup \rolesorch$ where $\Set{\dot{\hh_i}}_{i\in I}\cap \rolesorch=\emptyset$
+ and $\roles_i\cap\rolesorch=\emptyset$ for all $i \in I$;\\
+                &  $\bullet$  & for each $\hh\in H$ with CFSM $M_{\HH}=(Q,q_0,\mathbb{A},\delta)$ we have that\\
+          & &  \qquad\qquad\qquad\qquad $M_{\dot\hh} = (\dot Q,\dot{q_0},\mathbb{A},\dot\delta)$\\
+         & & where $\circ\ $ $\dot Q = \Set{\dot q \mid q\in Q}$ and \\
+             & & \phantom{where} $\circ\ $ $q \lts{\ttr\HH?\msg[a]} q'\in \delta \text{\quad iff \quad} \dot q \lts{\dot\HH\ttu!\msg[a]} \dot{q'}\in \dot\delta$ (with $\ttr\in\roles_i$ and $\ttu\in\roles_{\cs}$)\\
+               &  & \phantom{where} $\circ\ $  $q \lts{\HH\ttr!\msg[a]} q' \in \delta \text{\quad iff \quad}  \dot q \lts{\ttu\dot\HH?\msg[a]} \dot{q'}\in \dot\delta$ (with $\ttr\in\roles_i$ and $\ttu\in\roles_{\cs}$)
+ \end{tabular}
+ 
+% \brc
+% In the third item, I believe that you only choose $\dot\ttu$
+%on the transition if $\ttu \in H$. Otherwise, if $\ttu \in \rolesorch$,
+%we would have $\ttu$ on the transition??
+% \erc \bfc The dot on that $\ttu$ was a typo. I erased it. It should work now.\efc
+ 
+ \smallskip
+ \noindent
+ We call $\rolesorch$ (or $\rolescsint$ in case of ambiguity) the set of {\em orchestrating participants} of $\cs$. %\setminus\Set{\kk_i}_{i\in I}$. 
+% Moreover,
+% we call {\em connection policy} \cite{BH24-ice} a connection system such that $\rolescsint=\emptyset$
+% 
+%  In case of ambiguity, w
+  We call {\em unorchestrated connection policy}
+ a connection policy with $\rolesorch=\emptyset$ {\em \cite{BH24}}.
+\end{definition}
+
+
+We recall that, %In the above definition, 
+when a CFSM has a name of the form $\dot \HH$, it describes the
+way the gateway corresponding to the interface $\hh$ interacts with other gateways and/or 
+participants in $\rolesorch$.
+%\brc \\To which set of participants does $\dot \HH$  belong? Probably it is a fresh name in the overall set $\roles_\mathfrak{U}$? \erc \bfc  Being a decoration of $\HH$, the name $\dot \HH$ can be definitely looked at as a fresh name. I would however refrain from discussing such an issue, in order not to 
+%confuse the reader. I would leave it for a possible extended version.\\ \efc
+Moreover, $\dot q$ (resp.\ $\dot\HH$) is to be looked at as a ``decoration'' of 
+the state $q$ (resp.\ the name $\HH$). 
+This will enable us to immediately retrieve $q$ (resp.\ $\HH$) out of  $\dot q$ (resp.\ $\dot\HH$).
+We assume names of the form $\dot \HH$ to belong to $\roles_\mathfrak{U}$.
+
+\medskip
+\noindent
+{\bf Notation:} In the following, for the sake of readability, we shall 
+write $\KK$ (resp.\ $\KK_i$) for $\dot\HH$ (resp.\ $\dot{\HH}_i$).\\
+
+\smallskip
+
+
+We formalise now the view of a connection model as an abstract and static description
+of the dynamics of the forwarding behaviour provided by a connection policy.
+We do that through the
+compliance relation $\models$\ : whenever an input/output action is
+represented in a connection policy, a corresponding connection between the sender and receiver
+of that action has to be present in the connection model. 
+
+
+\begin{definition}[Policy-model compliance]\label{def:pmcomp}
+Let $\cm$ and $\cs=(M_\ttu)_{\ttu\in\roles_{\cm}}$ with $M_{\ttu} = \{(Q_{\ttu}, q_{\ttu0},\mathbb{A},\delta_{\ttu})$ be, respectively, a connection model and a  connection policy
+for a set of interfaces $H=\Set{\hh_i}_{i\in I}$ and an orchestrating set $\rolesorch$.
+We say that  $\cs$ {\em complies with} $\cm$, and write
+$$
+\cs\models \cm
+$$
+
+whenever\quad
+$(\ttu,\msg[a],\ttv)\in\cm \text{\quad holds if\quad} (q_1,
+{\ttu}{\ttv}!\msg[a],q'_1)\in\delta_{{\ttu}}, (q_2,{\ttu}{\ttv}?\msg[a],q'_2)\in\delta_{{\ttv}}$ for some $q_1,q'_1,q_2,q'_2$.
+%whenever\quad
+%$(\ttr,\msg[a],\tts)\in\cm \text{\quad holds if\quad} (q_1,\widetilde{\widetilde\ttr}\widetilde{\widetilde\tts}!\msg[a],q'_1)\in\delta_{\widetilde{\widetilde\ttr}}, (q_2,\widetilde{\widetilde\ttr}\widetilde{\widetilde\tts}?\msg[a],q'_2)\in\delta_{\widetilde{\widetilde\tts}}$ for some $q_1,q'_1,q_2,q'_2$.
+
+%\brc
+%This definition of ``complies with´´  is stronger than our non-orchestrated one
+%from the ICE paper which would only require the direction $\Leftarrow$. Is this by purpose?
+%It is okay for me but we should  be aware that now we require additionally
+%that all connections of a connection model must be realised.
+%\erc \bfc Actually I have no strong opinion on that. Maybe we can use just $\Leftarrow$ in order
+%to be consistent with the ICE paper.\efc
+%\brc I have changed to ``if'' \erc Franco: OK.
+\end{definition}
+
+\noindent
+From \cref{def:pmcomp} and \cref{def:cs} the following holds.
+\begin{lemma}\label{lem:ud}
+Let $\cm$ be a connection model for a set of interfaces $H$ and let 
+$\cs=(M_\ttu)_{\ttu\in\roles_{\cm}}$
+and $\cs'=(M'_\ttu)_{\ttu\in\roles_{\cm}}$ be two  connection policies such that 
+$$\cs\models \cm \quad\text{and}\quad \cs'\models \cm.$$
+If  $\cm$ is strong then, for all $\hh\in H$, we have that $M_{\dot{\hh}}= M'_{\dot{\hh}}$.
+\end{lemma}
+
+%\bfc An extensive proof is needed for the above lemma? \efc
+%\brc
+%First I thought this would be clear. But then I also got the feeling
+%that a technical proof is needed. On the other hand the lemma is not used anymore. So we can skip a proof. Or call the Lemma Fact.
+%\erc
+\begin{remark}{\em
+As previously pointed out, a connection model can be looked at as a static and abstract description of orchestrated connection policies. 
+In particular, a connection model abstracts from the order of  exchanged messages. 
+% As previously pointed out, %above
+There may be actually several connection policies complying with a given connection model $\cm$ if $\cm$ is not strong.
+As an example, assume %given
+three systems with the following interfaces:
+$$
+\begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [right of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [ above left = 0.3cm  of zero]{$\HH_1$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[s][h_1][][a]$} (one)
+      (one) edge[bend left] node[below] {$\ain[r][h_1][][a]$} (zero)
+      ;
+  \end{tikzpicture}
+ \qquad\qquad\qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [right of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [ above  left = 0.3cm  of zero]{$\HH_2$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\aout[h_2][v][][a]$} (one)
+      ;
+  \end{tikzpicture}
+  \qquad\qquad\qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [right of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [ above left = 0.3cm  of zero]{$\HH_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\aout[h_3][w][][a]$} (one)
+      ;
+  \end{tikzpicture}
+ $$
+ We can now consider the following (non-strong) connection model for $H$ and $\rolesorch=\emptyset$:
+ $$
+ \cm = \Set{(\kk_1,\msg[a],\kk_2), (\kk_1,\msg[a],\kk_3)}.
+ $$
+ It is easy to check that the connection policies $\cs_1$ and $\cs_2$ below
+do both comply with $\cm$.
+ $$
+   \text{\small $\cs_1$ = \quad}
+\begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\kk_1$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[k_1][\kk_2][][a]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_1][\kk_3][][a]$} (zero)
+      ;
+  \end{tikzpicture}
+ \qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\kk_2$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\ain[k_1][k_2][][a]$} (one)
+      ;
+  \end{tikzpicture}
+  \qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\kk_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\ain[k_1][k_3][][a]$} (one)
+      ;
+  \end{tikzpicture}
+  \qquad\qquad\qquad
+ \text{\small $\cs_2$ = \quad}
+\begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\kk_1$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[k_1][\kk_3][][a]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_1][\kk_2][][a]$} (zero)
+      ;
+  \end{tikzpicture}
+ \qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\kk_2$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\ain[k_1][k_2][][a]$} (one)
+      ;
+  \end{tikzpicture}
+  \qquad
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\kk_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge  node[above] {$\ain[k_1][k_3][][a]$} (one)
+      ;
+  \end{tikzpicture}
+ $$
+ \finex
+ }
+\end{remark}
+
+\smallskip
+\begin{example}[Two connection policies]
+\label{ex:connsys}
+{\em 
+We consider now the systems of \cref{eq:JK} in order to show two further examples of connection policy and compliance. We assume $H=\Set{\hh_1,\hh_2,\hh_3,\hh_4}$ as interface set.
+
+The following one is  
+ an  unorchestrated  connection policy (i.e. with  $\rolesorch=\emptyset$), % the interfaces $\Set{\hh_1,\hh_2,\hh_3,\hh_4}$  of the systems of \cref{eq:JK} , 
+ complying with $\cm_{\emptyset}$ of \cref{ex:scm}.
+$$
+ \begin{array}{c}
+    \begin{array}{c@{\hspace{5mm}}c@{\hspace{5mm}}c@{\hspace{5mm}}c}
+    \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_1]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[k_3][k_1][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[k_1][k_4][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[k_2][ k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+ \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_2]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[k_2][k_3][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[k_4][k_2][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[k_2][k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+\begin{array}{c}
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\aout[k_3][k_1][][start]$} (one)
+      (one) edge[bend left] node[above] {$\ain[k_2][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ &
+  \begin{array}{c}
+     \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_4$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[k_1][k_4][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_4][k_2][][pars]$} (zero)
+      ;
+      \end{tikzpicture}
+ \end{array}
+ \end{array}
+ \end{array}
+ $$
+ 
+The following one, instead, is an example of orchestrated connection policy for $H$ and % the interfaces $\Set{\hh_1,\hh_2,\hh_3,\hh_4}$ of the systems of \cref{eq:JK} with  
+$\rolesorch=\Set{\ttb,\ttd}$  that complies with $\cm_{\{\ttb,\ttd\}}$ of \cref{ex:scm}.
+$$
+ \begin{array}{c}
+    \begin{array}{c@{\hspace{5mm}}c@{\hspace{5mm}}c@{\hspace{5mm}}c}
+    \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_1]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[k_3][k_1][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[k_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[k_2][ k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+ \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_2]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[k_2][d][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[k_4][k_2][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[k_2][k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+\begin{array}{c}
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\aout[k_3][k_1][][start]$} (one)
+      (one) edge[bend left] node[above] {$\ain[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ &
+  \begin{array}{c}
+     \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_4$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[d][k_4][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_4][k_2][][pars]$} (zero)
+      ;
+      \end{tikzpicture}
+ \end{array}
+ \end{array}
+ \\
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[b]$}] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[k_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[k_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][k_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ $$
+ \finex
+ }
+\end{example}
+
+
+By now we have almost all the necessary notions to formally define the PaI orchestrated multicomposition of CFSM systems.
+The only missing piece is how
+to build the gateways out of interfaces and an orchestrated connection policy.
+
+As hinted at in the Introduction, we get a gateway essentially by transforming an interface $M_\HH$ by inserting  a fresh state in between any transition. The label of the newly formed transition depends on the connection policy. 
+More precisely, any input  transition  $q\lts{\tts\hh?\msg[a]}q'$ (resp. output transition $q\lts{\hh\tts!\msg[a]}q'$) of $M_\HH$ is transformed into two consecutive transitions \\
+\centerline{
+$q\lts{\tts\hh?\msg[a]}\hat{q} \lts{\hh\hh'!\msg[a]}q'\qquad 
+\text{(resp. $q\lts{\hh'\hh?\msg[a]}\hat{q} \lts{\hh\tts!\msg[a]}q'$)}$}
+where $\hat{q}$ is a fresh state and 
+$\dot{q}\lts{\kk\kk'!\msg[a]}\dot{q'}\,\,\
+\text{(resp. $q\lts{\kk'\kk?\msg[a]}\dot{q'}$)}$
+belong to 
+% $(\hh,\msg[a],\hh')$ is a connection 
+%one of the other interfaces, according 
+the orchestrated connection policy taken into account.
+In the formal definition below we distinguish the fresh  states by superscripting them
+by the transition they are ``inserted in between''.
+
+
+%In such a way a transition from $q$ to $q'$ receiving a message $\msg[a]$ from a role $\tts$ is transformed
+%into two transitions: one from $q$ to the new state $\widehat{q}$ receiving $\msg[a]$ from $\tts$, and one from
+%$\widehat{q}$ to $q'$ sending $\msg[a]$ to one of the other interfaces, according to the connection policy used. 
+%Conversely, a transition from $q$ to $q'$ sending a message $\msg[a]$ to a role $\tts$ is transformed
+%into two transitions: one from $q$ to the new state $\widehat{q}$ receiving $\msg[a]$ from an interface (according to the connection policy), and one from
+%$\widehat{q}$ to $q'$ sending $\msg[a]$ to $\tts$. We distinguish the new ``inserted'' states by superscripting them
+%by the transition where they are ``inserted in between''.
+
+
+
+
+%\begin{definition}[Gateway]\hfill\\
+%\label{def:gatewaymc} Assume given a connection model $\cm$ 
+%and two CFSMs $M_{\hh}$ and $M_{\kk}$ such that 
+% $M_{\hh}= (Q, q_0,\mathbb{A},\delta)$ and 
+%$M_{\kk} = (\dot Q,\dot {q_0},\mathbb{A},\dot\delta)\in \IS {M_{\hh}}{\cm}$. 
+%The {\em gateway} $M_{\hh}{\gts} M_{\kk}$ obtained out of  $M_\HH$ and $M_\KK$  is defined by  
+%$$
+%M_{\hh}{\gts} M_{\kk} = (Q\cup\widehat Q, q_0, \mathbb{A},\hat{\delta})
+%$$
+%where\\
+%$-$ $\widehat{Q} =\bigcup_{q\in Q}\Set{q^{(q, l,q')} \mid (q, l,q')\in\delta},$ %\bigcup_{q\in Q}\Set{q^{(q,\msg[a],q')} \mid (q,\msg[a],q')\in\delta}
+%\\
+%$-$ $\widehat\delta = \Set{(q,\ttr\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q')\in\delta, (\dot q,\dot\ttr\KK?\msg[a],\ \dot{q'})\in\dot\delta,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}$\\
+%${\qquad}\cup\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q')\in\delta,\ (\dot q,\KK\dot\ttr!\msg[a],\dot{q'})\in\dot\delta,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+%
+%\smallskip
+% 
+%\noindent
+%We refer to $\widehat\delta$ as $\widehat\delta_{\HH}$ whenever $\HH$ is not clear from the
+%context; similarly for $\widehat Q$.
+%\end{definition}
+
+
+\begin{definition}[Gateway]\hfill\\
+\label{def:gatewaycs} 
+\label{def:gatewaymc}
+Let $\Set{S_i}_{i\in I}$ be a set of communicating systems  and let $H$ be a set of interfaces for it.
+Moreover, let $\cs= (M_\ttu)_{\ttu \in \roles_{\cs}}$ with
+$\roles_{\cs} = \Set{\kk_i}_{i\in I}\cup \rolesorch$
+be an orchestrated connection policy for 
+$\Set{S_i}_{i\in I}$ and $H$,
+and let $\hh\in H$ such that  $M_{\hh}= (Q, q_0,\mathbb{A},\delta)$ and 
+$M_{\kk} = (\dot Q,\dot {q_0},\mathbb{A},\dot\delta)$. 
+The {\em gateway} $M_{\hh}{\gts} M_{\kk}$ obtained out of  $M_\HH$ and $M_\KK$  is the CFSM with name $\hh$ defined by  
+$$
+M_{\hh}{\gts} M_{\kk} = (Q\cup\widehat Q, q_0, \mathbb{A},\hat{\delta})
+$$
+\begin{tabular}{lc@{\hspace{2mm}}l}
+where &  $\bullet$  & $\widehat{Q} =\bigcup_{q\in Q}\Set{q^{(q, l,q')} \mid (q, l,q')\in\delta}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q,\widetilde{\widetilde\ttr}\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q')\in\delta, (\dot q,\ttr\KK?\msg[a],\ \dot{q'})\in\dot\delta,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{18pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH \widetilde{\widetilde\ttr}!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q')\in\delta,\ (\dot q,\KK\ttr!\msg[a],\dot{q'})\in\dot\delta,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+ \end{tabular} 
+ 
+\smallskip
+\noindent
+We refer to $\widehat\delta$ as $\widehat\delta_{\HH}$ whenever $\HH$ is not clear from the
+context; similarly for $\widehat Q$.
+\end{definition}
+%\bfc You were right about the $\dot\ttr$ previously used in the above definition: in the present case $\ttr$ can belong to the orchestrating participants.
+%I fixed the definition using the $\widetilde{\widetilde\cdot}$ function.\efc
+%\brc I agree with the change. \erc
+%  \brc Concerning the above definition of $\widehat\delta$, I think that in the orchestrated case $\dot\ttr$ could be in
+%$\rolesorch$? Then we whould have $\dot\ttr = \ttr$ in both cases?
+%\erc  RIGHT! FIXED.
+
+
+\begin{example}[Some gateways]
+%\brc
+%I think we should focus in this example on gateways for for h2,
+%i.e.\ $M_{\HH_2}\gts M_{\KK_2}$, rather than on h1 and show two versions:
+% the one with no orchestration and the other one.
+%Because for the construction of gateways it is important for the reader to understand the difference between the
+%non-orchestrated and the orchestrated case.
+%Moreover, also the gateways for h4, i.e.\ $M_{\HH_4}\gts M_{\KK_4}$
+%would be interesting to see.
+%Unfortunately it is quite some work to implement the figures.
+%\erc
+{\em 
+Let $M_{\HH_2}$ and $M_{\HH_4}$  be as in \cref{ex:simplewe},
+and let $M_{\KK_2}$ and $M_{\kk_4}$ be as in  the first connection policy of  \cref{ex:connsys} (the unorchestrated one).
+The gateways $M_{\HH_2}\gts M_{\KK_2}$ and  $M_{\HH_4}\gts M_{\KK_4}$ are as follows.
+$$
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[\HH_2]$}] (0) {$0$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_2][k_3][][react]$} (1)
+		  (1) edge   node[above] {$\ain[h_4][h_2][][pars]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_1][h_2][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge node[above] {$\ain[q][h_2][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_2][h_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_1][h_2][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge node[above] {$\ain[q][h_2][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_2][h_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}		
+		\qquad\qquad\qquad
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [ left = 0.3cm  of 0]{$\HH_4$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttr\hh_3}?{\msg[react]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_3\hh_1}!{\msg[react]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\hh_2\HH_3}?{\msg[pars]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_3\ttr}!{\msg[pars]}$} (0);       \end{tikzpicture}$$
+             
+If we consider, instead, the second connection policy of  \cref{ex:connsys} (the orchestrated one),
+the gateways  $M_{\HH_2}\gts M_{\KK_2}$ and  $M_{\HH_4}\gts M_{\KK_4}$ now contain channels from/to the orchestrating participants. In the drawings below the names of the orchestrating participants
+appear at a larger scale. %zoomed. 
+
+$$
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[\HH_2]$}] (0) {$0$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (hat0)
+		  (hat0) edge node[above] {$\hh_2\hspace{-4pt}\text{\Large \ptp[d]}\hspace{-4pt}!\msg[react]$} (1)
+		  (1) edge   node[above] {$\ain[h_4][h_2][][pars]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_1][h_2][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge node[above] {$\ain[q][h_2][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_2][h_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_1][h_2][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge node[above] {$\ain[q][h_2][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_2][h_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+		\qquad\qquad\qquad
+		 \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [left = 0.3cm  of 0]{$\HH_4$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\text{\Large \ptp[d]}\hspace{-4pt}\hh_4}?{\msg[react]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_4\tts}!{\msg[react]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\tts\HH_4}?{\msg[pars]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_4\hh_2}!{\msg[pars]}$} (0);       \end{tikzpicture}
+$$
+\finex
+}\end{example}
+
+%\brc
+%The next paragraph can be removed since a similar text is now already
+%before the definition of orchestrated connection policy.
+%\erc
+%
+%When we have  more than two systems to compose, the channels of gateways are,
+%in general, also for an empty set of orchestrating participants, not uniquely determined.
+%The structure of the gateways, instead, is.
+%In order to produce  gateways out of interfaces we need to decide 
+%which connection model we wish to take into account and how 
+%the interfaces and the possible orchestrating participants  do actually interact ``complying'' with the connection model.
+% Once a connection model is selected, the channels used by the gateway
+%are still not uniquely determined  if the connection model is not strong. 
+% The reason is that in the case of at least two connectors with the same source or the same target, like $(\kk,\msg[b],\pv)$ and $(\pw,\msg[b],\pv)$ in~\cref{ex:scm}, the gateway for $\pv$
+%has a dynamic choice when to accept message $\msg[b]$ from $\kk$
+%and when from $\pw$. Therefore we need further (dynamic) information
+%which is  provided by a choosen {\em orchestrated connection policy\/}. 
+
+
+%In order to get a safe composition, some conditions are needed.
+
+ \begin{definition}[Composability]
+ \label{def:composability}
+Let $\Set{S_i}_{i\in I}$ be a set of communicating systems such that, for each $i\in I$, $S_i=(M_{\ttx})_{\ttx\in\roles_i}$. 
+Moreover, let $H=\Set{\hh_i}_{i\in I}$ be a set of interfaces for it and let
+$\cs$ be an orchestrated connection policy for $H$.
+We say that $\Set{S_i}_{i\in I}$ is {\em composable by} $\cs$ whenever
+the  sets $\roles_i$s and $\rolesorch_{\cs}$ are  pairwise disjoint.
+%\begin{enumerate}[a)]
+%\item
+%the  $\roles_i$'s are  pairwise disjoint;
+%\item
+%the $M_{\hh_i}$'s are ?!-deterministic and have no mixed states.
+%\brc
+%Probably we can remove no-mixed-state also and add it as an assumption
+%for preservation of no unspecified reception.
+%\erc
+%\end{enumerate}
+\end{definition} 
+
+%\begin{remark}\em 
+%One could wonder why, for the property preservation results of~\cite{BdLH19} for the binary case,
+%additional conditions like $?!$-determinism (see ~\cite[Sect.2]{BdLH19}) are required for interfaces. 
+%As a matter of fact, in the present paper we are assuming that communication properties do
+%hold for the communication policies, whereas in~\cite{BdLH19} compatibility is assumed.
+%The latter is not enough to ensure communication properties for the communication policies
+%unless further conditions like $?!$-determinism are also considered. 
+%\finex
+%\end{remark}
+
+%
+%PaI multicomposition fails to be safe without the above conditions, even for the binary case.
+%We refer to counterexamples in \cite[Sect.5]{BdLH19} for the necessity of such conditions.
+
+
+Before formally defining system composition, we specify how to rename channels of 
+orchestrating participants (namely of elements of $\rolesorch_{\cs}$) before using these participants
+in a composition.
+In a connection policy, orchestrating participants may interact with other orchestrating participants
+or with participants with dotted names. The latter participants correspond to the gateways in the
+composition and gateways have the same names as their corresponding 
+% are such that their names are as their 
+interfaces. 
+This means that, in order orchestrating participants can be used in the composition,
+we have to ``undot'' the dotted names possibly present in the channels' names.
+We do that by means of the $\widetilde{\widetilde{(\cdot)}}$ function: 
+we extend to whole machines such a function, so that $\widetilde{\widetilde{(\cdot)}}$
+is applied to all the participant names used to denote the machines' channels.
+\begin{definition}
+\label{def:tildetildem}
+Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to $H=\Set{\hh_i}_{i\in I}$ 
+and let  $\cs=(M_{\ttp})_{\ttp\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$  
+ be an orchestrated connection policy for $H$. Moreover, let $\ttq\in\rolescsint$
+ with $M_{\ttq}= (Q, q_0,\mathbb{A},\delta)$. We then define
+ $$\widetilde{\widetilde{M_\ttq}} = (Q, q_0,\mathbb{A},\widetilde{\widetilde\delta})$$
+ where $\widetilde{\widetilde\delta} = \Set{(q,\widetilde{\widetilde\ttr}\widetilde{\widetilde\tts}?\msg[a],q') \mid (q,{\ttr}{\tts}?\msg[a],q')\in\delta}\cup \Set{(q,\widetilde{\widetilde\ttr}\widetilde{\widetilde\tts}!\msg[a],q') \mid (q,{\ttr}{\tts}!\msg[a],q')\in\delta}$
+\end{definition}
+
+
+
+ We are ready now  to describe how systems are composed on the basis of a given orchestrated connection policy.
+
+
+\begin{definition}[PaI orchestrated multicomposition of communicating systems]
+\label{def:multicomposition} 
+Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to $H=\Set{\hh_i}_{i\in I}$ 
+and let  $\cs=(M_{\ttp})_{\ttp\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$  % $\cs=(M_{\kk_i})_{i\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$
+ be an orchestrated connection policy for $H$. 
+The {\em orchestrated multicomposition of $\Set{S_i}_{i\in I}$ with respect to $\cs$} (multicomposition for short)
+ is the communicating system 
+$$\MC(\Set{S_i}_{i\in I}, \cs) =  (M'_\ttp)_{\ttp\in(\bigcup_{i\in I}\roles_i)\cup\rolescsint}$$
+where\\
+${\qquad\qquad}M'_\ttp = \left\{ \begin{array}{ll}
+                          M_\ttp 
+                                    &  \text{ if } \ttp\not\in\Set{\hh_i}_{i\in I}\cup \rolescsint  
+                          \\[2mm]
+                           \widetilde{\widetilde{M_\ttp}}  %M_\ttp 
+                                    &  \text{ if } \ttp\in \rolescsint %\not\in\Set{\kk_i}_{i\in I} 
+                          \\[2mm]
+                          M_{\hh_i}{\gts\,}M_{\kk_i} & \text{ if } \ttp=\hh_i \text{ with $i\in I$}
+                           \end{array}
+                 \right.$
+\end{definition}
+
+\smallskip
+Note that the machines  in a composition are CFSMs over $\roles = \bigcup_{i\in I}\roles_i \cup \rolescsint$
+ and $\mathbb{A} = \bigcup_{i\in I} \mathbb{A}_i$.
+ Graphically, the architectural structure of an orchestrated multicomposition via gateways can be shown as on the right of~\cref{fig:orchint}.%\cref{fig:multiconnection}. 
+
+
+
+
+%\begin{remark}
+%{\em
+%Our forthcoming result about safety of  multicomposition is actually independent of a  concrete connection model.
+%Considering connection policies which comply with a connection model is, however,
+%helpful at the design stage of the multicomposition and
+%enhances the possibility of getting connection policies which 
+%satisfy communication properties and hence support the preservation of communication properties of the composed systems.
+%\finex
+%}
+%\end{remark}
+
+
+\begin{example}[An orchestrated multicomposition of communicating systems] {\em
+The communicating system of \cref{fig:orchsyscomp} is $\MC(\Set{S_i}_{i\in \Set{1,2,3,4}}, \cs)$,
+ namely the orchestrated multicomposition
+of the communicating systems $\Set{S_i}_{i\in \Set{1,2,3,4}}$ of \cref{eq:JK} using the orchestrated connection policy $\cs$ described in the second part of \cref{ex:connsys}. }
+\begin{figure*}[h]
+$$
+\begin{array}{c@{\hspace{-2mm}}c}
+     \begin{array}{cc} %%% SYSTEM 1
+            \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+           \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state] (0) {$0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_1$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		  (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[h_3][h_1][][start]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge   node[above] {$\ain[p][h_1][][react]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_1][h_2][][rc]$} (3)
+		  (3) edge node[above] {$\ain[h_2][h_1][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_1][h_2][][nc]$} (4)
+		  (4) edge node[above] {$\ain[h_2][h_1][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+    \end{array}
+&
+    \begin{array}{cc} %%% SYSTEM 4
+          \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_4$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttd\hh_4}?{\msg[react]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_4\tts}!{\msg[react]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\tts\HH_4}?{\msg[pars]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_4\hh_2}!{\msg[pars]}$} (0);                 
+             \end{tikzpicture}
+             &
+                   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$};
+            \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\tts$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\ain[h_4][s][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[s][h_4][][pars]$} (zero)
+      ;
+      \end{tikzpicture}           
+      \end{array}
+\\[-4mm]
+\multicolumn{2}{@{\hspace{35mm}}c}{ %%% ORCHESTRATING SYSTEM
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[b]$}] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[h_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  left= 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[h_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][h_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][h_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+    }
+\\[-4mm]
+\begin{array}{cc} %%% SYSTEM 2
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttq]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[q][h_2][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_2][q][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_2][q][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge  node[below] {$\ain[h_2][q][][reset]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+\begin{tikzpicture}[mycfsm]
+		  % 
+		   \node[state]           (0)                        {$0$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_2$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		   (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_2][d][][react]$} (1)
+		  (1) edge   node[above] {$\ain[h_4][h_2][][pars]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_1][h_2][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge node[above] {$\ain[q][h_2][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_2][h_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_1][h_2][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge node[above] {$\ain[q][h_2][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_2][h_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+      \end{array}
+&
+   \begin{array}{c@{\hspace{-2mm}}c} %%% SYSTEM 3
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_3$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttr\hh_3}?{\msg[start]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_3\hh_1}!{\msg[start]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\ttd\HH_3}?{\msg[react]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_3\ttr}!{\msg[react]}$} (0);       \end{tikzpicture}
+    &
+    \begin{array}{c}
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-6mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=6mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[r][h_3][][start]$} (one)
+      (one) edge[bend left] node[below] {$\ain[h_3][r][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[r][r'][][greet]$} (zero)
+      ;
+  \end{tikzpicture}
+   \\
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      %\node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr'$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[loop right,looseness=40]  node[above] {$\ain[r][\ttr'][][greet]$} (zero)
+      %(zero) edge[bend right] node[below] {$\aout[h_4][r][][react]$} (one)
+      ;
+  \end{tikzpicture}
+  \end{array}
+    \end{array}
+\end{array}
+$$
+   \caption{\label{fig:orchsyscomp}An orchestrated multicomposition of communicating systems}
+%   \brc There are three typos: In the h2 gateway 
+%   h2k3!react must be replaced by h2d!react.
+%   In the h4 gateway 
+%   h1h4?react must be replaced by dh4?react. 
+%   In the h3 gateway 
+%   h2h3?react must be replaced by dh3?react.\erc
+\end{figure*}
+\finex
+\end{example}
+
+
+
+\section{On Safety of Orchestrated Multicomposition }
+\label{sec:preservation}
+
+
+The main result of the present paper is the safety of PaI orchestrated multicomposition of CFSM 
+systems for all communication properties of~\cref{def:safeness} but lock-freedom.
+Apart from orphan-message-freedom we need the no-mixed-state assumption for interfaces to obtain the preservation results.
+
+%\begin{theorem}[Safety of orchestrated PaI multicomposition of CFSM systems]
+%\label{th:paisafenesse}
+%\bfr Let $\Set{S_i}_{i\in I}$ be
+%a set of communicating systems composable with respect to a set $H = \{\hh_i\}_{i \in I}$
+% of interfaces with no mixed states (cf.~\cref{def:interfaces});
+% and let $\cs$ be an orchestrated connection policy for $H$.
+% %of interfaces with\\
+% %\phantom{--} no mixed states (cf.~\cref{def:interfaces});\\
+%%-- 
+%% an orchestrated connection policy $\cs$ for $H$;\\
+%%--
+%%  a property $\mathcal{P}$ among {\em deadlock-freedom},
+%%{\em reception-error-freedom}, {\em progress},\\
+%%we have that\\
+%
+%%
+%% \qquad For any property $\mathcal{P}$ among {\em deadlock-freedom},
+%%{\em reception-error-freedom},and {\em progress},
+%%we have\\
+%%%\centerline{
+%%\qquad if $\mathcal{P}$ holds for each $S_i$ with $i \in I$ 
+%%and for $\cs$, 
+%%then $\mathcal{P}$ holds for $S  = \MC(\Set{S_i}_{i\in I}, \cs)$.
+%%%}
+%%Moreover, the above holds also if the no-mixed-state condition is removed and
+%%$\mathcal{P}$ is {\em orphan-message-freedom}. \efr
+%\end{theorem}
+
+
+\begin{theorem}[Safety of orchestrated PaI multicomposition of CFSM systems]
+\label{th:paisafenesse}
+ Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to a set
+ $H$ %$ = \{\hh_i\}_{i \in I}$
+ of interfaces with no mixed states (cf.~\cref{def:interfaces}); and
+let $\cs$ be an orchestrated connection policy for $H$. 
+
+
+Let $\mathcal{P}$ be
+either the property of {\em deadlock-freedom} or {\em reception-error-freedom} 
+or {\em progress}
+(as defined in \cref{def:safeness}).
+If $\mathcal{P}$ holds for each $S_i$ with $i \in I$ %CS in $\Set{S_i}_{i\in I}$
+and for $\cs$, 
+then $\mathcal{P}$ holds for $S  = \MC(\Set{S_i}_{i\in I}, \cs)$.
+%===
+%for each $S_i$ with $i \in I$ $CS in \Set{S_i}_{i\in I}$
+%and for $\cs$, 
+% 
+%Let $\mathcal{P}$ be
+%either the property of {\em deadlock-freedom} or
+%{\em reception-error-freedom} %or {\em strong deadlock freedom}
+%or {\em progress}.
+%%(as defined in \cref{def:safeness}).
+%%\centerline{
+%If $\mathcal{P}$ holds for each $S_i$ with $i \in I$ %CS in $\Set{S_i}_{i\in I}$
+%and for $\cs$, 
+%then $\mathcal{P}$ holds for $S  = \MC(\Set{S_i}_{i\in I}, \cs)$.
+%%}
+Moreover, the above holds also if the no-mixed-state condition is removed and
+$\mathcal{P}$ is {\em orphan-message-freedom}.
+\end{theorem}
+
+%\bfc I removed $ = \{\hh_i\}_{i \in I}$ from $H= \{\hh_i\}_{i \in I}$. It seems useless to me.
+%\efc
+
+\begin{remark}
+{\em
+ The above result about safety of multicomposition is actually independent of 
+ any specific connection model somewhat related to the connection policy used. 
+ The design of a connection model can nonetheless be considered as the first phase of
+ an effective multicomposition. Setting up a complying overall description of the actual
+ orchestrated connection policy used in the multicomposition can be helpful in
+ preventing communication inaccuracies and hence enhances the possibility of getting a policy enjoying the desired communication properties.
+%Considering orchestrated connection policies which comply with a connection model is, however,
+%helpful at the design stage of the multicomposition and
+%enhances the possibility of getting orchestrated connection policies which 
+%satisfy communication properties and hence support the preservation of communication properties of the composed systems.
+\finex
+}
+\end{remark}
+
+
+%This theorem 
+ \cref{th:paisafenesse} can be proved for each property $\mathcal{P}$, separately, by contradiction. 
+ In particular by showing that $\mathcal{P}$ does not hold for $S$ implies that it does not hold either for one of the $S_i$'s or for $\cs$. 
+ 
+ A key notion for the proofs is that of {\em  projection\/} (see \cref{def:projectedconf} below). 
+ In particular, any reachable configuration of the composed system can be actually projected on
+ any of the single systems $S_i$, as well as on the the orchestrated connection policy $\cs$,
+so essentially getting a respective configuration. 
+A projection substantially disregards all the states and queues
+of a configuration but those related to the system we project on. 
+The crucial result enabling to get contradictions
+shows that projections of reachable configurations involving no
+intermediate gateway states are reachable too (see \cref{lem:nohatrestrict} below).
+
+
+The complete proofs of property preservations are provided  in~\cref{sect:presres},
+using definitions and technical results presented in~\cref{sect:safetypreservation}. 
+As previously stated, such proofs are independent of the connection model the used orchestrated connection policies complies with. 
+
+%We shall prove that if a projection does not contain any fresh state
+%introduced by gateway construction then it is a configuration in the corresponding system.
+ 
+%\begin{definition}[Configuration projections]
+%\label{def:projectedconf-maintext}
+% Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ be as in~\cref{th:paisafenesse}
+%(but without no-mixed-state assumption).
+%%$\cs =(M_{\kk_i})_{i\in I}$ is a connection policy for $\Set{M_{\hh_i}}_{i\in I}$.
+%% Moreover, 
+%Let $s= (\vec{q},\vec{w})\in \RS(S)$ where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
+%and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C_\roles}$.
+% For each $i\in I$, the projection $\restrict{s}{i}$ of $s$
+%to $S_i$ is defined by\\
+%\centerline{$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$}
+%where $\restrict{\vec{q}}{i} = (q_\ttp)_{\ttp\in\roles_i}$ and 
+%$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_{\roles_i}}$.
+%
+%\noindent
+%The projection $\restrict{s}{\cs}$ of $s= (\vec{q},\vec{w})$ to $\cs$  is defined
+%if ${q}_{\HH_i}\not\in \widehat Q_{\HH_i}$  for each $i \in I$ and
+%then \\[1mm]
+%\centerline{$\restrict{s}{\cs}=(\restrict{\vec{q}}{\cs},\restrict{\vec{w}}{\cs})$}\\[1mm]
+%where $\restrict{\vec{q}}{\cs} = (p_{\kk_i})_{i\in I}$ is such that, for each $i \in I$,
+% $p_{\kk_i} = \dot{q_{\HH_i}}$ (with $\dot{q_{\HH_i}}$ being the ``dotted decoration'' of the local state $q_{\HH_i}$)  
+%and where
+%$\restrict{\vec{w}}{\cs} =  (w'_{\ttp\ttq})_{\ttp,\ttq\in \Set{\KK_i}_{i\in I},\ttp\neq\ttq}$  
+%is such that, for each pair ${i,j\in I}$ with $i\neq j$,
+%$w'_{\KK_i\KK_j} = w_{\HH_i\HH_j}$.
+%\end{definition}
+
+\medskip
+\noindent
+
+
+
+%\begin{proposition}[On reachability of projections]
+%\label{lem:nohatrestrict-maintext}
+%Let $s= (\vec{q},\vec{w}) \in \RS(S)$. % be a reachable configuration of $S = \MC(\Set{S_i}_{i\in I}, \cs)$.
+%\begin{enumerate}[i)]
+%\item
+%\label{lem:nohatrestrict-a}
+% For each $i\in I$, (${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}} \implies 
+%\restrict{s}{i}\in \RS(S_i))$;
+%%\brc Shouldn't we use $i$ instead of $k$ as above?\erc
+%\item
+%\label{lem:nohatrestrict-b}
+%$({q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I)$ $\implies$
+%$\restrict{s}{\cs}\in \RS(\cs)$.
+%\end{enumerate}
+%\end{proposition}
+\smallskip
+All communicating systems $S_i$ ($i \in \{1\ldots 4\}$) of \cref{eq:JK} %\cref{ex:simplewe} 
+and both connection policies of \cref{ex:connsys} do enjoy all the properties of \cref{def:safeness}.
+Moreover, the interfaces of the four systems of  \cref{eq:JK} %\cref{ex:simplewe} 
+are all with no mixed state.
+Hence \cref{th:paisafenesse} guarantees that
+any property (among those of \cref{def:safeness}, but lock-freedom) enjoyed by the systems is also enjoyed by
+their PaI multicompositions.
+
+\smallskip
+
+
+By means of some counterexamples we now show that
+the no-mixed-state condition is actually necessary in order
+deadlock-freedom, reception-error-freedom and progress be preserved by composition, as stated 
+in~\cref{th:paisafenesse}.
+In all counterexamples, where simple unorchestrated connection policies are taken into account, the properties are disrupted in the composition by the new receiving states introduced by the gateway construction. The notion of connection model does not intervene in any of such counterexamples. 
+
+%Now we provide some examples for cases in which communication properties are
+%not preserved. First we show that all the three properties for which we have assumed
+%the no-mixed-state condition in~\cref{th:paisafenesse} would, in general, not be preserved by composition if the condition is dropped.
+%In the counterexamples, the receiving states introduced by the gateway construction cause the breaking of the property taken into account. Notice that in all the counterexamples we can consider orchestrated connection policies that are actually connection policies, i.e.\ orchestrated connection policies with $\rolesorch=\emptyset$.
+
+%\medskip
+%Reception-error-freedom and deadlock-freedom are not preserved in general by composition, in case we dropped the {\em no-mixed-state} condition, as shown by the following examples.
+%In both examples the receiving states introduced by the gateway construction cause the breaking of
+%the property taken into account.
+
+\begin{example}[Mixed-state counterexample for deadlock-freedom and progress preservation]
+\label{ex:lackprogdfpres}
+\em
+Let us consider the two following systems $S_1$ and $S_2$ with interfaces,
+respectively, $\hh_1$ and $\hh_2$
+containing mixed states.
+$$
+\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\hh_1\ttu?\msg[a]$} (1) ;
+       \end{tikzpicture}
+&
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_1$};
+  \node[state]            (1) [right of=0] {$1$};
+  %\node[state]           (2) [above right of=0] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge   [bend right]      node [below] {$\hh_1\ttu!\msg[a]$} (1)
+                   edge   [bend left]       node [above]  {$\ttu\hh_1?\msg[b]$} (1);
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [right of=0] {$1$};
+  % \node[state]           (2) [above right of=0] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\ttv\hh_2?\msg[a]$} (1)
+                   edge    [bend left]            node [above]  {$\hh_2\ttv!\msg[b]$} (1);
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\hh_2\ttv?\msg[b]$} (1) ;
+       \end{tikzpicture}
+\end{array}
+$$
+
+$S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
+There is a unique connection model for their composition:
+%\centerline{
+$
+\cm = \Set{(\hh_2,\msg[a],\hh_1),(\hh_1,\msg[b],\hh_2)}.
+$
+% }
+The unique connection policy complying with $\cm$ is the following one.
+$$
+\begin{array}{c}
+      \cs  = \quad
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$\dot 0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\kk_1$};
+  \node[state]            (1) [right of=0] {$\dot 1$};
+ % \node[state]           (2) [above right of=0] {$\dot 2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]      node [above] {$\kk_1\kk_2!\msg[b]$} (1)
+                  edge     [bend right]              node [below]  {$\kk_2\kk_1?\msg[a]$} (1);
+       \end{tikzpicture}
+\qquad
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$\dot 0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\kk_2$};
+  \node[state]            (1) [right of=0] {$\dot 1$};
+  %\node[state]           (2) [above right of=0] {$\dot 2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge      [bend right]       node [below] {$\kk_2\kk_1!\msg[a]$} (1)
+                   edge      [bend left]           node [above]  {$\kk_1\kk_2?\msg[b]$} (1);
+       \end{tikzpicture}
+\end{array}
+$$
+
+Also $\cs$ is deadlock free and  enjoys the progress property.  The system $\MC(\Set{S_1,S_2}, \cs)$  is the following one.
+$$
+\begin{array}{c@{\hspace{1cm}}c@{\hspace{1cm}}c@{\qquad}c}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\hh_1\ttu?\msg[a]$} (1) ;
+       \end{tikzpicture}
+&
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_1$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)         edge   [bend right]        node [below] {${\hh_2\hh_1}?{\msg[a]}$} (hat0)
+                         edge   [bend left]      node [above]  {${\ttu\hh_1}?{\msg[b]}$} (hat0')
+             (hat0)  edge  [bend right]         node [below] {${\HH_1\ttu}!{\msg[a]}$} (1)
+             (hat0')  edge  [bend left]      node [above] {${\hh_1\hh_2}!{\msg[b]}$} (1);       \end{tikzpicture}
+      &
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_2$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend right]               node [above] {${\ttv\hh_2}?{\msg[a]}$} (hat0)
+                  edge   [bend left]          node [above]  {${\hh_1\hh_2}?{\msg[b]}$} (hat0')
+             (hat0)  edge   [bend right]      node [above] {${\hh_2\hh_1}!{\msg[a]}$} (1)
+             (hat0')  edge   [bend left]            node [above] {${\HH_2\ttv}!{\msg[b]}$} (1);      
+ \end{tikzpicture}
+       &
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\hh_2\ttv?\msg[b]$} (1) ;
+       \end{tikzpicture}
+\end{array}
+$$
+The initial configuration is actually a deadlock,  and hence the composed system does also not enjoy progress.
+\finex
+\end{example}
+
+ \begin{example}[Mixed-state counterexample for reception-error-freedom preservation]
+ \label{ex:refpres}
+\em
+Let us consider the two following systems $S_1$ and $S_2$ with interfaces,
+respectively, $\hh_1$ and $\hh_2$
+containing mixed states.
+$$
+\begin{array}{c@{\hspace{1cm}}c@{\hspace{1cm}}c@{\qquad}c}
+    \begin{array}{c}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+  \node[state]            (1) [ right of=0] {$1$};
+  \node[state]            (2) [ right of=1] {$2$};
+  \node[state]            (3) [ right of=2] {$3$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\ttu\hh_1!\msg[a]$} (1)
+            (1)  edge                                   node [above] {$\ttu\hh_1!\msg[b]$} (2)
+            (2)  edge                                   node [above] {$\hh_1\ttu?\msg[c]$} (3);
+       \end{tikzpicture}
+\\
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_1$};
+  \node[state]            (1) [ right of=0] {$1$};
+  \node[state]            (2) [ right of=1] {$2$};
+  \node[state]            (3) [ right of=2] {$3$};
+
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\ttu\hh_1?\msg[a]$} (1)
+            (1)  edge                                   node [above] {$\ttu\hh_1?\msg[b]$} (2)
+            (2)  edge                                   node [above] {$\hh_1\ttu!\msg[c]$} (3);
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [right of=0] {$1$};
+  \node[state]           (2) [above right of=0] {$2$};
+    \node[state]           (3) [right of=1] {$3$};
+ %       \node[state]           (five) [above right of=two] {$5$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\hh_2\ttv!\msg[b]$} (1)
+                      edge                                   node [above]  {$\ttv\hh_2?\msg[c]$} (2)
+	     (1)  edge                                   node [above] {$\hh_2\ttv!\msg[a]$} (3);
+%	              edge                                   node [above] {$\hh_2\tts!\msg[d]$} (five);
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+  \node[state]            (1) [ below of=0, yshift = 3mm] {$1$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\ttv\hh_2!\msg[d]$} (1);
+       \end{tikzpicture}
+\end{array}
+$$
+
+\noindent
+$S_1$ and $S_2$ are both reception-error free. 
+The unique connection 
+model for their composition without considering any orchestrating participant is\\
+\centerline{$
+\cm = \Set{(\hh_1,\msg[a],\hh_2),(\hh_1,\msg[b],\hh_2),(\hh_2,\msg[c],\hh_1)}
+$}
+The unique connection policy complying with $\cm$ is
+$$
+\cs = \quad
+\begin{array}{c@{\hspace{1cm}}c}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$\dot 0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\kk_1$};
+  \node[state]            (1) [ right of=0] {$\dot 1$};
+  \node[state]            (2) [ right of=1] {$\dot 2$};
+  \node[state]            (3) [ right of=2] {$\dot 3$};
+
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\kk_1\kk_2!\msg[a]$} (1)
+            (1)  edge                                   node [above] {$\kk_1\kk_2!\msg[b]$} (2)
+            (2)  edge                                   node [above] {$\kk_2\kk_1?\msg[c]$} (3);
+       \end{tikzpicture}
+       &
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$\dot 0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\kk_2$};
+  \node[state]            (1) [right of=0] {$\dot 1$};
+  \node[state]           (2) [above right of=0] {$\dot 2$};
+    \node[state]           (3) [right of=1] {$\dot 3$};
+ 
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\kk_1\kk_2?\msg[b]$} (1)
+                      edge                                   node [above]  {$\kk_2\kk_1!\msg[c]$} (2)
+	     (1)  edge                                   node [above] {$\kk_1\kk_2?\msg[a]$} (3);
+       \end{tikzpicture}
+\end{array}
+$$
+Also $\cs$ is reception-error free. The system $\MC(\Set{S_1,S_2}, \cs)$  is the following one.
+$$
+\begin{array}{c}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+  \node[state]            (1) [ right of=0] {$1$};
+  \node[state]            (2) [ right of=1] {$2$};
+  \node[state]            (3) [ right of=2] {$3$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\ttu\hh_1!\msg[a]$} (1)
+            (1)  edge                                   node [above] {$\ttu\hh_1!\msg[b]$} (2)
+            (2)  edge                                   node [above] {$\hh_1\ttu?\msg[c]$} (3);
+       \end{tikzpicture}
+ \\
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [right of=0]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_1$};
+  \node[state]            (1) [right of=hat0] {$1$};
+  \node[state]           (hat1) [right of=1] {$\widehat{1}$};
+  \node[state]           (2) [right of=hat1] {$2$};
+      \node[state]           (hat2) [right of=2] {$\widehat{2}$};
+    \node[state]           (3) [right of=hat2] {$3$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {${\ttu\hh_1}?{\msg[a]}$} (hat0)
+             (1)     edge                                   node [above]  {${\ttu\hh_1}?{\msg[b]}$} (hat1)
+             (hat0)  edge                       node [above] {${\HH_1\HH_2}!{\msg[a]}$} (1)
+             (hat1)  edge                                   node [above] {${\hh_1\hh_2}!{\msg[b]}$} (2)
+              (2)  edge                                   node [above] {${\hh_2\hh_1}?{\msg[c]}$} (hat2)
+            (hat2)  edge                                   node [above]{${\hh_1\ttu}!{\msg[c]}$} (3);
+       \end{tikzpicture}
+       \\
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_2$};
+  \node[state]            (1) [right of=hat0] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  \node[state]           (3) [right of=hat0'] {$3$};
+   \node[state]           (hat1) [ right of=1] {$\widehat{1}$};
+    \node[state]           (2) [right of=hat1] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {${\hh_1\hh_2}?{\msg[b]}$} (hat0)
+                  edge                                   node [above]  {${\ttv\hh_2}?{\msg[c]}$} (hat0')
+             (hat0)  edge                       node [above] {${\HH_2\ttv}!{\msg[b]}$} (1)
+             (hat0')  edge                                   node [above] {${\hh_2\hh_1}!{\msg[c]}$} (3)
+              (1)    edge                                   node [above] {${\hh_1\hh_2}?{\msg[a]}$} (hat1)
+             (hat1)  edge                                   node [above] {${\hh_2\ttv}!{\msg[a]}$} (2);
+       \end{tikzpicture}
+       \qquad
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+  \node[state]            (1) [ below of=0, yshift = 3mm] {$1$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge                                   node [above] {$\ttv\hh_2!\msg[d]$} (1);
+       \end{tikzpicture}
+\end{array}
+$$
+This communicating system, however, is not reception-error free, since it is possible to reach the 
+configuration $s = (\vec q,\vec w)$ where\\
+\centerline{
+$
+\vec{q} = (2_{\ttu}, 2_{\hh_1}, 0_{\hh_2}, 1_{\ttv}),
+\qquad  w_{\hh_1\hh_2} = \langle\msg[a]\cdot\msg[b]\rangle,
+\qquad w_{\ttv\hh_2} = \langle\msg[d]\rangle,
+\qquad w_{c} = \varepsilon \ \ (\forall c\not\in\Set{\hh_1\hh_2, \ttv\hh_2})
+%
+%\vec{w} = (\langle\msg[a]\cdot\msg[b]\rangle_{\hh_1\hh_2}, \langle\msg[d]\rangle_{\ttv\hh_2},\vec\varepsilon)
+$}
+In the configuration $s$, the CFSM $\hh_2$ is in a receiving state, namely $0$, from which there are two transitions, namely
+$(0,{\ttv\hh_2}?{\msg[c]},\hat 0')$ and  $(0, {\hh_1\hh_2}?{\msg[b]}, \hat 0)$.
+Moreover, the channels $\ttv\hh_2$ and $\hh_1\hh_2$ are both not empty and their first element
+is different from both $\msg[b]$ and $\msg[c]$.
+The above configuration $s$ is hence an unspecified reception configuration
+of the composed system.
+\finex
+\end{example}
+
+\begin{remark}\label{rem:connection-model}
+{\em Notice that 
+in case we dropped the requirement that $\cs$ has to comply with a connection model,
+the interfaces $\hh_1$ and $\hh_2$ in the counterexample of \cref{ex:refpres} could  be simplified.
+% to get the counterexample. 
+In particular, they could have just, respectively, two and three states.
+ Such an observation can be considered as empirical evidence of the fact that the use of connection models does increase the possibility of getting safe compositions.
+%The use of connection models hence 
+%limits the possibility of getting systems whose properties are not preserved by composition. 
+% This is an indication that connection models increase
+%the possibility of getting safe compositions.
+\finex}
+\end{remark}
+
+
+
+%Reception-error freedom preservation is however recoverable by requiring interfaces
+%to have no-mixed states, as shown in our main theorem below. 
+%In fact, what causes the presence of the unspecified reception configuration in the above
+%counterexample is essentially  the mixed state $0$ of $\hh_2$.
+
+
+%The main goal of the present paper is the investigation of communication property preservation
+%in case the properties enjoyed by the systems we compose are also enjoied by the connection
+%policy we use for the multicomposition.
+%This is far from being always true. 
+
+\medskip
+Let us now turn to the last communication property stated in~\cref{def:safeness},
+namely lock-freedom. This property is also meaningful in the context of synchronous
+communication.
+In \cite[Example 6.7]{BLT23}
+a counterexample is provided, showing that in the formalism of {\em synchronous} CFSMs the properties of (synchronous) lock-freedom and deadlock-freedom
+are, in general, not preserved.
+As a matter of fact, lock-freedom is problematic also for the case of asynchronous communications and no mixed states,
+as shown in the following example,
+adapted from~\cite{BLT23}.%one in \cite{BLT23}.
+
+%\footnote{As
+%a matter of fact, also the property of strong lock-freedom is not preserved using symmetric synchronous
+%communications, but preserved using asymmetric synchronous communications.
+%We shall define and discuss the  strong lock-freedom in Section \ref{sect:conclusions}.}.
+
+\begin{example}[Lock-freedom is not preserved by composition]\label{rem:lfnotpres} 
+{\em  Let us consider the following communicating systems $S_1$ and $S_2$.
+$$
+  % 
+%  \begin{align*}
+%	S_1 = \dboxed{
+	 \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[q]$}] (zero) {$0$};
+		  %\node[state] (one) [below of=zero]   {$1$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\aout[q][h_1][][m]$} (zero)
+		 % (one) edge[bend left]  node[above] {$\aout[a][h][][m]$} (zero)
+		  ;
+		\end{tikzpicture}
+	 \end{array}
+	 \qquad
+	 \begin{tikzpicture}[mycfsm]
+      % 
+		\node[state, initial, initial where = left, initial text={$\HH_1$}] (zero) {$0$};
+      %\node[state] (one) [right = 1cm of zero]   {$1$};
+      % 
+      \path
+      (zero) edge [loop below,looseness=40] node[below] {$\ain[q][h_1][][m]$} (zero)
+      (zero) edge [loop right,looseness=40] node[above] {$\ain[q][h_1][][x]$} (zero)
+      ;
+	 \end{tikzpicture}
+%	 }
+	 \qquad
+             \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+      \qquad      
+%	 S_2 = \dboxed{
+	 \begin{array}{ccc}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left,  initial text={$\HH_2$}] (zero) {$0$};
+		  %\node[state] (two) [right = 1cm of zero]   {$1$};
+		  %
+		  \path
+		  (zero) edge  [loop right,looseness=40] node[above] {$\aout[h_2][s][][x]$} (zero)
+		  (zero) edge [loop below,looseness=40] node[below] {$\aout[h_2][s][][m]$} (zero)
+		  ;
+		\end{tikzpicture}
+		\quad
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ttr$}] (zero) {$0$};
+		  \node[state] (one) [below = 1cm of zero]   {$1$};
+		  % 
+		  \path (zero) edge node[above] {$\ain[s][r][][stop]$} (one)
+		  ;
+		\end{tikzpicture}
+		\quad
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[s]$}] (zero) {$0$};
+		  \node[state] (one) [below right of=zero]   {$1$};
+		  \node[state] (two) [below left of=one, yshift=.5cm]   {$2$};
+		  %\node[state] (three) [above left of=two]   {$3$};
+		  % 
+		  \path
+		  (zero) edge[loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (zero)
+		  (zero) edge [bend left] node[above] {$\ain[h_2][s][][x]$} (one)
+		  (one) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (two)
+		  (two) edge  [loop left,looseness=40] node[above] {$\ain[h_2][s][][x]$} (two)
+		  (two) edge [loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (two)
+		  ;
+		\end{tikzpicture}
+	 \end{array}
+$$
+  Note that both $S_1$ and $S_2$ are lock-free and their respective interfaces $\HH_1$ and $\HH_2$ have no mixed states.
+   
+   Let us now consider the (unorchestrated) connection model 
+   $\cm = \Set{(\hh_1,\msg[x],\hh_2),(\hh_1,\msg[m],\hh_2)}$ and the (unique) connection policy
+   compliant with it, namely 
+$$
+	\cs = %\dboxed{
+	 \begin{tikzpicture}[mycfsm]
+      % 
+		\node[state, initial, initial where = left, initial text={$\KK_1$}] (zero) {$\dot 0$};
+      %\node[state] (one) [right = 1cm of zero]   {$\dot 1$};
+      % 
+      \path
+      (zero) edge [loop below,looseness=40] node[below] {$\aout[k_1][k_2][][m]$} (zero)
+      (zero) edge [loop right,looseness=40]  node[above] {$\aout[k_1][k_2][][x]$} (zero)
+      ;
+	 \end{tikzpicture}
+	 \qquad
+	 \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\KK_2$}] (zero) {$\dot 0$};
+		 % \node[state] (one) [left of=zero]   {$1$};
+		 % \node[state] (two) [right = 1cm of zero]   {$\dot 1$};
+		  %\node[state] (three) [below = 1cm of two]   {$2$};
+		  %
+		  \path
+		 % (zero) edge[bend right] node[above] {$\tau$} (one)
+		  (zero) edge [loop right,looseness=40] node[above] {$\ain[k_1][k_2][][x]$} (zero)
+		  %(two) edge node[above] {$\aout[h_2][s][][x]$} (three)
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[k_1][k_2][][m]$} (zero)
+		  ;
+	    \end{tikzpicture}
+%	                        }
+%         \end{align*}
+$$
+   %
+   It is easy to see that $\cs$ is lock-free.
+   The multicomposition  $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is the following communicating system: 
+   %
+$$
+       \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[q]$}] (zero) {$\dot 0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\aout[q][h_1][][m]$} (zero)
+		  ;
+		\end{tikzpicture}
+		\qquad
+	 \begin{tikzpicture}[mycfsm]
+      % 
+		\node[state, initial, initial where = above, initial text={$\HH_1$}] (zero) {$\dot 0$};
+           \node[state] (zerohat) [below left of=zero,yshift=4mm]   {$\widehat 0$};
+	     \node[state] (zerohatp) [below right of=zero,yshift=4mm]   {$\widehat 0'$};	
+	      %\node[state] (one) [below left of=zerohatp, xshift=3mm,yshift=3mm]   {$\dot 1$};  
+      % 
+      \path
+      (zero) edge [bend left=20] node[below] {$\ain[q][h_1][][m]$} (zerohat)
+      (zerohat) edge [bend left=20] node[above] {$\aout[h_1][h_2][][m]$} (zero)
+      (zero) edge [bend left=20]  node[above] {$\ain[q][h_1][][x]$} (zerohatp)
+      (zerohatp) edge [bend left=20]  node[below] {$\aout[h_1][h_2][][x]$} (zero)
+      ;
+	 \end{tikzpicture}
+	 \qquad
+	 \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial text={$\HH_2$}] (zero) {$\dot 0$};
+           \node[state] (zerohat) [below left of=zero,yshift=4mm]   {$\widehat 0$};
+	     \node[state] (zerohatp) [below right of=zero,yshift=4mm]   {$\widehat 0'$};	
+	     % \node[state] (one) [below left of=zerohatp, xshift=3mm,yshift=3mm]   {$\dot 1$};  
+		  %
+		  \path
+		  (zero) edge[bend left=20]  node[above] {$\ain[h_1][h_2][][x]$} (zerohatp)
+		  (zerohatp) edge [bend left=20] node[below] {$\aout[h_2][s][][x]$} (zero)
+		  (zero) edge [bend left=20] node[below] {$\ain[h_1][h_2][][m]$} (zerohat)
+		  (zerohat) edge [bend left=20] node[above] {$\aout[h_2][s][][m]$} (zero)
+		  ;
+	    \end{tikzpicture}
+	    \qquad
+	    \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ttr$}] (zero) {$0$};
+		  \node[state] (one) [below = 1cm of zero]   {$1$};
+		  % 
+		  \path (zero) edge node[above] {$\ain[s][r][][stop]$} (one)
+		  ;
+		\end{tikzpicture}
+		\qquad
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[s]$}] (zero) {$0$};
+		  \node[state] (one) [below right of=zero]   {$1$};
+		  \node[state] (two) [below left of=one, yshift=.5cm]   {$2$};
+		  %\node[state] (three) [above left of=two]   {$3$};
+		  % 
+		  \path
+		  (zero) edge[loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (zero)
+		  (zero) edge [bend left] node[above] {$\ain[h_2][s][][x]$} (one)
+		  (one) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (two)
+		  (two) edge  [loop left,looseness=40] node[above] {$\ain[h_2][s][][x]$} (two)
+		  (two) edge [loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (two)
+		  ;
+		\end{tikzpicture}
+%	                        }
+  $$
+  The initial configuration $s_0$ of $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is an
+  $\ptp[r]$-lock,  since the transition $\ain[q][h_1][][x]$ of $\HH_1$ can never be fired,
+  so implying, in turn, that also $\aout[h_1][h_2][][x]$ of $\HH_1$,
+  $\ain[h_1][h_2][][x]$ of $\HH_2$, $\aout[h_2][s][][x]$ of $\HH_2$,
+  $\ain[h_2][s][][x]$ of $\tts$ and $\aout[s][r][][stop]$ of $\tts$ can never be fired.
+  Hence, no transition sequence out of $s_0$ will ever involve the participant  $\ttr$.
+  Thus $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is not lock-free. 
+  }
+  % 
+  \finex
+\end{example} 
+
+
+
+%%%%%%%%%%%%%%%%
+% ICE version of counterexample %
+%%%%%%%%%%%%%%%%
+%\begin{example}[Lock-freedom is not preserved by composition]\label{rem:lfnotpres} 
+%{\em  Let us consider the following communicating systems $S_1$ and $S_2$.\\[-4mm]
+%$$
+%  % 
+%%  \begin{align*}
+%%	S_1 = \dboxed{
+%	 \begin{array}{c}
+%		\begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = left, initial text={$\ptp[q]$}] (zero) {$0$};
+%		  %\node[state] (one) [below of=zero]   {$1$};
+%		  % 
+%		  \path
+%		  (zero) edge [loop below,looseness=40] node[below] {$\aout[q][h_1][][m]$} (zero)
+%		 % (one) edge[bend left]  node[above] {$\aout[a][h][][m]$} (zero)
+%		  ;
+%		\end{tikzpicture}
+%	 \end{array}
+%	 \qquad
+%	 \begin{tikzpicture}[mycfsm]
+%      % 
+%		\node[state, initial, initial where = left, initial text={$\HH_1$}] (zero) {$0$};
+%      \node[state] (one) [right = 1cm of zero]   {$1$};
+%      % 
+%      \path
+%      (zero) edge [loop below,looseness=40] node[below] {$\ain[q][h_1][][m]$} (zero)
+%      (zero) edge node[above] {$\ain[q][h_1][][x]$} (one)
+%      ;
+%	 \end{tikzpicture}
+%%	 }
+%	 \qquad
+%             \begin{array}{c}
+%       |\\
+%       |\\
+%       |\\
+%       |
+%       \end{array}
+%      \qquad      
+%%	 S_2 = \dboxed{
+%	 \begin{array}{ccc}
+%		\begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = left,  initial text={$\HH_2$}] (zero) {$0$};
+%		 % \node[state] (one) [left of=zero]   {$1$};
+%		  \node[state] (two) [right = 1cm of zero]   {$1$};
+%		  %\node[state] (three) [below = 1cm of two]   {$2$};
+%		  %
+%		  \path
+%		 % (zero) edge[bend right] node[above] {$\tau$} (one)
+%		  (zero) edge node[above] {$\aout[h_2][s][][x]$} (two)
+%		  %(two) edge node[above] {$\aout[h_2][s][][x]$} (three)
+%		  (zero) edge [loop below,looseness=40] node[below] {$\aout[h_2][s][][m]$} (zero)
+%		  ;
+%		\end{tikzpicture}
+%		\quad
+%		\begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = left, initial text={$\ttr$}] (zero) {$0$};
+%		  \node[state] (one) [below = 1cm of zero]   {$1$};
+%		  % 
+%		  \path (zero) edge node[above] {$\ain[s][r][][stop]$} (one)
+%		  ;
+%		\end{tikzpicture}
+%		\quad
+%		\begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = left, initial text={$\ptp[s]$}] (zero) {$0$};
+%		  \node[state] (one) [below right of=zero]   {$1$};
+%		  \node[state] (two) [below left of=one, yshift=.5cm]   {$2$};
+%		  %\node[state] (three) [above left of=two]   {$3$};
+%		  % 
+%		  \path
+%		  (zero) edge[loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (zero)
+%		  (zero) edge [bend left] node[above] {$\ain[h_2][s][][x]$} (one)
+%		  (one) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (two)
+%		 % (two) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (three)
+%		  ;
+%		\end{tikzpicture}
+%	 \end{array}
+%$$
+%%	 }
+%%  \end{align*}
+%  Note that both $S_1$ and $S_2$ are lock-free and their respective interfaces $\HH_1$ and $\HH_2$ have no mixed states.
+%% $\Set{S_i}_{i=1,2}$ is composable with respect 
+%  %to the set of interfaces 
+%   
+%   Let us now consider the  (unique) connection policy % for $H$:\quad
+%   %complying with the obvious communication model
+%   $\cs =(M_{\kk_i})_{i\in \Set{1,2}}$
+%   where $M_{\kk_1}\in \IS {M_{\HH_1}}{\cm}$
+%   and $M_{\kk_2}\in \IS {M_{\HH_2}}{\cm}$ 
+%   with connection model $\cm = \Set{(\hh_1,\msg[x],\hh_2),(\hh_1,\msg[m],\hh_2)}$.\\ 
+%   %In particular,\\
+%%   \begin{align*}
+%$$
+%	\cs = %\dboxed{
+%	 \begin{tikzpicture}[mycfsm]
+%      % 
+%		\node[state, initial, initial where = left, initial text={$\KK_1$}] (zero) {$\dot 0$};
+%      \node[state] (one) [right = 1cm of zero]   {$\dot 1$};
+%      % 
+%      \path
+%      (zero) edge [loop below,looseness=40] node[below] {$\aout[k_1][k_2][][m]$} (zero)
+%      (zero) edge node[above] {$\aout[k_1][k_2][][x]$} (one)
+%      ;
+%	 \end{tikzpicture}
+%	 \qquad
+%	 \begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = left, initial text={$\KK_2$}] (zero) {$\dot 0$};
+%		 % \node[state] (one) [left of=zero]   {$1$};
+%		  \node[state] (two) [right = 1cm of zero]   {$\dot 1$};
+%		  %\node[state] (three) [below = 1cm of two]   {$2$};
+%		  %
+%		  \path
+%		 % (zero) edge[bend right] node[above] {$\tau$} (one)
+%		  (zero) edge node[above] {$\ain[k_1][k_2][][x]$} (two)
+%		  %(two) edge node[above] {$\aout[h_2][s][][x]$} (three)
+%		  (zero) edge [loop below,looseness=40] node[below] {$\ain[k_1][k_2][][m]$} (zero)
+%		  ;
+%	    \end{tikzpicture}
+%%	                        }
+%%         \end{align*}
+%$$
+%   %
+%%   Note that, since we are considering a connection policy for two systems only, both $\IS {M_{\HH_1}}{\cm}$ and $\IS {M_{\HH_2}}{\cm}$ are necessarily singletons.
+%   It is easy to see that $\cs$ is lock-free.
+%   The multicomposition  $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is the following communicating system: 
+%$$ 
+%%  \begin{align*}
+%%     \dboxed{
+%       \begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = above, initial text={$\ptp[q]$}] (zero) {$\dot 0$};
+%		  % 
+%		  \path
+%		  (zero) edge [loop below,looseness=40] node[below] {$\aout[q][h_1][][m]$} (zero)
+%		 % (one) edge[bend left]  node[above] {$\aout[a][h][][m]$} (zero)
+%		  ;
+%		\end{tikzpicture}
+%		\qquad
+%	 \begin{tikzpicture}[mycfsm]
+%      % 
+%		\node[state, initial, initial where = above, initial text={$\HH_1$}] (zero) {$\dot 0$};
+%           \node[state] (zerohat) [below left of=zero,xshift=4mm]   {$\widehat 0$};
+%	     \node[state] (zerohatp) [below right of=zero,xshift=-4mm]   {$\widehat 0'$};	
+%	      \node[state] (one) [below left of=zerohatp, xshift=3mm,yshift=3mm]   {$\dot 1$};  
+%      % 
+%      \path
+%      (zero) edge [bend left=20] node[below] {$\ain[q][h_1][][m]$} (zerohat)
+%      (zerohat) edge [bend left=20] node[above] {$\aout[h_1][h_2][][m]$} (zero)
+%      (zero) edge node[above] {$\ain[q][h_1][][x]$} (zerohatp)
+%      (zerohatp) edge [bend left=20]  node[above] {$\aout[h_1][h_2][][x]$} (one)
+%      ;
+%	 \end{tikzpicture}
+%	 \qquad
+%	 \begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial text={$\HH_2$}] (zero) {$\dot 0$};
+%           \node[state] (zerohat) [below left of=zero,xshift=4mm]   {$\widehat 0$};
+%	     \node[state] (zerohatp) [below right of=zero,xshift=-4mm]   {$\widehat 0'$};	
+%	      \node[state] (one) [below left of=zerohatp, xshift=3mm,yshift=3mm]   {$\dot 1$};  
+%		  %
+%		  \path
+%		 % (zero) edge[bend right] node[above] {$\tau$} (one)
+%		  (zero) edge node[above] {$\ain[h_1][h_2][][x]$} (zerohatp)
+%		  (zerohatp) edge [bend left=20] node[above] {$\aout[h_2][s][][x]$} (one)
+%		  %(two) edge node[above] {$\aout[h_2][s][][x]$} (three)
+%		  (zero) edge [bend left=20] node[below] {$\ain[h_1][h_2][][m]$} (zerohat)
+%		  (zerohat) edge [bend left=20] node[above] {$\aout[h_2][s][][m]$} (zero)
+%		  ;
+%	    \end{tikzpicture}
+%	    \qquad
+%	    \begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = above, initial text={$\ttr$}] (zero) {$0$};
+%		  \node[state] (one) [below = 1cm of zero]   {$1$};
+%		  % 
+%		  \path (zero) edge node[above] {$\ain[s][r][][stop]$} (one)
+%		  ;
+%		\end{tikzpicture}
+%		\qquad
+%		\begin{tikzpicture}[mycfsm]
+%		  % 
+%		  \node[state, initial, initial where = above, initial text={$\ptp[s]$}] (zero) {$0$};
+%		  \node[state] (one) [below right of=zero]   {$1$};
+%		  \node[state] (two) [below left of=one, yshift=.5cm]   {$2$};
+%		  %\node[state] (three) [above left of=two]   {$3$};
+%		  % 
+%		  \path
+%		  (zero) edge[loop below,looseness=40] node[below] {$\ain[h_2][s][][m]$} (zero)
+%		  (zero) edge [bend left] node[above] {$\ain[h_2][s][][x]$} (one)
+%		  (one) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (two)
+%		  %(two) edge [bend left]  node[below] {$\aout[s][r][][stop]$} (three)
+%		  ;
+%		\end{tikzpicture}
+%%	                        }
+%  $$
+%  %     \end{align*} 
+%  % 
+%  The initial configuration $s_0$ of $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is an
+%  $\ptp[r]$-lock,  since the transition $\ain[q][h_1][][x]$ of $\HH_1$ can never be fired,
+%  so implying, in turn, that also $\aout[h_1][h_2][][x]$ of $\HH_1$,
+%  $\ain[h_1][h_2][][x]$ of $\HH_2$, $\aout[h_2][s][][x]$ of $\HH_2$,
+%  $\ain[h_2][s][][x]$ of $\tts$ and $\aout[s][r][][stop]$ of $\tts$ can never be fired.
+%  Hence, no transition sequence out of $s_0$ will ever involve the participant  $\ttr$.
+%  Thus $\MC(\Set{S_i}_{i\in \Set{1,2}}, \cs)$ is not lock-free. 
+%  }
+%  % 
+%  \finex
+%\end{example} 
+
+\smallskip
+\begin{remark}
+{\em
+In the above counterexample all the states of the interfaces do belong to some reachable configuration.
+This hence falsifies the conjecture made in \cite{BH24} which claimed that  the absence of unreachable states in interfaces could entail the preservation of lock-freedom by composition. 
+As a matter of fact this counterexample leads to refine that conjecture: one should prevent
+the absence of unreachable states in gateways rather than in interfaces.
+One should however look for conditions more feasible than that.
+%It is worth noticing that, in Examples \ref{ex:lackprogdfpres}, \ref{ex:refpres} and \ref{rem:lfnotpres}
+%above, the interfaces of the systems we compose do have unreachable states.
+%It is hence natural to wonder whether it is the presence of unreachable states in interfaces that entails the possibility of getting counterexamples for the properties taken into account. 
+}\finex
+\end{remark}
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+

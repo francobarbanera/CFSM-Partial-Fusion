@@ -1,0 +1,230 @@
+%!TEX root = Main-JLAMP-asynchCFSM-multicomp.tex
+
+
+\section{Related Work}
+\label{sect:related-work}
+
+The necessity of supporting the modular development of concurrent/distributed systems,
+as well as the need to extend/modify/adapt/upgrade them, urged the investigation
+ of composition methods. Focusing on such investigations in the setting of abstract formalisms
+for the description and verification of systems enables to get general and formal guarantees of relevant features of the composition methods.  
+We briefly review in this section a few of these methods proposed in the literature,
+pointing out their possible connections with the PaI approach in general and its multicomposition
+version in particular. 
+
+\smallskip
+
+As fairly usual for choreographic formalisms, in MPTS 
+ (MultiParty Session Types~\cite{HYC08,Honda2016})
+two distinct but related views of concurrent systems are taken into account:
+$(a)$ the {\em global view}, a formal specification via {\em global types} of the overall behaviour 
+of a system; $(b)$ the {\em local view}, namely a description, at different  levels 
+of abstraction, of the behaviours of the single components. 
+In \cite{BDLT21} the PaI approach was exploited for the (synchronous) MPST choreographic formalism
+for both of the above mentioned views. In particular showing that it is possible to represent 
+PaI binary composition at the global level, such that composition of well-formed global types
+is still a well-formed global type. 
+
+For an ``unstructured'' formalism like CFSM,
+the natural generalisation from multicomposition with
+single interfaces (per system) to multicomposition with multiple interfaces is not trouble-free,
+even for binary composition, as discussed in \cite[Sect.6]{BdLH19}.
+This is mainly due to the indirect  interactions  which could occur  among the interfaces inside the single systems.
+In more structured frameworks like MPST, instead, such possible interactions can be controlled. 
+In \cite{GY23} the authors devise a  
+ {\em  direct} composition mechanism (i.e.  without using gateways) for MPST systems,
+ allowing for multiple interfaces. This is possible thanks to a hybridisation with local and external information of the standard notion of global type.  
+A combination of global and local constructs in order to get flexible specifications
+(uniformly describing both the internal and the interface behavior of systems) is also present in \cite{CV10}.
+In an MPST setting, the authors of \cite{MY13} investigate composition in a formalism for choreographic programming. 
+In particular, they allow for implementations that can
+be omitted for some roles in protocols. Their {\em partial choreographies} can be composed
+-- preserving their typability and deadlock-freedom --
+by enabling them to describe message passing with the environment.
+The notion of partiality in MPST was exploited also in \cite{SMG23} but from a different perspective.
+In particular, the type of a composed system can be derived from those of its components without knowing, unlike \cite{MY13}, any suitable global type nor the types of missing parts.
+In absence of delegation, local types of participants in MPTS systems  are comparable to communicating finite state machines. Differently from the above \cite{MY13} and \cite{SMG23}, however, the PaI approach does not recur to any notion of partiality, since any closed system can be looked at as potentially open.
+
+The approach to composition of interface automata \cite{deAlfaro2001,deAlfaro2005} shows some loose connections with the binary PaI approach.
+% , but diverges from it in
+%many relevant points. First of all, 
+%interface automata rely on synchronous communication, whereas in the present paper we consider asynchronous communications. 
+Similarly to\cite{BdLH19}, composition for interface automata relies on a crucial idea of compatibility: no error state should be reachable in the synchronous product of two automata. But the notion of error state in interface automata composition is very different from error states which we consider here in the asynchronous infrastructure.
+The compatibility of two automata can also be obtained by means of an environment (also formalised 
+in terms of an automaton) enabling two automata to work together, so resembling the possible presence of an orchestrating set of participants in the multicomposition of the present paper.
+
+ Compatibility of Team Automata \cite{CK13} -- 
+a flexible framework for modelling collaboration between system components -- is related to interface automata when closed systems are considered.
+Their 
+compositionality issues for open systems have been addressed in  \cite{BK03,BHK-ictac20}.
+ %SOME CONNECTION WITH THE PRESENT PAPER(?) - ROLF.
+Interface theories supporting pairwise component analysis like that of interface automata have been extended in an abstract and generic way to a multi-component setting
+in the formalism of Assembly Theories~\cite{HK-acta15}.
+%In the aformentioned papers synchronous composition has been considered
+%and hence communication properties like orphan-message freedom and
+%reception error freedom for CFSM systems is not related to our current work.
+% SOME CONNECTION WITH THE PRESENT PAPER(?) - ROLF.
+
+ 
+ 
+In \cite{KFG04} a modular technique  -- based on model checking --  was developed for the verification of 
+aspect-oriented programs expressed as state machines.
+ In \cite{CMV18,SGV20} a technique for modular design in the setting of reactive programming
+is proposed. Both base and composite components can interact with the external environment by means of input and output ports following the reactive programming
+principle enabling data to be received or emitted as soon as available.
+The authors consider a quite ductile approach to the notion of component compatibility 
+(sort of in contrast to the rigid compatibility taken into account in \cite{BdLH19} for binary PaI). 
+Types of components can be inferred and used to
+ check whether they are compatible with a governing communication protocol.
+ Such an approach might be worth investigating in a PaI setting.
+
+In \cite{BOV23} the authors define a process-calculus-based notation for protocols .
+These can contain ‘assertions’ specifying contact points and constraints between component protocols. 
+The constraints can be checked statically and in that case the contact points enable to perform an interleaved protocol composition.
+
+
+
+
+
+
+
+
+In the setting of {\em coordination models}, in \cite{Arbab98} the author proposes 
+a distinction between {\em endogenous} and {\em exogenous} coordination models.
+In endogenous coordination models the primitives that cause and affect the coordination of an
+entity with others can reside only inside of that entity itself \cite{Arbab04}.
+Our approach does not precisely fit in the context of coordination models,
+since these are mostly independent of the computational entities they compose/coordinate
+and suitable for dealing with {\em hetherogeneus} entities.
+We consider instead entities that can be uniformly represented as CFSM systems.
+%that are {\em homogeneously} representable as CFSM systems.
+Nonetheless we could look at PaI as a {\em totally endogenous} coordination model since
+the composition is based on no concept outside those at the basis of CFSM,
+like the one of {\em channel}. The latter notion is actually at the core of a widely investigated
+coordination model: Reo \cite{Arbab04}. 
+The connectors in our connection models correspond to channels in Reo, whereas 
+our notion of orchestrated connection policy can be assimilated to that of
+Reo connector (roughly a coordination infrastructure using channels as structured building blocks).
+
+
+Papers exploiting the PaI approach have been already mentioned in~\cref{sec:Intro}.
+It is worth pointing out how in the synchronous CFSM setting of \cite{BLT23} it has been shown that binary PaI composition preserves a number of communication properties only at the cost of severe
+restrictions on interface participants. Some of them can be recovered in presence of a communication
+model where $\tau$-actions precede any output action. It is natural to wonder whether
+the use of multicomposition does affect such results. Some other cues for further investigations    
+are dealt with in the following and concluding section.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusions and Future Work}
+\label{sect:conclusions}
+
+
+The {\em participants-as-interfaces\/} (PaI) approach to system composition -- exploited in
+\cite{BdLH19} for the binary case in a  communicating finite state machines (CFSM)  setting -- consists in replacing any two {\em compatible} participants
+(one per system)  by a pair of coupled forwarders, dubbed gateways, enabling the
+two systems to exchange messages. In this approach, any system is potentially {\em open} and the behaviour of any participant can be looked at as an interface.
+
+
+In the present paper we  extend  the PaI approach to orchestrated multicomposition
+ of CFSM systems.
+Unlike \cite{BdLH19} we do not need 
+any compatibility relation and show that  (under mild assumptions) important 
+communication properties of relevance for asynchronous communication, like freedom of orphan messages and unspecified receptions,  are preserved by composition (a feature dubbed 
+{\em safety\/} in \cite{BDGY23}).
+ For this we assume that 
+for each single system one participant is chosen as an interface. 
+A key role in our work, inspired by  \cite{BDGY23}, is played by
+{\em orchestrated connection policies}, which are CFSM systems which determine the ways 
+ interfaces can interact when they are replaced by gateways (forwarders) and, possibly, orchestrating participants are added. 
+
+%In~\cite{BdLH19} a quite general approach to (binary) composition of systems
+%(dubbed {\em participants-as-interfaces\/} -- PaI -- in subsequent papers) was introduced
+%and exploited for the asynchronous formalism of Communicating Finite State Machines (CFSM).
+%It was also investigated in \cite{BLT20,BLP22b,BLT23}, always for binary composition, for 
+%a synchronous version of such a formalism, as well in~\cite{BDL22,BDLT21} for synchronous MPTS
+%formalisms.
+%The PaI approach distils to the interpretation of participants as interfaces 
+%and to their replacement with forwarders for the composition of systems. 
+%The extension of such an approach in order to compose more than two systems
+%was investigated in a synchronous MPTS formalism in \cite{BDGY23}.
+
+
+ 
+ 
+%In the setting of {\em coordination models}, in \cite{Arbab98} the author proposes 
+%a distinction between {\em endogenous} and {\em exogenous} coordination models.
+%In endogenous coordination models the primitives that cause and affect the coordination of an
+%entity with others can reside only inside of that entity itself \cite{Arbab04}.
+%Our approach does not precisely fit in the context of coordination models,
+%since these are mostly independent of the computational entities they compose/coordinate
+%and suitable for dealing with {\em etherogeneus} entities.
+%We consider instead entities that are {\em homogeneusly} representable as CFSM systems.
+%Nonetheless we could look at PaI as a {\em totally endogenous} coordination model since
+%the composition is based on no concept outside those at the basis of CFSM,
+%like the one of {\em channel}. The latter notion is actually at core of a widely investigated
+%coordination model: Reo \cite{Arbab04}. 
+%The connectors in our connection models correspond to channels in Reo, whereas 
+%our notion of orchestrated connection policy can be assimilated to that of
+%Reo connector (roughly a coordination infrastructure using channels as structured building blocks).
+
+As discussed above in \cref{sect:related-work} , the PaI approach has been investigated also for formalisms other than CFSM, always for composing {\em homogeneous} systems.
+%, namely MultiParty Session Types (MPST). 
+It is hence natural to wonder whether our approach can be adapted 
+(at the cost of loosening its full endogenicity, a notion briefly described in the previous Related Work section) in order to deal with systems possessing
+a certain amount of heterogeneity (always keeping in mind that our approach hardly fits outside
+one-to-one communication models).
+For instance, it would be worth investigating the feasibility of our approach for
+formalisms at the basis of platforms like CHOReVOLUTION~\cite{CHOReVOLUTION} (aimed at the development and execution of distributed applications, based on service choreography).
+Said that, it is worth recalling however that our interest is deeply focused on
+{\em safe} approaches to composition/coordination. 
+
+
+
+
+
+
+Whereas the PaI approach naturally proposes itself as a general framework for the {\em safe} modular 
+development of systems, further investigation is needed in order to exploit its potentiality
+inside compositional analysis of systems. 
+Broadly speaking, compositional analysis frameworks enable to ``break'' a system into components.
+The critical behaviors of components
+are then individually identified and analysed, with the aim of getting larger proof of correctness for
+the system out of the ones devised for the components.
+
+A method for decomposing a CFSM system into components identified by the presence of gateways
+ would likely be infeasible. A decomposition mechanism could instead be devised as the dual
+correspondent of a direct composition mechanism, similar to the one proposed in \cite{BDLT21}
+in a MPST setting, where it is actually equipped with a dual decomposition.
+Adapting that idea to the present and less structured setting would be entailed by the possibility of 
+identifying subsets of participants corresponding to direct compositions,
+in turn subsumed by the virtual presence of gateways.
+As hinted at above, such an investigation would broaden the scope of the PaI approach to  
+compositional analysis of systems. From a very general point of view it could be slightly akin to 
+the so called compositional assume-guarantee reasoning which stemmed from works in temporal logics, like \cite{Pnueli84}, and was %were 
+further developed in contract-based software engineering, like~\cite{BDHLLNW12}.
+The properties to be {\em guaranteed} for the components would hence be communication properties that would immediately transfer over the overall system.
+However, the absence of {\em assumed} properties would limit the potential of the approach,
+so stimulating, in the long run, a possible investigation of the definition and use  of the notion
+of assumption in the envisaged PaI approach to compositional assume-guarantee reasoning.
+
+
+In the paper we assume that the orchestrators are manually designed depending on the application at hand and that the same holds for connection models and connection policies.
+A semi-automatic generation of such entities is an interesting aspect of future research.
+
+   
+  
+
+
+
+
+
+
+
+%\paragraph{Acknowledgements}
+%We are grateful to the anonymous referees for several helpful comments and suggestions.
+%We also thank Emilio Tuosto for some macros used to draw Figure \ref{fig:examplegg}.
+%The first author is also thankful to Mariangiola Dezani for her everlasting support.

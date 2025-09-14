@@ -1,0 +1,15 @@
+\documentclass{standalone}
+
+\input{ggstyle}
+
+\begin{document}
+
+      \begin{tikzpicture}
+        \mkint{}{g}[];
+        \mkint{right=of g}{gp}[][@][n];
+        \mkfork{g,gp}[fork][@][25pt];
+        \mkjoin{g,gp}[join][@][25pt];
+        \mkgraph{fork}{join};
+      \end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,374 @@
+\def\colorPtp{\color{blue}}
+\def\colorNode{\color{cyan}}
+\def\colorOp{\color{OliveGreen}}
+\def\colorMsg{\color{BrickRed}}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mfirstuc}
+\newcommand{\aG}{\mathsf{G}}
+\newcommand{\gatedistancein}{3pt}
+\newcommand{\gatedistanceinand}{2pt}
+\newcommand{\gname}[1][i]{{\colorNode{\scriptstyle\textsf{#1}}}}
+\usepackage{xifthen}        % for conditional commands
+\usepackage{xstring}
+\usepackage{xargs}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} % must be loaded before tikz
+\usepackage{tikz}
+
+\usetikzlibrary{
+  arrows,snakes,shapes,automata,backgrounds,petri,positioning,fit,calc,
+  decorations.markings,decorations.text,shadows,fadings,patterns,
+  decorations.pathreplacing,chains,spy
+}
+
+\tikzset{
+  src/.style={draw,circle,fill=white,
+    minimum size=2mm,
+    inner sep=0pt
+  },
+  sink/.style={draw,circle,double,fill=white,
+    minimum size=1.5mm,
+    inner sep=0pt
+  },
+  node/.style={draw,circle,fill=black,
+    minimum size=2mm,
+    inner sep=0pt
+  },
+  % 
+  source/.style={draw,circle,fill=white,
+    minimum size=3mm,
+    inner sep=0pt
+  },
+  sink/.style={draw,circle,double,fill=white,
+    minimum size=3mm,
+    inner sep=0pt
+  },
+  % ACTION
+  block/.style = {rectangle, draw=gray, align=center, fill=orange!25, rounded corners=0.1cm,
+    minimum size=5mm, inner sep=2pt},
+  prenode/.style = {minimum size=9pt,inner sep=2pt, font=\Large},
+  % 
+  bblock/.style = {rectangle, draw=blue!50, opacity=.5, line width=1pt, align=center, fill=white, rounded corners=0.1cm,
+    minimum size=7mm, inner sep=2pt},
+  prenode/.style = {minimum size=9pt,inner sep=2pt, font=\Large},
+  % AND GATE
+  agate/.style={draw, rectangle,
+    minimum size=3mm,
+    inner sep=0pt,
+    fill=orange!25,
+    postaction={path picture={% 
+        \draw[red]
+        ([yshift=\gatedistanceinand]path picture bounding box.south) --
+        ([yshift=-\gatedistanceinand]path picture bounding box.north) ;}}
+  },
+  % ORGATE
+  ogate/.style = {
+    diamond, draw, fill=orange!25,
+    minimum size=4mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw[red]
+        ([yshift=\gatedistancein]path picture bounding box.south) -- ([yshift=-\gatedistancein]path picture bounding box.north)
+        ([xshift=-\gatedistancein]path picture bounding box.east) -- ([xshift=\gatedistancein]path picture bounding box.west)
+        ;}}},
+  % 
+  altogate/.style = {
+    diamond, draw,
+    minimum size=4mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw
+        ([yshift=\gatedistancein]path picture bounding box.south) -- ([yshift=-\gatedistancein]path picture bounding box.north)
+        ([xshift=-\gatedistancein]path picture bounding box.east) -- ([xshift=\gatedistancein]path picture bounding box.west)
+        ;}}},
+  altgate/.style={draw, rectangle,
+    minimum size=3mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw
+        ([yshift=\gatedistanceinand]path picture bounding box.south) --
+        ([yshift=-\gatedistanceinand]path picture bounding box.north) ;}}},
+  % ogate or agate
+  anygate/.style = {circle, draw, fill=white,
+    minimum size=4mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw[black]
+        ([xshift=-\gatedistancein,yshift=\gatedistancein]path picture bounding box.south east) --
+        ([xshift=\gatedistancein,yshift=-\gatedistancein]path picture bounding box.north west)
+        ([xshift=-\gatedistancein,yshift=-\gatedistancein]path picture bounding box.north east) --
+        ([xshift=\gatedistancein,yshift=\gatedistancein]path picture bounding box.south west)
+        ;}}
+  },
+  % 
+  smallglobal/.style={
+        node distance=1cm and 0.8cm, semithick, scale=0.8, every node/.style={transform shape}
+  },
+  % DOTS
+  elli/.style = {draw,densely dotted,-},
+  % 
+  % LINES
+  line/.style = {draw,->, rounded corners=0.07cm,>=latex},
+  nline/.style = {draw,semithick, ->},
+  pline/.style = {draw,->,>=latex},
+  node distance=1cm and 0.7cm,
+  baseline=(current  bounding  box.center),
+  local/.style={rectangle, draw, fill=\fillcolor, drop shadow,
+    text centered, rounded corners, minimum height=5em
+  },
+  bigar/.style={
+    draw,very thick, ->
+  },
+  process/.style={rectangle, draw=gray, fill=\fillcolor, drop shadow,
+    text centered, minimum height=5em,text=gray
+  },
+  choreo/.style={rectangle, draw, fill=\fillcolor, drop shadow,
+    text centered, rounded corners, minimum height=5em
+  },
+  % CFSM
+  mycfsm/.style={
+        font=\footnotesize,
+        initial where=above,
+        ->,>=stealth,auto, node distance=1cm and 1cm,
+        scale=1, every node/.style={transform shape},
+        every state/.style=inner sep=2pt,
+        baseline=(current  bounding  box.center)
+  },
+  machinecloud/.style={
+    cloud, cloud puffs=10, cloud ignores aspect, minimum height=.1cm, minimum width=2cm, draw
+  },
+  fitting node/.style={
+    inner sep=0pt,
+    fill=none,
+    draw=none,
+    reset transform,
+    fit={(\pgf@pathminx,\pgf@pathminy) (\pgf@pathmaxx,\pgf@pathmaxy)}
+  },
+  mypetri/.style={
+    font=\footnotesize,
+    baseline=(current  bounding  box.center)
+  },
+  silentrans/.style = {rectangle, draw=black, align=center, fill=black,
+    minimum height=1pt,
+    minimum width=15pt,
+    inner sep=1.5pt
+  },
+  reset transform/.code={\pgftransformreset},
+  tmtape/.style={draw,minimum size=1.2cm}
+}
+
+\newcommand{\p}{\ptp}
+\newcommand{\q}{{\ptp[b]}}
+\newcommand{\msg}[1][m]{\mathsf{\colorMsg{#1}}}
+\newcommand{\ifempty}[3]{%
+  \ifthenelse{\isempty{#1}}{#2}{#3}%
+}
+\newcommandx{\nmerge}[2][1={i},2={},usedefault=@]{
+  \ifempty{#2}{
+    \ifempty{#1}{\mu}{-\gname[{#1}]}
+  }{-{#2}}
+}
+\newcommandx{\gint}[4][1=i,2=\ptp,3=\msg,4=\q,usedefault=@]{
+  \ptp[{#2}] {\colorOp \xrightarrow{\scriptscriptstyle\gname[#1]}} \ptp[{#4}] \colon {\msg[{#3}]}
+}
+\newcommandx{\gout}[4][1=\gname,2=\ptp,3=\msg,4={\ptp[C]},usedefault=@]{
+  \achan[{#2}][{#4}] {\colorOp {\colorOp{!}}} {\msg[{#3}]}
+}
+\newcommandx{\gin}[4][1=\gname,2=\ptp,3=\msg,4={\ptp[C]},usedefault=@]{
+  \achan[{#2}][{#4}] {\colorOp {\colorOp{?}}} {\msg[{#3}]}
+}
+\newcommandx{\gseq}[3][1=i,2={\aG},3={\aG'},usedefault=@]{
+  \gnode[{#1}][{#2} \gseqop {#3}]
+}
+\newcommandx{\gpar}[3][1=i,2={\aG},3={\aG'},usedefault=@]{
+  \gnode[{#1}][\ifempty{#1}{{#2} \gparop {#3}}{({#2} \gparop {#3})}]
+}
+\newcommandx{\gcho}[3][1=i,2={\aG},3={\aG'},usedefault=@]{
+  \gnode[{#1}][\ifempty{#1}{{#2} \gchoop {#3}}{\big({#2} \gchoop {#3}\big)}]
+}
+\newcommandx{\gchov}[3][1=i,2={\aG},3={\aG'},usedefault=@]{
+  \gnode[{#1}][\left(
+  \begin{array}l
+    \ifempty{#1}{{#2} \\ \gchoop \\ {#3}}{\!\!{#2} \\ \gchoop \\ {#3}}
+  \end{array}\right)
+  ]
+}
+\newcommandx{\grec}[3][1=i,2={\aG},3={\p},usedefault=@]{
+  \gnode[{#1}][\ifempty{#1}{\grecop {#2} \grecopp {#3}}{\big(\grecop {#2} \grecopp {#3}\big)}]
+}
+\newcommand{\ptp}[1][A]{
+  \ensuremath{\mathtt{\colorPtp{%\capitalisewords
+  {#1}}}}
+}
+
+\newcommandx{\mkint}[6][3=i,4=\p,5=\msg,6=\q,usedefault=@]{
+  \node[bblock,{#1}] (#2) {$\gint[#3][#4][#5][#6]$};
+%[block,]
+}
+
+\newcommand{\mkseq}[2]{\path[line] (#1) -- (#2);}
+
+\newcommandx{\mkgraph}[3][1=.5cm]{
+  \node[source,above = #1 of {#2}] (src#2) {};
+  \node[sink,below  = #1 of {#3}] (sink#3) {};
+  \path[line] (src#2) -- (#2);
+  \path[line] (#3) -- (sink#3);
+}
+
+\newcommandx{\mkloop}[4][1=.5,2=1.5]{ %it does insert an agate below and one above
+  \node[ogate,above = #1 of {#3}] (entry#3) {};
+  \pgfgetlastxy \xentry \yentry;
+  \pgfmathtruncatemacro{\xentryrounded}{\xentry};
+  \node[ogate,below  = #1 of {#4}] (exit#4) {};
+  \pgfgetlastxy \xexit \yexit;
+  \pgfmathtruncatemacro{\xexitrounded}{\xexit};
+  \path[line] (entry#3) -- (#3);
+  \path[line] (#4) -- (exit#4);
+  \pgfmathsetmacro\tmpdiff{abs(\xentryrounded - \xexitrounded)}
+  \path[line] (exit#4) -|  ($(exit#4)+(\tmpdiff,0)+(#2,0)$) |- (entry#3);
+}
+
+
+\newcommandx{\mklooptwo}[4][1=.5,2=1.5]{ %does not insert the a gate below
+  \node[ogate,above = #1 of {#3}] (entry#3) {};
+  \pgfgetlastxy \xentry \yentry;
+  \pgfmathtruncatemacro{\xentryrounded}{\xentry};
+%  \node[ogate,below  = #1 of {#4}] (exit#4) {};
+%  \pgfgetlastxy \xexit \yexit;
+  \path (#4);
+   \pgfgetlastxy \xexit \yexit;
+  \pgfmathtruncatemacro{\xexitrounded}{\xexit};
+  \path[line] (entry#3) -- (#3);
+  \pgfmathsetmacro\tmpdiff{abs(\xentryrounded - \xexitrounded)}
+  \path[line] (#4) -|  ($(#4)+(\tmpdiff,0)+(#2,0)$) |- (entry#3);
+}
+
+\newcommandx{\mklooptwobelow}[4][1=.5,2=1.5]{ %does not insert the a gate below, add extra line down
+  \node[ogate,above = #1 of {#3}] (entry#3) {};
+  \pgfgetlastxy \xentry \yentry;
+  \pgfmathtruncatemacro{\xentryrounded}{\xentry};
+  \path (#4);
+   \pgfgetlastxy \xexit \yexit;
+  \pgfmathtruncatemacro{\xexitrounded}{\xexit};
+  \path[line] (entry#3) -- (#3);
+  \pgfmathsetmacro\tmpdiff{abs(\xentryrounded - \xexitrounded)}
+  \path[line] (#4)  |- ($(#4)+(0,-0.5)$) -|  ($(#4)+(\tmpdiff,0)+(#2,0)$) |- (entry#3);
+}
+
+\newcommandx{\mklooponetwo}[4][1=.5,2=1.5]{ %does not insert the a gate below
+  \path (#3);
+  \pgfgetlastxy \xentry \yentry;
+  \pgfmathtruncatemacro{\xentryrounded}{\xentry};
+  \path (#4);
+   \pgfgetlastxy \xexit \yexit;
+  \pgfmathtruncatemacro{\xexitrounded}{\xexit};
+  \path[line] (entry#3) -- (#3);
+  \pgfmathsetmacro\tmpdiff{abs(\xentryrounded - \xexitrounded)}
+  \path[line] (#4) -|  ($(#4)+(\tmpdiff,0)+(#2,0)$) |- (entry#3);
+}
+
+\newcommandx{\mkfork}[4][2=gatenode,3=i,4=.6,usedefault=@]{
+  \mkgatebegin{#1}[{\gname[#3]}][agate][#4]{#2}
+}
+
+\newcommandx{\mkbranch}[4][2=gatenode,3=i,4=.6,usedefault=@]{
+  \mkgatebegin{#1}[{\gname[#3]}][ogate][#4]{#2}
+}
+
+\newcommandx{\mkgatebegin}[5][2={},3=ogate,4=.5]{
+  % #1 list of nodes
+  % #2 control point
+  % #3 gate type
+  % #4 vertical position offset
+  % #5 name of the gate node
+  %
+  \coordinate (gatecord) at (0,0);
+  \foreach \n [count=\i] in {#1}{
+    \pgfgetlastxy \xc \yc;
+    \path (\n);
+    \pgfgetlastxy \xn \yn;
+    \coordinate (gatecord) at ($(gatecord) + (\xn,0)$);
+    \coordinate (gatecord) at ($1/\i*(gatecord)$);
+    \ifdim \yn < \yc
+    \node (max) at (0,\yc) {};
+    \else
+    \node (max) at (0,\yn) {};
+    \fi
+  }
+  \coordinate (gatecord) at ($(gatecord) + (0,#4) + (max)$);
+  \node[#3,label={below:$#2$}] (#5) at (gatecord) {};
+  \pgfgetlastxy{\xgate}{\ygate};
+  \pgfmathtruncatemacro{\xgateround}{\xgate};
+  \StrCount{#1,}{,}[\l] % from package xxstring
+  \ifnum \l < 2 {\errmessage{#1 argument should be a comma-separated list of lenght >= 2}}
+  \else{
+    \foreach \n in {#1}{
+      \path (\n);
+      \pgfgetlastxy{\xnode}{\ynode};
+      \pgfmathtruncatemacro{\xnround}{\xnode};
+      \pgfmathsetmacro\tmpdiff{abs(\xnround - \xgateround)}
+      \ifdim \tmpdiff pt > 1 pt \path[line] (#5) -| (\n);
+      \else
+        \path[line] (#5) -- (\n);
+      \fi
+    }
+  }
+  \fi
+}
+
+
+\newcommandx{\mkmerge}[4][2=gatenode,3=i,4=0,usedefault=@]{\mkgateend{#1}[{\ifempty{#3}{}{\nmerge[#3]}}][ogate][#4]{#2}}
+
+\newcommandx{\mkjoin}[4][2=gatenode,3=i,4=0,usedefault=@]{\mkgateend{#1}[{\ifempty{#3}{}{\nmerge[#3]}}][agate][#4]{#2}}
+
+\newcommandx{\mkgateend}[5][2={},3=ogate,4=.5]{
+  % #1 list of nodes
+  % #2 control point
+  % #3 gate type
+  % #4 vertical position offset
+  % #5 name of the gate node
+  %
+  \coordinate (gatecord) at (0,0);
+  \foreach \n [count=\i] in {#1}{
+    \pgfgetlastxy \xc \yc;
+    \path (\n);
+    \pgfgetlastxy \xn \yn;
+    \coordinate (gatecord) at ($(gatecord) + (\xn,0)$);
+    \coordinate (gatecord) at ($1/\i*(gatecord)$);
+    \ifdim \yn > \yc
+    \node (min) at (0,\yc) {};
+    \else
+    \node (min) at (0,\yn) {};
+    \fi
+  }
+  \coordinate (gatecord) at ($(gatecord) - (0,#4) + (min)$);
+  \node[#3,label={above:$#2$}] (#5) at (gatecord) {};
+  \pgfgetlastxy{\xgate}{\ygate};
+  \pgfmathtruncatemacro{\xgateround}{\xgate};
+  \StrCount{#1,}{,}[\l] % from package xxstring
+  \ifnum \l < 2 {\errmessage{#1 argument should be a comma-separated list of lenght >= 2}}
+  \else{
+    \foreach \n in {#1}{
+      \path (\n);
+      \pgfgetlastxy{\xnode}{\ynode};
+      \pgfmathtruncatemacro{\xnround}{\xnode};
+      \pgfmathsetmacro\tmpdiff{abs(\xnround - \xgateround)}
+      \ifdim \tmpdiff pt > 1 pt \path[line] (\n) |- (#5);
+      \else
+        \path[line] (\n) -- (#5);
+      \fi
+    }
+  }
+  \fi
+}
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

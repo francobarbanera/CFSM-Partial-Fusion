@@ -1,0 +1,1514 @@
+%!TEX root = Main-asynchCFSM-multicomp.tex
+
+\section{Projections and Related Technical Results}
+\label{sect:safetypreservation}
+
+
+In this section we provide some assumptions, notations, definitions, and technical lemmas 
+accessory to the subsequent proofs of property preservation.
+% We begin with some general assumption and notations.
+
+
+
+\medskip
+
+\noindent
+\textbf{General assumptions:}
+
+\noindent
+We assume given a
+system $S$  obtained via orchestrated multicomposition:
+$$S= (M_\ttp)_{\ttp\in\roles} = \MC(\Set{S_i}_{i\in I}, \cs)$$
+where 
+\begin{enumerate}[a)]
+\item
+$\Set{S_i}_{i\in I}$
+is a set of communicating systems, composable with respect to the set of interfaces
+$H = \Set{\hh_i}_{i\in I}$;
+\item 
+$S_i= (M^i_\ttp)_{\ttp\in \roles_i}$ for each $i\in I$;
+\item
+$\cs = (M^{\cs}_\ttu)_{\ttu\in \roles_{\cs}}$, with $\roles_{\cs} = \Set{\kk_i}_{i\in I}\cup\rolesorch_{\cs}$, is an orchestrated connection policy for $H$ (complying with a given connection model
+$\cm$ for $H$,  though this is only of methodological relevance and irrelevant for the proofs);
+\item
+$\roles = (\bigcup_{i\in I} \roles_i)\cup \rolescsint$.
+%where $\rolescsint = \roles_{\cs}\setminus\Set{\kk_i}_{i\in I}$\\
+\end{enumerate}
+ Notice that, by definition of orchestrated multicomposition, we have that, for each $i\in I$ and $\ttp\in\roles_i\setminus\Set{\HH_i}$, $M^i_\ttp = M_\ttp$. 
+ Moreover, for each $\ttu\in\rolesorch_{\cs}$, we have that $M_\ttu = \widetilde{\widetilde{M^{\cs}_\ttu}}$. In the following, for the sake of readability and when no
+ambiguity arises, we shall refer to $\widetilde{\widetilde{M^{\cs}_\ttu}}$ as simply $M_\ttu$ when
+$\ttu\in\rolesorch_{\cs}$.
+ 
+
+ We also recall that, for each $i\in I$, $M_{\hh_i} = M^i_{\HH_i}\gts M^{\cs}_{\KK_i}$, where we recall that $\kk_i=\dot{\hh_i}$.
+
+
+
+%\smallskip
+%\noindent
+%We emphasise again that no condition is required for $\cm$, being our result indipendent 
+%from the connection policy considered.
+%We recall that, by the composability condition, 
+% $\roles=\bigcup_{i\in I}\roles_i$ with  $\roles_n\cap\roles_m=\emptyset$ for
+%each $n,m\in I$ such that $n\neq m$.
+
+\medskip
+
+
+\noindent
+\textbf{Notations:} \\
+%The  participants 
+%of $S$ are $\roles=\bigcup_{i\in I}\roles_i$ with  $\roles_n\cap\roles_m=\emptyset$ for
+%each $n,m\in I$ such that $n\neq m$.\\
+The set of channels of $S$ is $C=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles, \ttp\neq\ttq}$.\\
+The set of transitions of $M_\ttp$ in $S$ is denoted by $\delta_\ttp$;\footnote{Note that,
+for $\HH \in \Set{\hh_i}_{i\in I}$, we use the notation
+$\delta_{\HH}$ for what is denoted by $\widehat\delta$ 
+in the definition of $M_{\HH}\gts M_{\KK}$ (see \cref{def:gatewaycs}).}\\
+Given $i\in I$:
+
+the set of channels of $S_i$ is $C_i=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles_i, \ttp\neq\ttq}$;
+%$C=\bigcup_{i\in I} C_i\cup \Set{\ttp\ttq \mid \ttp,\ttq\in H\cup\rolescsint, \ttp\neq\ttq}$
+%--$C=\bigcup_{i\in I} C_i\cup\Set{\HH_i\HH_j}_{i,j\in I, i\neq j}$. \\
+
+the set of transitions of $M^i_\ttp$ in $S_i$ will be denoted by $\delta^i_\ttp$
+ where $\delta^i_\ttp = \delta_\ttp$ for each $\ttp\in\roles_i\setminus\Set{\HH_i}$;\\
+%The set of transitions of $M_{\KK_i}$ will be denoted by $\delta^\cs_{\KK_i}$. \\
+Given $\ttu\in\roles_{\cs}$, the set of transitions of 
+$M^{\cs}_{\ttu}$ in $\cs$ will be denoted by $\delta^\cs_{\ttu}$.\\
+
+\noindent
+Notice that, for each $i\in I$ and $\ttp\in\roles_i\setminus\Set{\HH_i}$, by definition of orchestrated multicomposition, $\delta^i_\ttp = \delta_\ttp$. 
+ Moreover, for each $\ttu\in\rolesorch_{\cs}$, $\delta_\ttu = \widetilde{\widetilde{\delta^{\cs}_\ttu}}$ (see \cref{def:tildetildem}). For the sake of readability, and when no ambiguity arises,
+in the following we shall refer to $\widetilde{\widetilde{\delta^{\cs}_\ttu}}$ as simply $\delta_\ttu$.
+
+
+
+%\smallskip
+%\noindent
+%Notice that, for each $i\in I$, $\delta_\ttp = \delta^i_\ttp$ for each $\ttp\in\roles_i\setminus\Set{\HH_i}$.
+
+
+%\subsection{Technical notions and results}
+
+%A key notion for our main result is that of {\em  projection\/} of a reachable configuration of a composed system. 
+
+%We shall prove that if a projection does not contain any fresh state
+%introduced by gateway construction then it is a configuration in the corresponding system.
+
+
+ 
+\begin{definition}[Configuration projections]\label{def:projectedconf}
+Let $s= (\vec{q},\vec{w})\in \RS(S)$ where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
+and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$.
+For each $i\in I$, the projection $\restrict{s}{i}$ of $s$
+to $S_i$ is defined by
+$$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$$
+where $\restrict{\vec{q}}{i} = (q_\ttp)_{\ttp\in\roles_i}$ and 
+$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_{i}}$.
+
+%\bfr
+%[[ALTERNATIVE]] Let $s= (\vec{q},\vec{w})\in \RS(S)$ where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
+%and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$.
+%For each $i\in I$, the projection $\restrict{s}{i}$ of $s$
+%to $S_i$ is defined by
+%$$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$$
+%where  $\restrict{\vec{q}}{i} = (p_{\ttp})_{i\in  \roles_{i}}$ is the configuration of $S_i$
+%such that,  for each $\ttp\in\roles_i$,
+%$$p_{\ttp} = \left\{\begin{array}{l@{\qquad}l}
+%                                                      q_\ttp & \text{if } \ttp\neq\hh_i  \text{ or }  q_\ttp\not\in\widehat{Q_{\hh_i}}\\[1mm]
+%                                                      p' & \text{if } p'\lts{\ttr\,\hh_i?\_}q_{\ttp} \text{ and } \ttr\not\in\roles_i\\ 
+%                                                      
+%                                                      p' & \text{if }  q_{\ttp}\lts{\hh_i\ttr!\_}p' \text{ and } \ttr\not\in\roles_i\\
+%                              \end{array}\right.
+%$$ 
+%
+%and 
+%$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_{i}}$.
+%\efr
+
+\noindent
+The projection $\restrict{s}{\cs}$ of $s= (\vec{q},\vec{w})$ on $\cs$  is defined
+if ${q}_{\HH_i}\not\in \widehat Q_{\HH_i}$  for each $i \in I$ and
+then
+$$\restrict{s}{\cs}=(\restrict{\vec{q}}{\cs},\restrict{\vec{w}}{\cs})$$
+where\\
+ - $\restrict{\vec{q}}{\cs} = (p_{\ttu})_{i\in  \roles_{\cs} }$ is the configuration of $\cs$ such that,  $\forall i \in   I.\,p_{\kk_i} = \dot{q_{\HH_i}}$  and  $\forall \ttu \in   \rolescsint.\,p_{\pu} = q_{\pu}$;\\
+- $\restrict{\vec{w}}{\cs} =  (w'_{\ttu\ttv})_{\ttu,\ttv\in \roles_{\cs},\ttu\neq\ttv}$
+%(w'_{\ttp\ttq})_{\ttp,\ttq\in \Set{\KK_i}_{i\in I},\ttp\neq\ttq}$  
+is such that, for each pair $\ttu,\ttv\in \roles_{\cs}$ with $\ttu\neq\ttv$, 
+ $w'_{\ttu\ttv} = w_{\tilde{\tilde{\ttu}}\tilde{\tilde{\ttv}}}$.
+%$w'_{\ttp\ttq} = w_{\ttp\ttq}$.
+% ${i,j\in I}$ with $i\neq j$, $w'_{\KK_i\KK_j} = w_{\HH_i\HH_j}$.
+%We also define 
+%$$\restrict{s}{\cs}=(\restrict{\vec{q}}{\cs},\restrict{\vec{w}}{\cs})$$
+%where
+%\bfc
+%Since we are using 
+%\cref{lem:nohatrestrict} in its present version, I guess that
+%the definition of $\restrict{\vec{s}}{\cs}$ does not need to be as complex as it is now, and
+%it could be made as simple as the one of $\restrict{s}{i}$.
+%Namely
+%$$\restrict{\vec{s}}{\cs} = (\restrict{\vec{q}}{\cs},\restrict{\vec{w}}{\cs})$$
+%where $\restrict{\vec{q}}{\cs} = (p_{\kk_i})_{i\in I}$ is such that, for each $i\in I$, \\
+%${\qquad}$ 
+%$p_{\KK_i} = \left\{ \begin{array}{ll}
+%                                  \\[-6mm]
+%                                  \dot{q_{\HH_i}} &  \text{ if }  {q}_{\HH_i}\not\in \widehat Q_{\HH_i}\\
+%                                  {q}_{\HH_i} &  \text{ if }  {q}_{\HH_i}\in \widehat Q_{\HH_i}\\
+%                                 \end{array}
+%                       \right.$\\
+%                        and where
+%$\restrict{\vec{w}}{\cs} =  (w_{\kk_i\kk_j})_{i,j\in I, i\neq j}$ 
+%is such that, for each $i,j\in I, i\neq j$\\
+%${\qquad}$
+% $w_{\kk_i\kk_j}= w_{\hh_i\hh_j}$.\\
+%\efc
+%
+%\brc
+%I don't understand the case ``${q}_{\HH_i}  \text{ if }  {q}_{\HH_i}\in \widehat Q_{\HH_i}$''.
+%Is this a typo and you mean $\dot{q}_{\HH_i}  \text{ if }  {q}_{\HH_i}\in \widehat Q_{\HH_i}$?\\
+%Anyway I understand that $\cs$-projection for the case ${q}_{\HH_i}\in \widehat Q_{\HH_i}$
+%is irrelevant in the sequel, since when doing projections to $\cs$ we always assume,
+%I guess, that 
+%${q}_{\HH_i}\not\in \widehat Q_{\HH_i}$ for all $i \in I$. Let us check this.
+%If this is true then $\cs$-projections for the case  ${q}_{\HH_i}\in \widehat Q_{\HH_i}$ are
+%meaningless and could be misunderstood by the reader.
+%Then I would propose to define projections to $\cs$ only for configurations $s$
+%with ${q}_{\HH_i}\not\in \widehat Q_{\HH_i}$ for all $i \in I$. The definition would then be very simple:
+%\erc
+
+%\noindent
+%We also define the projection of $s= (\vec{q},\vec{w})$ to $\cs$ in case,  for each $i \in I$,
+%${q}_{\HH_i}\not\in \widehat Q_{\HH_i}$. Namely,
+%$$\restrict{s}{\cs}=(\restrict{\vec{q}}{\cs},\restrict{\vec{w}}{\cs})$$
+%where $\restrict{\vec{q}}{\cs} = (p_{\kk_i})_{i\in I}$ is such that, for each $i \in I$,
+% $p_{\kk_i} = \dot{q_{\HH_i}}$ 
+%%  \brc
+%% BTW: I think the notation $\dot{q}_{\HH_i}$ is not correct and should be
+%% $\dot{q}_{\dot{\HH}_i}$.
+%%\erc
+%%\bfc
+%%The dot is over the whole $q_{\HH_i}$. 
+%%Writing $\dot{q}_{\dot{\HH}_i}$ would be the same as writing $\dot{q}_{\kk_i}$, which is not
+%%what we mean.\\
+%%\efc
+%%\brc Okay. It is indeed subtle. Also in~\cref{def:cps}, $\dot{q}_0$ should be $\dot{q_0}$
+%%and $\dot{q}'$ should be $\dot{q'}$.
+%%I did the changes. And I think in all connection policy examples we must change
+%%the state names $0, 1$ etc.\ to $\dot{0}, \dot{1}$?  \erc
+%
+%\noindent
+%and where
+%$\restrict{\vec{w}}{\cs} =  (w'_{\ttp\ttq})_{\ttp,\ttq\in \Set{\KK_i}_{i\in I},\ttp\neq\ttq}$  
+%is such that, for each pair ${i,j\in I}$ with $i\neq j$,
+%$w'_{\KK_i\KK_j} = w_{\HH_i\HH_j}$.
+ 
+
+
+%%%%%%%%--OLD DEFINITION of projection on K--%%%%%%%%%%%%%%
+%$\restrict{\vec{q}}{\cs} = (p_{\KK_i})_{i\in I}$ is such that, for each $i\in I$,\\
+%
+%
+%${\qquad}$ 
+%$p_{\KK_i} = \left\{ \begin{array}{ll}
+%                                  \\[-6mm]
+%                                  \dot{q}_{\HH_i} &  \text{ if }  {q}_{\HH_i}\not\in \widehat Q_{\HH_i}\\
+%                                  \dot{q'} &  \text{ if }  {q}_{\HH_i}\in \widehat Q_{\HH_i} \text{ and } \text{\em (*)}\\
+%                                  \dot{q''}           &  \text{ if }  {q}_{\HH_i}\in \widehat Q_{\HH_i} \text{ and } \text{\em (**)}
+%                                 \end{array}
+%                       \right.$\\
+%                       
+%${\qquad}$ \text{\em (*)} if, in  $\widehat \delta_{\HH_i}$,  the outgoing transition from ${q}_{\HH_i}$ is of the form 
+%$({q}_{\HH_i}, {\HH_i}\tts!\_,q')$ with $\tts\in\roles_i$; 
+%
+%${\qquad\;}$\text{\em (**)}  if,  in  $\widehat \delta_{\HH_i}$,  the incoming transition to ${q}_{\HH_i}$ is of the form 
+%$(q'', \tts{\HH_i}?\_,{q}_{\HH_i}) $ with $\tts\in\roles_i$;\\
+
+%${\qquad}$ where $\widehat Q$  are the additional states and  $\widehat \delta$  are the  transitions of $M_{\HH_j}\gts M_{\KK_j}$ (see \cref{def:gatewaymc}); \\
+%and 
+%
+%$\restrict{\vec{w}}{\cs} =  (w'_{\ttp\ttq})_{\ttp,\ttq\in \Set{\KK_i}_{i\in I},\ttp\neq\ttq}$ is such that, for each ${j,v\in I}$ with $j\neq v$, 
+%\  $w'_{\KK_j\KK_v} = w_{\HH_j\HH_v}$.
+\end{definition}
+
+%\medskip
+%\noindent
+%Notice that $\restrict{s}{i}$ is not necessarily a configuration of $S_i$, because of the possible presence of the additional states introduced by the gateways construction.
+%%  
+%-----------------------------------------------------------------------------
+% COMMENT TO BE TAKEN INTO ACCOUNT IN THE FUTURE  |
+%-----------------------------------------------------------------------------
+%\bmc better to add an example \emc \bfc A meaningful example could be obtained by completely describing 
+%the multicomposition of the systems of \cref{eq:JK} (i.e. by showing also the the gateways for
+%$\HH_2$, $\HH_3$ and $\HH_4$), taking a reachable configuration (represented by coloring
+%the corresponding states in the multicomposition system) and showing the various projections. I am not sure, however, it to be worth doing in the present version of the paper. \efc 
+%
+%
+%Instead, $\restrict{s}{\cp}$, when defined, is a configuration of $\cs$ by construction.\\
+
+
+%\bfr It is not difficult to check that the projections above are well defined. \efr  
+ Notice that a projection $\restrict{s}{i}$ is not necessarily a configuration of $S_i$, because of the possible presence of the additional states introduced by the gateway construction.
+ 
+ 
+ \begin{example}[A reachable configuration and two projections of it] {\em
+We consider the following reachable configuration of the orchestrated composition illustrated in 
+\cref{fig:orchsyscomp}
+$$s=\big((4_{\ttp},2_{\hh_1},0_{\hh_4},0_{\tts},0_{\ttb},0_{\ttd},0_{\ttq},0_{\hh_2},1_{\hh_3},1_{\ttr}),\, \vec{w}\big)
+$$
+where \quad $w_{\ttp\hh_1}=\langle\msg[nc]\rangle$ \quad $w_{\hh_1\ttb}=\langle\msg[react]\rangle$ \quad $w_{c}=\varepsilon\, (\forall c\not\in\Set{\ttp\hh_1,\hh_1\ttb})$.\\
+This configuration is graphically depicted on top of \cref{fig:orchsyscompproj}, where, for the sake of readability,
+empty channels are not indicated.
+
+
+ 
+\begin{figure*}[h!t]
+$$
+\begin{array}{c@{\hspace{-2mm}}c}
+     \begin{array}{cc} %%% SYSTEM 1
+            \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[draw=none,fill=none] (wph1) [below  of=2,yshift=12mm]   {\scalebox{1.3}{$w_{\ttp\hh_1}=\langle\msg[nc]\rangle$}};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm, fill=black]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+           \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state] (0) {$0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_1$};
+		  \node[draw=none,fill=none] (wh1b) [below  of=0,yshift=-8mm,xshift=10mm]   {\scalebox{1.3}{$w_{\hh_1\ttb}=\langle\msg[react]\rangle$}};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm, fill=black]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		  (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[h_3][h_1][][start]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge   node[above] {$\ain[p][h_1][][react]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_1][h_2][][rc]$} (3)
+		  (3) edge node[above] {$\ain[h_2][h_1][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_1][h_2][][nc]$} (4)
+		  (4) edge node[above] {$\ain[h_2][h_1][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+    \end{array}
+&
+    \begin{array}{cc} %%% SYSTEM 4
+          \begin{tikzpicture}[mycfsm]
+  \node[state, fill=black]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+  \node[draw=none,fill=none] (none) [below  of=hat0,yshift=8mm]   {};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_4$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttd\hh_4}?{\msg[react]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_4\tts}!{\msg[react]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\tts\HH_4}?{\msg[pars]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_4\hh_2}!{\msg[pars]}$} (0);                 
+             \end{tikzpicture}
+             &
+                   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state, fill=black] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$}; 
+      \node[draw=none,fill=none] (none) [below  of=one,yshift=8mm]   {};
+            \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\tts$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\ain[h_4][s][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[s][h_4][][pars]$} (zero)
+      ;
+      \end{tikzpicture}           
+      \end{array}
+\\[-12mm]
+\multicolumn{2}{@{\hspace{35mm}}c}{ %%% ORCHESTRATING SYSTEM
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[b]$}, fill=black] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[h_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black]{$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  left= 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[h_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][h_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][h_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+    }
+\\[-6mm]
+\begin{array}{cc} %%% SYSTEM 2
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttq]$}, fill=black] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[q][h_2][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_2][q][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_2][q][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge  node[below] {$\ain[h_2][q][][reset]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+\begin{tikzpicture}[mycfsm]
+		  % 
+		   \node[state]           (0)     [fill=black]                   {$0$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_2$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		   (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_2][d][][react]$} (1)
+		  (1) edge   node[above] {$\ain[h_4][h_2][][pars]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_1][h_2][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge node[above] {$\ain[q][h_2][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_2][h_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_1][h_2][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge node[above] {$\ain[q][h_2][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_2][h_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+      \end{array}
+&
+   \begin{array}{c@{\hspace{-2mm}}c} %%% SYSTEM 3
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_3$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm, fill=black] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttr\hh_3}?{\msg[start]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_3\hh_1}!{\msg[start]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\ttd\HH_3}?{\msg[react]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_3\ttr}!{\msg[react]}$} (0);       \end{tikzpicture}
+    &
+    \begin{array}{c}
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-6mm, fill=black]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=6mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[r][h_3][][start]$} (one)
+      (one) edge[bend left] node[below] {$\ain[h_3][r][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[r][r'][][greet]$} (zero)
+      ;
+  \end{tikzpicture}
+   \\
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      %\node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr'$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[loop right,looseness=40]  node[above] {$\ain[r][\ttr'][][greet]$} (zero)
+      %(zero) edge[bend right] node[below] {$\aout[h_4][r][][react]$} (one)
+      ;
+  \end{tikzpicture}
+  \end{array}
+    \end{array}
+\end{array}
+$$
+\hrule
+\vspace{2mm}
+$$
+\begin{array}{c} 
+  \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[draw=none,fill=none] (wph1) [below  of=1,yshift=8mm,xshift=12mm]   {\scalebox{1.3}{$w_{\ttp\hh_1}=\langle\msg[nc]\rangle$}};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm, fill=black]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\HH_1]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1, fill=black]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+ $$
+ \hrule
+ \vspace{-6mm}
+ $$
+ \begin{array}{c}
+    \begin{array}{c@{\hspace{5mm}}c@{\hspace{5mm}}c@{\hspace{5mm}}c}
+    \begin{array}{c}
+    \\[4mm]
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_1]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1, fill=black]   {$\dot 2$};
+		  \node[draw=none,fill=none] (wk1b) [below  of=2,yshift=8mm]   {\scalebox{1.3}{$w_{\kk_1\ttb}=\langle\msg[react]\rangle$}};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[k_3][k_1][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[k_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[k_2][ k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+ \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_2]$}, fill=black] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[k_2][d][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[k_4][k_2][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[k_2][k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+\begin{array}{c}
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero, fill=black]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\aout[k_3][k_1][][start]$} (one)
+      (one) edge[bend left] node[above] {$\ain[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ &
+  \begin{array}{c}
+     \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black] {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_4$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[d][k_4][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_4][k_2][][pars]$} (zero)
+      ;
+      \end{tikzpicture}
+ \end{array}
+ \end{array}
+ \\[-10mm]
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[b]$}, fill=black] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[k_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black] {$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[k_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][k_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ $$
+   \caption{\label{fig:orchsyscompproj}A configuration $s$ (top) and two projections of it: $\restrict{s}{1}$ (middle) and $\restrict{s}{\cs}$ (bottom)}
+\end{figure*}
+
+It is possible to check that $s$ is reachable from the initial state after the following actions:\\[1mm] 
+- $\ttr$ puts $\msg[start]$ in the $\ttr\hh_3$ channel;\\
+- $\msg[start]$ is then taken by $\hh_3$ which, in turn, puts the same message in $\hh_3\hh_1$ that is afterwards taken by $\hh_1$;\\
+- after receiving $\msg[start]$, $\hh_1$ puts the same message in $\hh_1\ttp$;\\
+-  after taking  $\msg[start]$ from $\hh_1\ttp$, $\ttp$ puts $\msg[react]$ in $\ttp\hh_1$;\\
+ - $\msg[react]$ is hence taken by $\hh_1$ which then puts the same message in $\hh_1\ttb$;\\
+- in the meantime, $\ttp$ puts $\msg[nc]$ in $\ttp\hh_1$.\\
+
+
+
+By \cref{def:projectedconf}, the projection on  $S_1$ (top left of \cref{eq:JK}) is
+$$\restrict{s}{1}=\big((4_{\ttp},2_{\hh_1}),\, \vec{\varepsilon}\,\big)$$
+as graphically depicted in the middle of \cref{fig:orchsyscompproj}.
+
+Also by \cref{def:projectedconf}, the projection of $s$ on the orchestrated connection policy $\cs$ (the second policy of \cref{ex:connsys}) is
+$$\restrict{s}{\cs}=\big((\dot{2}_{\kk_1},\dot{0}_{\kk_2},\dot{1}_{\kk_3},\dot{0}_{\kk_4},\dot{0}_{\ttb},\dot{0}_{\ttd}),\, \vec{w}\big)$$
+where  \quad $w_{\kk_1\ttb}=\langle\msg[react]\rangle$ \quad $w_{c}=\varepsilon\, (\forall c\neq\kk_1\ttb)$\\
+$\restrict{s}{\cs}$ is graphically depicted on the bottom of \cref{fig:orchsyscompproj}.
+
+It is easy to check that the configuration $s'$ reachable from $s$ in case $\hh_1$ takes the message
+$\msg[nc]$ from channel $\ttp\hh_1$ would have a projection on $S_1$ which would not be a configuration of $S_1$,
+since the configuration contains an intermediate local state (denoted with a hat). 
+Moreover, also the projection of $s'$ on $\cs$ would not be defined.
+
+
+\finex
+}
+\end{example}
+
+
+The following lemma
+directly descends from how gateways are built (\cref{def:gatewaymc}).
+In particular from the fact that the gateway transformation of a machine $M$ does insert an intermediate state
+ between any pair of states of $M$ connected by a transition. By definition, the intermediate state
+ possesses exactly one incoming transition and one outgoing transition. 
+
+\begin{lemma}\hfill\\
+\label{fact:uniquesending}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$. % be a reachable configuration of$S$ % $= \MC(\Set{S_i}_{i\in I}, \cs)$.
+For each $i\in I$, by setting $\HH=\HH_i$  and $\KK=\KK_i$,  the following holds, where
+$M_\HH\gts M_\KK= (Q_\HH\cup\widehat{Q_\HH}, \_,\_,  \delta_\HH)$.
+\begin{enumerate}
+\item
+\label{fact:uniquesending-i}
+If ${q_\HH} \in\widehat{Q_\HH}$ then
+${q_\HH}$ is not final and
+ there exists a unique transition $({q_\HH},\_,\_)\in\delta_\HH$.
+  Moreover, such a transition is of the form
+ $(q_\HH,\HH\tts!\msg[a],q')$ with $q'\not\in\widehat{Q_\HH}$.
+% \\Similarly for $\KK$.
+
+\item
+\label{fact:uniquesending-ii}
+If ${q_\HH}\not\in\widehat{Q_\HH}$ then either $q_\HH$ is final, or any transition $({q_\HH},\_,\_)\in\delta_\HH$
+is an input  one, that 
+is of the form $({q_\HH},\tts\HH?\msg[a],{q'_\HH})$ with ${q'_\HH}\in\widehat{Q_\HH}$. 
+%Similarly for $\KK$.
+\item
+\label{fact:uniquesending-iii}
+If ${q_\HH}\not\in\widehat{Q_\HH}$ then 
+             \begin{enumerate}[a)]
+\item
+\label{fact:uniquesending-iiia}
+
+If $(q_\HH,{\ttu}\HH?\msg[a],{q'_\HH})\in\delta_\HH$ for a $\ttu\in\Set{\hh_i}_{i\in I}\cup\rolescsint$,  then there exists $({q'_\HH},\HH\tts!\msg[a],q''_\HH)\in\delta_\HH$ with $\tts \in \roles_i$ 
+(and hence $\tts\not\in\Set{\hh_i}_{i\in I}\cup\rolescsint$). 
+Moreover, $(q_\HH,\HH\tts!\msg[a],q''_\HH)\in\delta^i_\HH$ and 
+$(\dot{q_\HH},\tilde{\ttu}\kk?\msg[a],\dot{q''_\HH})\in\delta^{\cs}_{\kk}$.
+
+%If $(q_\HH,{\HH_j}\HH?a,{q'_\HH})\in\delta_\HH$ for a $j\in I$,  then there exists $({q'_\HH},\HH\tts!a,q''_\HH)\in\delta_\HH$ with $\tts \in \roles_i$ 
+%(and hence, for each  $l\in I$, $\tts \neq \HH_l$)  %$j\in I$, $\tts \neq \HH_j$)
+%such that $(q_\HH,\HH\tts!a,q''_\HH)\in\delta^i_\HH$.
+\item\label{fact:uniquesending-iiib}
+
+If $(q_\HH,\tts\HH?\msg[a], {q'_\HH})\in\delta_\HH$ with $\tts \in \roles_i$ 
+(and hence $\tts\not\in\Set{\hh_i}_{i\in I}\cup\rolescsint$)  then there exists   $({q'_\HH},\HH\ttu!\msg[a],q''_\HH)\in\delta_\HH$,
+for a $\ttu\in\Set{\hh_i}_{i\in I}\cup\rolescsint$. 
+Moreover, $(q_\HH,\tts\HH?\msg[a],q''_\HH)\in\delta^i_\HH$ and 
+$(\dot{q_\HH},\kk\widetilde{\ttu}!\msg[a],\dot{q''_\HH})\in\delta^{\cs}_{\kk}$.
+
+%If $(q_\HH,\tts\HH?\msg[a], {q'_\HH})\in\delta_\HH$ with $\tts \in \roles_i$ 
+%(and hence, for each $j\in I$, 
+%$\tts \neq \HH_j$)  then there exists   $({q'_\HH},\HH\HH_j!\msg[a],q''_\HH)\in\delta_\HH$,
+%for a $j\in I$,  
+%such that $(q_\HH,\tts\HH?\msg[a],q''_\HH)\in\delta^i_\HH$.
+\end{enumerate}
+\end{enumerate}
+\end{lemma}
+
+The third item of the following lemma (whose proof depends on the first two items)
+states that any sequence of transitions ending with an output action by a gateway
+can be ``rearranged'' so that the output action is immediately preceded
+by its corresponding reception. 
+
+
+\begin{lemma}
+\label{lem:swap-rolf}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ and $\HH \in \Set{\hh_i}_{i\in I}$.
+
+\begin{enumerate}[i)]
+\item\label{lem:swap-rolf-item1}
+Let $s,s',s''\in \RS(S)$  such that\\
+\hspace*{30mm}
+$s\lts{\ttr\HH?\msg[a]}s'\lts{\elle}s''$
+ where $\elle$ is not of the form $\HH\_!\_$.\\
+Then there exists $s'''\in \RS(S)$ such that $s\lts{\elle}s'''\lts{\ttr\HH?\msg[a]}s''$.
+
+\item\label{lem:swap-rolf-item2}
+For $j,k \geq 0$, let $s_j \in \RS(S)$ and $s_{j+k+1} \in \RS(S)$ be reachable from $s_j$ by a sequence of transitions of the form
+$s_j  \lts{\ttr\HH?\msg[a]} s_{j+1}\lts{\elle_1}\ldots\, s_{j+k}\lts{\elle_{k}}s_{j+k+1}$
+ where, for $x = 1,\ldots,k$,  $\elle_x$ is not of the form $\HH\_!\_$.\\
+Then  there exists a sequence of transitions of the form
+\\
+\hspace*{30mm}
+$s_j  \lts{\elle_1}s'_{j+1} \ldots\,  \lts{\elle_k} s'_{j+k} \lts{\ttr\HH?\msg[a]}s_{j+k+1}$.
+
+\item\label{lem:swap-rolf-item3}
+Let $s \in \RS(S)$ be reachable from $s_0$ by a sequence of
+transitions of the form\\
+\hspace*{30mm}
+$s_0\lts{}  s_1\,\ldots \lts{} s_{n-2}  \lts{} s_{n-1}\lts{\HH\tts!\msg[a]}s_n=s$.\\
+Then $n \geq 2$ and there exists a sequence of transitions of the form
+\\
+\hspace*{30mm}
+$s_0\lts{} s'_1\,\ldots \lts{} s'_{n-2}\lts{\ttr\HH?\msg[a]}s_{n-1}\lts{\HH\tts!\msg[a]}s_n=s$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(\ref{lem:swap-rolf-item1})
+%For all $\tts\in\roles_j\cup\Set{\hh_i}_{i\in I\setminus \Set{j}}$, the action $\elle$ cannot affect the buffer ${w}_{\HH_j\tts}$.\\
+%
+ Let $s = (\vec{q},\vec{w}), s' = (\vec{q'},\vec{w'})$ and
+ $s'' = (\vec{q''},\vec{w''})$.
+ For all $\ttp \in \roles\setminus\{\hh\}$ we have $q'_\ttp = q_\ttp$.
+ Since $\elle$ is not of the form $\HH\_!\_$ by assumption and
+$\elle$ is also not of the form $\_\HH?\_$ by gateway construction, we have $q''_\HH = q'_\HH$. 
+ Then we set $q'''_\HH = q_\HH$ and $q'''_\ttp = q''_\ttp$ for all
+$\ttp \in \roles\setminus\{\hh\}$.
+
+Concerning the channels, we know that $w_{\ttr\HH} =  \msg[a]\cdot w'_{\ttr\HH}$ and $w'_{\ttp\ttv} =  w_{\ttp\ttv}$ for all
+$\ttp\ttv \neq \ttr\HH$. 
+Now we set $w'''_{\ttp\ttv} =  w''_{\ttp\ttv}$ for all $\ttp\ttv \neq \ttr\HH$. 
+For defining $w'''_{\ttr\HH}$ we consider three cases for $\elle$: 
+%
+\begin{description}
+\item \underline{$\diamond$}
+$\elle = \ttr\HH?\msg[b]$ for some $\msg[b]$.\\
+As already said above, this case is not possible by construction of gateways.
+
+\item \underline{$\diamond$}
+$\elle \neq \ttr\HH?\msg[b]$ and $\elle \neq \ttr\HH!\msg[b]$
+for any $\msg[b]$.\\
+Then $w''_{\ttr\HH} =  w'_{\ttr\HH}$. We set
+$w'''_{\ttr\HH} = w_{\ttr\HH}$ and $s''' = (\vec{q'''},\vec{w'''})$. 
+Thus $s\lts{\elle}s'''\lts{\ttr\HH?\msg[a]}s''$. 
+%
+\item
+\underline{$\diamond$}
+$\elle = \ttr\HH!\msg[b]$ for some $\msg[b]$.\\
+Then $w''_{\ttr\HH} = w'_{\ttr\HH}\cdot\msg[b]$.
+We set $w'''_{\ttr\HH} = w_{\ttr\HH}\cdot\msg[b] = \msg[a]\cdot w'_{\ttr\HH}\cdot\msg[b]$ and $s''' = (\vec{q'''},\vec{w'''})$.
+Thus $s\lts{\elle}s'''\lts{\ttr\HH?\msg[a]}s''$. 
+\end{description}
+
+(\ref{lem:swap-rolf-item2}) The proof is done by induction on $k$.
+
+{\em Case $k = 0$}.
+Then we take $s'_{j+k} = s_j$ and the statement is trivial. 
+
+{\em Case $k>0$}. % \mapsto k+1$}.
+Let $s_j  \lts{\ttr\HH?\msg[a]} s_{j+1}\lts{\elle_1}s_{j+2}\,\,\ldots\, \lts{\elle_{k}}s_{j+k+1} \lts{\elle_{k+1}}s_{j+k+2}.$
+Then, by part (\ref{lem:swap-rolf-item1}) of the lemma, there exists
+$s'_{j+1}$ such that $s_j \lts{\elle_1} s'_{j+1}\lts{\ttr\HH?\msg[a]}s_{j+2}$.
+By induction hypothesis, there exists a sequence of transitions 
+$s'_{j+1}  \lts{\elle_2} \ldots\,  \lts{\elle_{k+1}} s'_{j+k+1} \lts{\ttr\HH?\msg[a]}s_{j+k+2}$. Thus
+$s_j \lts{\elle_1} s'_{j+1}  \lts{\elle_2} \ldots\,  \lts{\elle_{k+1}} s'_{j+k+1} \lts{\ttr\HH?\msg[a]}s_{j+k+2}$. 
+
+
+(\ref{lem:swap-rolf-item3})
+Let $s_0\lts{}  s_1\,\ldots \lts{} s_{n-2}  \lts{} s_{n-1}\lts{\HH\tts!\msg[a]}s_n=s$ with $s = (\vec{q},\vec{w})$.
+ Due to the construction of gateways
+ ${q_{(n-1)}}_{\HH}\in\widehat{Q_{\HH}}$
+ %${q_{(n-1)}}_{\HH_i}\in\widehat{Q_{\HH_i}}$ for each $i\in I$
+ and, since ${q_0}_{\HH}\not\in\widehat{Q_{\HH}}$ % for each $i\in I$,
+ there must be a transition $s_j \lts{\ttr\HH?\msg[a]}s_{j+1}$ for
+ some $0\leq j \leq n-2$. In particular, $n \geq 2$ must hold.
+Now we take the largest $j$ with $0\leq j \leq n-2$ such that
+ $s_j  \lts{\ttr\HH?\msg[a]} s_{j+1}\lts{\elle_1}\ldots\, s_{j+k}\lts{\elle_{k}}s_{n-1}$
+ where, for each $x = 1,\ldots,k$,  $\elle_x$ is not of the form $\HH\_!\_$.
+By part (\ref{lem:swap-rolf-item2}) of the lemma, there exists
+ $s_j  \lts{\elle_1}s'_{j+1} \ldots\,  \lts{\elle_k} s'_{j+k} \lts{\ttr\HH?\msg[a]} s_{n-1}$. Thus we obtain a sequence
+$s_0\lts{}\,\,\ldots \lts{}s_j  \lts{\elle_1}s'_{j+1} \ldots\,  \lts{\elle_k} s'_{n-2}\lts{\ttr\HH?\msg[a]}s_{n-1}\lts{\HH\tts!\msg[a]}s_n=s$.
+ 
+ 
+\end{proof}
+
+
+
+%\begin{lemma}
+%\label{lem:swap}
+%Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$, $j\in I$ and 
+%let $s,s',s''\in \RS(S)$  such that\\
+%\centerline{$s\lts{\elle}s'\lts{\hh_j\tts!a}s''$ where
+%$\elle$ is not of the form $\_\hh_j?\_$.}
+%Then, there exists $s'''\in \RS(S)$ such that $s\lts{\hh_j\tts!a}s'''\lts{\elle}s''$.
+%\end{lemma}
+%
+%\begin{proof}
+%%Let us consider just the case $\JJ=\HH$, the other one being similar.
+%Since $s\in \RS(S)$ and by definition of gateway (Def. \ref{def:gatewaymc}), $\elle$ cannot be of the form $\_\HH!\_$. 
+%\brc Why not? Is there a typo? \erc
+%So, for all $\ttr\in\roles_j\cup\Set{\hh_i}_{i\in I\setminus \Set{j}}$, the action $\elle$ cannot affect the buffer ${w}_{\ttr\HH_j}$.\\
+%It is now easy to check that, by defining $s'''=(\vec{q'''},\vec{w'''})$ such that  
+% $q'''_{\HH_j} = q''_{\HH_j}$,  and $q'''_{\ttp} = q_{\ttp}$  %${q'''}_{\HH_j} = {q''}_{\HH_j}$,  and ${q'''}_{\ttp} = {q}_{\ttp}$
+%for $\ttp\neq \HH$,
+%and such that
+% $w'''_{\HH_j\tts} = w_{\HH_j\tts}\cdot \msg[a]$ and  $w'''_{\ttp\ttq} = w_{\ttp\ttq}$  %${w'''}_{\HH_j\tts} = {w}_{\HH_j\tts}\cdot a$ and  ${w'''}_{\ttp\ttq} = {w}_{\ttp\ttq}$
+% for $\ttp\ttq\neq \HH_j\tts$, we get $s\lts{\HH_j\tts!a}s'''\lts{\elle}s''$.
+%\end{proof}
+
+The following lemma relates transitions in a composed systems to transitions, if any, in the systems
+used to get the composition. In particular, the fourth item specifies that two consecutive
+actions of a gateway making a message forwarded, do correspond to a single action in an interface.
+\begin{lemma}
+\label{lem:indrestrict}
+Let $s\in \RS(S)$ be a reachable configuration of $S = \MC(\Set{S_i}_{i\in I}, \cs)$. Then, for each $i\in I$,
+\begin{enumerate}[i)]
+\item\label{lem:indrestrict1}
+$\restrict{s_0}{i}\in \RS(S_i)$.
+%\item\label{lem:indrestrict1b}
+%\bfr
+%Let $s\lts{\elle}s'$ such that $\prt{\elle}\cap\{\HH_i\}_{i \in I}=\emptyset$,
+%then one of the following hold:
+%\begin{enumerate}[a)]
+%\item 
+%$\prt{\elle}\subseteq \roles_i$; or
+%\item
+%$\prt{\elle}\subseteq  \roles_{\cs}\setminus\Set{\kk_i}_{i\in I}$; or
+%\item
+%$\prt{\elle}\subseteq  \roles_j$ for some $j\in I\setminus\Set{i}$.
+%\end{enumerate}
+%\efr
+\item\label{lem:indrestrict2}
+Let $s = (\vec{q},\vec{w})\lts{\elle}s'$
+ and let  $\restrict{s}{i}$ be a configuration of $S_i$, i.e.  $q_{\hh_i}\not\in\widehat{Q_{\HH_i}}$. 
+If $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$,
+then either $\restrict{s}{i}\lts{\elle}\restrict{s'}{i}$ or  $\restrict{s}{i}=\restrict{s'}{i}$.
+
+\item\label{lem:indrestrict2cs}
+ Let $s = (\vec{q},\vec{w})\lts{\elle}s'$
+ and let  $\restrict{s}{\cs}$ be defined, i.e. a configuration of $\cs$.
+% , i.e.  $q_{\hh_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I$. 
+If, for each $i\in I$,  $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$,
+then either $\restrict{s}{\cs}\lts{\elle}\restrict{s'}{\cs}$ or  $\restrict{s}{\cs}=\restrict{s'}{\cs}$.
+
+
+\item\label{lem:indrestrict3}
+Let $s\lts{\ttr\HH_i?\msg[a]} s'\lts{\HH_i\tts!\msg[a]} s''$.
+Then $\ttr \in \roles_i$ implies  $\restrict{s}{i}\lts{\ttr\HH_i?\msg[a]}\restrict{s''}{i}$ ,
+ and $\tts \in \roles_i$ implies  $\restrict{s}{i}\lts{\HH_i\tts!\msg[a]}\restrict{s''}{i}$. 
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(\ref{lem:indrestrict1}) is trivially true.
+
+%\noindent
+%\bfr
+%(\ref{lem:indrestrict1b}) 
+%By definition of composition and the fact that the sets $\roles_i$'s and 
+%$\roles_{\cs}\setminus\Set{\kk_i}_{i\in I}$ are pairwise disjoint.
+%\efr
+
+\noindent
+(\ref{lem:indrestrict2}) Let $i\in I$. Besides, let $s = (\vec{q},\vec{w})$ and
+$s' = (\vec{q'},\vec{w'})$.  We proceed now by cases, according to the form of
+$\elle$. Since the sets $\roles_i$s and $\rolescsint$ are pairwise disjoint,
+only the following three cases are possible:
+
+\begin{description}
+\item
+\underline{$\diamond$}
+$\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+with $\ttr,\tts \in \roles_i$.\\ 
+Since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+it holds that   
+$q_{\HH_i},  q'_{\HH_i} \not\in \widehat{Q_{\HH_i}}$ (by construction of gateways) and, in particular, 
+$q_{\HH_i} = q'_{\HH_i}$.
+Then, by definitions of transition and projection, we get $\restrict{s}{i}\lts{\elle}\restrict{s'}{i}$.
+
+\item
+\underline{$\diamond$}
+$\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+with $\ttr,\tts \in \roles_j$ for a certain  $j$ such that $j \neq i$.\\
+Since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+it holds that $q_\ttv = q'_\ttv$ for all $\ttv \in \roles_i$
+and $w_{\ttu\ttv} = w'_{\ttu\ttv}$ for all $\ttu,\ttv \in \roles_i$.
+Hence, $\restrict{s}{i}=\restrict{s'}{i}$.
+\item
+\underline{$\diamond$}
+ $\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+with $\ttr,\tts \in \rolescsint\cup\Set{\hh_k}_{k\in I}$. \\ 
+As in the previous case, 
+since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+it holds that $q_\ttv = q'_\ttv$ for all $\ttv \in \roles_i$
+and $w_{\ttu\ttv} = w'_{\ttu\ttv}$ for all $\ttu,\ttv \in \roles_i$.
+Hence, $\restrict{s}{i}=\restrict{s'}{i}$.
+
+\end{description}
+%
+%
+\noindent
+(\ref{lem:indrestrict2cs}) 
+Let $s = (\vec{q},\vec{w})$ and
+$s' = (\vec{q'},\vec{w'})$.  We proceed now by cases, according to the form of
+$\elle$. Since the sets $\roles_i$s and $\rolescsint$ are pairwise disjoint,
+only the following two cases are possible:
+
+\begin{description}
+\item
+\underline{$\diamond$}
+$\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+with $\ttr,\tts \in \roles_j$ for a certain $j\in I$.\\ 
+Since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+for each $i\in I$,
+it holds that $q_\ttv = q'_\ttv$ for all $\ttv \in  \{\HH_k\}_{k \in I}\cup\rolescsint$
+and $w_{\ttu\ttv} = w'_{\ttu\ttv}$ for all $\ttu,\ttv \in \{\HH_k\}_{k \in I}\cup\rolescsint$.
+This implies that also $\restrict{s'}{\cs}$ is defined and $\restrict{s}{\cs}=\restrict{s'}{\cs}$.
+
+%\item
+%\underline{$\diamond$}
+%$\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+%with $\ttr,\tts \in \roles_j $ for a certain  $j$ such that $j \neq i$.\\
+%Since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+%it holds that   
+%$q_{\HH_i},  q'_{\HH_i} \not\in \widehat{Q_{\HH_i}}$ (by construction of gateways) and, in particular, 
+%$q_{\HH_i} = q'_{\HH_i}$.
+%Then, by definitions of transition and projection, we get $\restrict{s}{\cs}\lts{\elle}\restrict{s'}{\cs}$.
+\item
+\underline{$\diamond$}
+ $\elle$ is of the form $\ttr\tts?\msg[a]$ or $\ttr\tts!\msg[a]$
+with $\ttr,\tts \in \rolescsint\cup\Set{\hh_k}_{k\in I}$. \\ 
+%As in the previous case, 
+%since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$
+%it holds that $q_\ttv = q'_\ttv$ for all $\ttv \in \roles_i$
+%and $w_{\ttu\ttv} = w'_{\ttu\ttv}$ for all $\ttu,\ttv \in \roles_i$.
+%Hence, $\restrict{s}{i}=\restrict{s'}{i}$.
+Since $\elle$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$ for each $i\in I$,
+and since $\restrict{s}{\cs}$ is defined,
+it holds that   
+$q_{\HH_i}=  q'_{\HH_i} \not\in \widehat{Q_{\HH_i}}$ for each $i\in I$ (by construction of gateways). Hence also $\restrict{s'}{\cs}$ is defined.
+Then, by definitions of transition and projection, we get $\restrict{s}{\cs}\lts{\elle}\restrict{s'}{\cs}$.
+\end{description}
+
+%
+%
+(\ref{lem:indrestrict3}) This item follows from the construction of gateways.
+In particular, either $\set{\ttr,\tts} \cap \roles_i=\ttr$ or $\set{\ttr,\tts} \cap \roles_i=\tts$. 
+% OLD version of the proof
+%
+%Easy by definitions of $\restrict{s}{i}$, by definition of $\lts{}$ and by definitions of  gateway and multicomposition 
+%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition}).  For Point~\ref{lem:indrestrict3} notice that either $\set{\ttr,\tts} \cap \roles_i=\ttr$ or $\set{\ttr,\tts} \cap \roles_i=\tts$. 
+\end{proof}
+
+Notice that $\restrict{s}{i}$ is not necessarily a configuration of $S_i$, because of the possible presence of the additional states introduced by the gateways construction.
+However, if reachable configurations of $S=\MC(\Set{S_i}_{i\in I}, \cs)$
+do not involve intermediate states of  gateways, 
+%$M_\HH = \gateway{M^1_\HH, \KK}$, %$M_\KK = \gateway{M^2_\KK, \HH}$, 
+then, by projection,
+% by taking into account only the states of machines of  $S_i$  and disregarding the channels between the gateways, %(see Definition \ref{def:restrictedconf} above),
+we get reachable configurations of  $S_i$ and $\cs$.  
+
+\begin{proposition}[On reachability of projections]
+\label{lem:nohatrestrict}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$. % be a reachable configuration of $S = \MC(\Set{S_i}_{i\in I}, \cs)$.
+\begin{enumerate}[i)]
+\item
+\label{lem:nohatrestrict-a}
+ For each $i\in I$, $({q}_{\HH_i}\not\in\widehat{Q_{\HH_i}} \implies 
+\restrict{s}{i}\in \RS(S_i))$;
+%\brc Shouldn't we use $i$ instead of $k$ as above?\erc
+\item
+\label{lem:nohatrestrict-b}
+$({q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I)$ $\implies$
+$\restrict{s}{\cs}\in \RS(\cs)$.
+\end{enumerate}
+%\begin{enumerate}[i)]
+%\item
+%\label{lem:nohatrestrict-i}
+%${q}_\HH\not\in\widehat{Q_\HH} \implies 
+%\restrict{s}{1}\in \RS(S_1)$;
+%\item
+%\label{lem:nohatrestrict-ii}
+%${q}_\KK\not\in\widehat{Q_\KK} \implies 
+%\restrict{s}{2}\in \RS(S_2)$.
+%\end{enumerate}
+\end{proposition}
+
+
+\begin{proof}
+{ (\ref{lem:nohatrestrict-a})}
+Let $s = (\vec{q},\vec{w}) \in \RS(S)$ and $i \in I$ such that ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+We prove $\restrict{s}{i}\in \RS(S_i)$  by (well-founded) induction on the length $n$ of the transition sequence to reach $s$ from the initial state $s_0$.
+
+{\em Case $n=0$}. Then $\restrict{s}{i} = \restrict{s_0}{i} \in \RS(S_i)$
+by~\cref{lem:indrestrict}(\ref{lem:indrestrict1}).
+
+
+{\em Case $n>0$}.
+Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in \RS(S)$ and an action $\elle_x$ over $\roles$
+such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps. We consider the following cases:
+
+\begin{description}
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$.\\
+Then ${q_x}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
+either $\restrict{s_x}{i}\lts{\elle_x}\restrict{s}{i}$ or  $\restrict{s_x}{i}=\restrict{s}{i}$.\\
+Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{i}\in \RS(S_i)$.\\
+Hence $\restrict{s}{i}\in \RS(S_i)$.
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is of the form $\_\,\HH_i?\_$.\\
+This is not possible since otherwise,
+by definition of gateways,
+${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$ which is excluded. 
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is of the form $\HH_i\_!\_$.\\
+More explicitly, let $s_x\lts{\HH_i\tts!\msg[a]}s$.
+%By definition of gateways, ${q_x}_{\HH_i}\in\widehat{Q_{\HH_i}}$.
+%Therefore $s_x \neq s_0$ and thus $s$ is reachable from $s_0$ in $n \geq 2$ steps.
+Then, by~\cref{lem:swap-rolf}(\ref{lem:swap-rolf-item3}), there exist
+transitions
+$s_y \lts{\ttr\HH_i?\msg[a]}s_x\lts{\HH_i\tts!\msg[a]}s$
+such that $s_y = (\vec{q_y},\vec{w_y})\in \RS(S)$ is reachable from $s_0$ in $n-2$ steps. By definition of gateways, ${q_y}_{\HH_i} \not\in\widehat{Q_{\HH_i}}$.
+Hence, we can apply the induction hypothesis for $s_y$ and obtain $\restrict{s_y}{i}\in \RS(S_i)$.
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict3}) we get a transition
+$\restrict{s_y}{i}\lts{\elle}\restrict{s}{i}$. Hence $\restrict{s}{i}\in \RS(S_i)$.
+\end{description}
+%
+%{\bf (\ref{lem:nohatrestrict-a})}[\brc OLD \erc NEW VE\RSION].
+%Let $s = (\vec{q},\vec{w}) \in \RS(S)$ and $i \in I$ such that ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+%We prove $\restrict{s}{i}\in RS(S_i)$  by (well-founded) induction on the length $n$ of the transition sequence to reach $s$ from the initial state $s_0$.
+%
+%{\em Case $n=0$}. Then $\restrict{s}{i} = \restrict{s_0}{i} \in RS(S_i)$
+%by~\cref{lem:indrestrict}(\ref{lem:indrestrict1}).
+%
+%{\em Case $n>0$}.
+%Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in RS(S)$ and an action $\elle_x$ over $\roles$
+%such that $s_x\lts{\elle_x}s$. We consider the following cases:
+%
+%\begin{description}
+%%
+%\item
+%\underline{$\diamond$}
+%$\elle_x$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$.\\
+%Then ${q_x}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+%Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
+%either $\restrict{s_x}{i}\lts{\elle_x}\restrict{s}{i}$ or  $\restrict{s_x}{i}=\restrict{s}{i}$.\\
+%Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{i}\in RS(S_i)$.\\
+%Hence $\restrict{s}{i}\in RS(S_i)$.
+%%
+%\item
+%\underline{$\diamond$}
+%$\elle_x$ is of the form $\_\,\HH_i?\_$.\\
+%This is not possible since otherwise,
+%by definition of gateways,
+%${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$ which is excluded. 
+%%
+%\item
+%\underline{$\diamond$}
+%$\elle_x$ is of the form $\HH_i\_!\_$.\\
+% More explicitly, let $s_x\lts{\HH_i\tts!\msg[a]}s$.
+%Then, by definition of gateways, ${q_x}_{\HH_i}\in\widehat{Q_{\HH_i}}$.
+%Therefore $s_x \neq s_0$ and thus there exists $s_y\lts{\elle_y}s_x\lts{\HH_i\tts!\msg[a]}s$.
+%By definition of gateways, $\elle_y$ can not be of the form $\HH_i\_!\_$. 
+%Now we distinguish two subcases:
+%%
+%\begin{itemize}
+%\item[(1)]
+%$\elle_y$ is not of the form $\_\,\HH_i?\_$.\\
+%Then, by~\cref{lem:swap}, there exists $s_z \in RS(S)$ such that
+%$s_y\lts{\hh_i\tts!a}s_z\lts{\elle_y}s$.
+%In particular, ${q_z}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$
+%since $\HH_i$ is not involved in $\elle_y$.
+%Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
+%either $\restrict{s_z}{i}\lts{\elle_y}\restrict{s}{i}$ or  $\restrict{s_z}{i}=\restrict{s}{i}$.
+%We can now apply the induction hypothesis for $s_z$ and obtain $\restrict{s_z}{i}\in RS(S_i)$.
+%Hence $\restrict{s}{i}\in RS(S_i)$.
+%%
+%\item[(2)]
+%$\elle_y$ is of the form $\_\,\HH_i?\_$.\\
+%Then, by definition of gateways, ${q_y}_{\HH_i} \not\in\widehat{Q_{\HH_i}}$.
+%Moreover,  $\elle_y$ must be of the form $\ttr\HH_i?\msg[a]$ and thus we have two transitions
+%$s_y\lts{\ttr\HH_i?\msg[a]} s_x\lts{\HH_i\tts!\msg[a]} s$.
+%By~\cref{lem:indrestrict}(\ref{lem:indrestrict3}) we get a transition
+%$\restrict{s_y}{i}\lts{\elle}\restrict{s}{i}$. 
+%We can now apply the induction hypothesis for $s_y$ (which is reached
+%from $s_0$ by $n-2$ steps) and obtain $\restrict{s_y}{i}\in RS(S_i)$.
+%Hence $\restrict{s}{i}\in RS(S_i)$.
+%\end{itemize}
+%\end{description}
+%%
+%{\bf (\ref{lem:nohatrestrict-a})}. [OLD VERSION] \\
+%If $s \in RS(S)$, then there exists a transition sequence leading to $s$ from the initial state, say
+%$$s_0\lts{}s_1\lts{} \ldots\lts{} s_{n-1}\lts{}s_n=s$$
+%where  $s_l = (\vec{q_l},\vec{w_l})$ $(l=0,\ldots,n)$.  
+%\\
+%Let then $k\in I$ and ${q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$.
+%For the sake of readability, let us set $\hh = \hh_{k}$. 
+% We denote by ${q_v}_\HH$ the local state of the machine $M_\HH$  configuration $s_v$.  
+%Let now $j \geq 0$ be the smallest index such that ${q_j}_\HH\not\in \widehat{Q_\HH}$ and  ${q_{j+1}}_\HH\in \widehat{Q_\HH}$
+%(if there is not such a $j$, then the thesis follows immediately).
+%By definitions of  gateway and multicomposition 
+%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition})  
+%we have that $s_j\lts{\ttr\HH?\msg[a]} s_{j+1}$ for a certain $\ttr$.
+%Now let $t$ be the smallest index such that  $t\geq j+1$, ${q_t}_\HH = {q_{j+1}}_\HH$ and ${q_{t+1}}_\HH\not\in \widehat{Q_\HH}$.
+%Such an index $t$ does exist because of the hypothesis $q_\HH\not\in\widehat{Q_\HH}$
+%(moreover, notice that no self loop transitions are possible out of a state in $\widehat{Q_\HH}$).
+%By definition of gateway and multicomposition 
+%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition}) 
+%we have that $s_{t}\lts{\HH\tts!\msg[a]} s_{t+1}$ for a certain $\tts$.\\
+%We can now proceed by induction on the length of the transition sequence
+%\centerline{
+%$s_j\lts{\ttr\HH?\msg[a]} \ldots \lts{\HH\tts!\msg[a]}s_{t+1}$
+%}
+%using Lemma \ref{lem:swap}, in order to show that 
+%it is possible to build a transition sequence like the following one\\
+%\centerline{
+%$s_0\lts{}s_1\lts{}\ldots s_j\lts{\ttr\HH?\msg[a]} s_{j+1}\lts{\HH\tts!\msg[a]} s'_{j+2} \lts{} \ldots \lts{}s'_{n-1}\lts{}s_n=s$
+%}
+%where ${q_{j+2}}_\HH\not\in \widehat{Q_\HH}$.\\
+%The iteration of this procedure trivially converges and allow us to get a sequence
+%\\
+%\begin{equation}
+%\label{eq:goodseqa}
+%s_0\lts{}\ldots  \lts{}s_n=s
+%\end{equation}
+%such that any transition of the form $\ttr\HH?a$ is immediately followed by a transition  of the form   $\HH\tts!a$.
+%Note that, by definition of gateway, we have also that any transition of the form $\HH\ttr!a$ is immediately preceded by a transition  of the form  $\tts\HH?a$.
+%
+%Now, by using Lemma \ref{lem:indrestrict}(\ref{lem:indrestrict3}),
+% it is possible to get, out of the transition sequence (\ref{eq:goodseqa}),
+%a transition sequence $\restrict{s_0}{k} \lts{}^* \restrict{s}{k}$. So $\restrict{s}{k}\in RS(S_k)$.\\
+%
+%
+%{\bf (\ref{lem:nohatrestrict-b})}.
+%\bfr
+%If $s \in RS(S)$, then there exists a transition sequence leading to $s$ from the initial state, say
+%$$s_0\lts{}s_1\lts{} \ldots\lts{} s_{n-1}\lts{}s_n=s$$
+%where  $s_l = (\vec{q_l},\vec{w_l})$ $(l=0,\ldots,n)$.  
+%\\
+%Let now $k\in I$ and ${q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$.
+%For the sake of readability, let us set $\hh = \hh_{k}$. 
+% We denote by ${q_v}_\HH$ the local state of the machine $M_\HH$  configuration $s_v$.  
+%Let now $j \geq 0$ be the smallest index such that ${q_j}_\HH\not\in \widehat{Q_\HH}$ and  ${q_{j+1}}_\HH\in \widehat{Q_\HH}$
+%(if there is not such a $j$, then the thesis follows immediately).
+%By definitions of  gateway and multicomposition 
+%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition})  
+%we have that $s_j\lts{\ttr\HH?\msg[a]} s_{j+1}$ for a certain $\ttr$.
+%Now let $t$ be the smallest index such that  $t\geq j+1$, ${q_t}_\HH = {q_{j+1}}_\HH$ and ${q_{t+1}}_\HH\not\in \widehat{Q_\HH}$.
+%Such an index $t$ does exist because of the hypothesis $q_\HH\not\in\widehat{Q_\HH}$
+%(moreover, notice that no self loop transitions are possible out of a state in $\widehat{Q_\HH}$).
+%By definition of gateway and multicomposition 
+%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition}) 
+%we have that $s_{t}\lts{\HH\tts!\msg[a]} s_{t+1}$ for a certain $\tts$.\\
+%We can now proceed by induction on the length of the transition sequence
+%\centerline{
+%$s_j\lts{\ttr\HH?\msg[a]} \ldots \lts{\HH\tts!\msg[a]}s_{t+1}$
+%}
+%using Lemma \ref{lem:swap}, in order to show that 
+%it is possible to build a transition sequence like the following one\\
+%\centerline{
+%$s_0\lts{}s_1\lts{}\ldots s_j\lts{\ttr\HH?\msg[a]} s_{j+1}\lts{\HH\tts!\msg[a]} s'_{j+2} \lts{} \ldots \lts{}s'_{n-1}\lts{}s_n=s$
+%}
+%where ${q_{j+2}}_\HH\not\in \widehat{Q_\HH}$.\\
+%The iteration of this procedure trivially converges and allow us to get a sequence
+%\begin{equation}
+%\label{eq:goodseqa}
+%s_0\lts{}\ldots  \lts{}s_n=s
+%\end{equation}
+%such that any transition of the form $\ttr\HH?a$ is immediately followed by a transition  of the form   $\HH\tts!a$.
+%Note that, by definition of gateway, we have also that any transition of the form $\HH\ttr!a$ is immediately preceded by a transition  of the form  $\tts\HH?a$.
+%
+%\efr
+%Let us now assume ${q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.
+%Then, by applying for each $k\in I$ the procedure used in the previous item to get the transition sequence (\ref{eq:goodseqa}), we get a sequence
+%\begin{equation}
+%\label{eq:goodseqab}
+%s_0\lts{}\ldots  \lts{}s_n=s
+%\end{equation}
+%such that, for each $k\in I$, any transition of the form $\ttr\HH_k?a$ is immediately followed by a transition $\HH_k\tts!a$.\\
+%We proceed now by complete induction on the length $n$ of the transition sequence 
+%($\ref{eq:goodseqab}$).\\
+%{\em Case $n=0$}. In such a case $s_0 = (({p_0}_{\ttp})_{\ttp\in\roles},\vec{\varepsilon})$
+%and we get that $\restrict{s_0}{\cs}$ is the initial configuration of $\cs$ by
+%definitions of connection policy and projection (\cref{def:projectedconf} and  \cref{def:connpol}).\\
+%{\em Case $n > 0$}. We consider separately the possible cases, where
+%we assume, for $0\leq z\leq n$,  $s_{z} = (\vec{{q}_{z}},\vec{{w}_{z}})$:
+%\begin{description}
+%%
+%\item
+%$s_{n-1}\lts{\tts\ttr?\msg[a]}s_n$, with $\ttr\not\in\Set{\HH_i}_{i\in I}$.\\
+%The thesis follows immediately by induction since, by definition of projection 
+%(Def. \ref{def:projectedconf}), we have that $\restrict{s_{n-1}}{\cs} = \restrict{s_{n}}{\cs}$.
+%%
+%\item
+%$s_{n-1}\lts{\tts\ttr!\msg[a]}s_n$, with $\tts\not\in\Set{\HH_i}_{i\in I}$.\\
+%This case can be treated as the previous one. 
+%%
+%\item
+%$s_{n-1}\lts{\ttr\HH_v?\msg[a]}s_n$, with $\ttr\not\in\Set{\HH_i}_{i\in I}$.\\
+%This case cannot actually apply, since, by definition of gateway, we would get 
+%${q_n}_{\HH_v}\in \widehat Q_{\HH_v}$,  so making our thesis vacuously true.
+%%
+%\item
+%$s_{n-1}\lts{\HH_v\ttr!\msg[a]}s_n$, with $\ttr\not\in\Set{\HH_i}_{i\in I}$.\\
+%Then necessarily $s_{n-2}\lts{\HH_j\HH_v?\msg[a]}s_{n-1}\lts{\HH_v\ttr!\msg[a]}s_n$ for a certain $j\in I$,
+%where
+%$$({q_{n-2}}_{\HH_v},\HH_j\HH_v?\msg[a],\hat q),
+%    (\hat q, \HH_v\ttr!\msg[a], {q_{n}}_{\HH_v})\in\delta_{\HH_v}
+%\quad\text{ and }\quad {w_{n-2}}_{\HH_j\HH_v} = a\cdot {w_{n}}_{\HH_j\HH_v}$$
+%and where, by definition of gateway and connection policy,
+%$$(\dot{q_{n-2}}_{\HH_v},\KK_j\KK_v?\msg[a],\dot{q_{n}}_{\HH_v})\in \delta^\cs_{\KK_v}$$
+%Since, by definition of gateway, we have ${q_{n-2}}_{\HH_v}\not\in\widehat{Q_{\HH_v}}$,
+%we have also that ${q_{n-2}}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.  
+%Hence we can recur to the induction hypothesis,  getting
+%$\restrict{s_{n-2}}{\cs}\in RS(S)$. 
+%If $\restrict{s_{n-2}}{\cs} = (\vec{q'},\vec{w'})$
+%and $\restrict{s_{n}}{\cs} = (\vec{q''},\vec{w''})$ then,
+% by definition of projection and the above, we have 
+%$$q'_{\KK_v} = \dot{{{q}}_{n-2}}_{\HH_v} \quad
+%q''_{\KK_v} = \dot{{{q}}_{n}}_{\HH_v} \quad
+%%\quad\text{and}\quad 
+%w'_{\KK_j\KK_v} = {w_{n-2}}_{\HH_j\HH_v} = \msg[a]\cdot {w_{n}}_{\HH_j\HH_v} = \msg[a]\cdot {w''}_{\KK_j\KK_v}.$$
+%Hence, by definition of transition, we get $\restrict{s_{n-2}}{\cs}\lts{\KK_j\KK_v?\msg[a]}\restrict{s_{\bmr n \emr}}{\cs}$, namely $\restrict{s_{n}}{\cs}\in RS(\cs)$.
+%%
+%\item
+%$s_{n-1}\lts{\HH_v\HH_z!\msg[a]}s_n$.\\
+%Then necessarily $s_{n-2}\lts{\ttr\HH_v?\msg[a]}s_{n-1}\lts{\HH_v\HH_z!\msg[a]}s_n$ for a certain 
+%$\ttr\not\in\Set{\HH_i}_{i\in I}$,
+%where
+%$$({q_{n-2}}_{\HH_v},\ttr\HH_v?\msg[a],\hat q),
+%    (\hat q, \HH_v\HH_z!\msg[a], {q_{n}}_{\HH_v})\in\delta_{\HH_v}
+%\quad\text{ and }\quad {w_{n}}_{\HH_v\HH_z} = {w_{n-2}}_{\HH_v\HH_z}\cdot \msg[a]$$
+%and where, by definition of gateway and connection policy,
+%$$(\dot{q_{n-2}}_{\bmr \HH_v\emr} %{\HH_j}
+%,\KK_v\KK_z!\msg[a],\dot{q_{n}}_{\HH_v})\in \delta^\cs_{\KK_v}$$
+%Since, by definition of gateway, we have ${q_{n-2}}_{\HH_v}\not\in\widehat{Q_{\HH_v}}$,
+%we have also that ${q_{n-2}}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.  
+%Hence we can recur to the induction hypothesis,  getting
+%$\restrict{s_{n-2}}{\cs}\in RS(S)$. 
+%If $\restrict{s_{n-2}}{\cs} = (\vec{q'},\vec{w'})$
+%and $\restrict{s_{n}}{\cs} = (\vec{q''},\vec{w''})$ then,
+% by definition of projection and the above, we have 
+%$$q'_{\KK_v} = \dot{{{q}}_{n-2}}_{\HH_v} \quad
+%q''_{\KK_v} = \dot{{{q}}_{n}}_{\HH_v} \quad
+%%\quad\text{and}\quad 
+%w''_{\KK_v\KK_z} = {w_{n}}_{\HH_v\HH_z} = {w_{n-2}}_{\HH_v\HH_z}\cdot \msg[a] = {w'}_{\bmr \KK_v\KK_z\emr}\cdot \msg[a].$$
+%%\bmc erase the following sentence?: Hence, by definition of transition, we get $\restrict{s_{n-2}}{\cs}\lts{\KK_j\KK_v?\msg[a]}\restrict{s_{n-2}}{\cs}$, namely $\restrict{s_{n-2}}{\cs}\in RS(\cs)$. \emc
+%Hence, by definition of transition, we get $\restrict{s_{n-2}}{\cs}\lts{\KK_v\KK_z?\msg[a]}\restrict{s_{n}}{\cs}$, namely $\restrict{s_{n}}{\cs}\in RS(\cs)$.
+%%
+%\item
+%\bfr
+%$s_{n-1}\lts{\HH_z\HH_v?\msg[a]}s_n$.\\
+%This case cannot occur, since $s_n = s$ and we assumed ${q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.
+%\efr
+%\end{description}
+%%\brc
+%%Isn't the case $s_{n-1}\lts{\HH_z\HH_v?\msg[a]}s_n$ missing?
+%%\erc
+%
+%\brc
+%\\
+%Below I have shortened the proof of (ii) by omitting \bfr your prelude \efr
+%and using~\cref{lem:swap-rolf}(ii) instead.\\
+
+\noindent
+{ (\ref{lem:nohatrestrict-b})}.
+Let $s = (\vec{q},\vec{w}) \in \RS(S)$ such that ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for all $i \in I$.
+We prove $\restrict{s}{\cs}\in \RS(\cs)$  by (well-founded) induction on the length $n$ of the transition sequence to reach $s$ from the initial state $s_0$.
+
+{\em Case $n=0$}. 
+In this case $s_0 = (({q_0}_{\ttp})_{\ttp\in\roles},\vec{\varepsilon})$.
+Then, by definitions of orchestrated connection policy  %policy 
+and projection (\cref{def:cs} and \cref{def:projectedconf} ),
+$\restrict{s_0}{\cs} = (({p}_{\ttu})_{\ttu \in \roles_{\cs}},(w'_{\ttu\ttv})_{\ttu,\ttv\in \roles_{\cs},\ttu\neq\ttv})$
+%$\restrict{s_0}{\cs} = (({p}_{\KK_i})_{i \in I},(w'_{\ttp\ttq})_{\ttp,\ttq\in \Set{\KK_i}_{i\in I},\ttp\neq\ttq})$
+where, recalling that $\roles_{\cs}=\Set{\kk_i}_{i\in I}\cup\rolescsint$, we have that ${p}_{\KK_i} = \dot{q_0}_{\HH_i}$ for each $i\in I$ (since ${q_0}_{\HH_i}\not\in \widehat Q_{\HH_i}$ for all $i \in I$) and  ${p}_{\ttu} = {q_0}_{\ttu}$ for each $\ttu\in \rolescsint$.
+Moreover, $w'_{\ttu\ttv} = %{w_0}_{\HH_j\HH_v} = 
+\varepsilon$ for each $\ttu,\ttv \in \roles_{\cs},\ttu\neq\ttv$.
+Obviously, $\restrict{s_0}{\cs}$ is the initial configuration of $\cs$
+and thus $\restrict{s_0}{\cs}\in \RS(\cs)$.\\
+{\em Case $n>0$}.
+Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in \RS(S)$ and an action $\elle_x$ over $\roles$
+such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps. We consider the following cases:
+
+\begin{description}
+%
+\item
+
+\underline{$\diamond$}
+$\elle_x$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$ for any $i\in I$.\\
+Then, for each $i\in I$, ${q_x}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+We can hence infer, by definition of projection (\cref{def:projectedconf}), 
+that $\restrict{s_x}{\cs}$ is defined.
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2cs}),
+either $\restrict{s_x}{\cs}\lts{\elle_x}\restrict{s}{\cs}$ or  $\restrict{s_x}{\cs}=\restrict{s}{\cs}$.\\
+Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{\cs}\in \RS(\cs)$.
+Hence $\restrict{s}{\cs}\in \RS(\cs)$.
+
+%%
+%\item
+%$s_x\lts{\ttr\tts?\msg[a]}s$, with $\tts\not\in\Set{\HH_i}_{i\in I}$.
+%Then there is no move in a gateway and also the channels between gateways
+%are untouched. Hence, by definition of projection 
+%(\cref{def:projectedconf}), $\restrict{s_x}{\cs} = \restrict{s}{\cs}$.
+%In particular, ${q_x}_{\HH_i} = {q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for all $i \in I$.
+%Then, by the induction hypothesis for $s_x$, we have $\restrict{s_x}{\cs} \in \RS(\cs)$ and thus $\restrict{s}{\cs} \in \RS(\cs)$. 
+%%
+%\item
+%$s_x\lts{\ttr\tts!\msg[a]}s$, with $\ttr\not\in\Set{\HH_i}_{i\in I}$.\\
+%This case is treated as the previous one. 
+%
+\item
+
+\underline{$\diamond$}
+$\elle_x$ is of the form $\_\,\HH_i?\_$  for some $i\in I$.  \\
+% $s_x\lts{\ttr\HH_i?\msg[a]}s$, with 
+%\ttr\not\in\Set{\HH_i}_{i\in I} and$ $i\in I$.\\
+This case cannot apply, since, by definition of gateway, we would get 
+$q_{\HH_i}\in \widehat Q_{\HH_i}$ which contradicts our assumption.
+
+\item
+
+\underline{$\diamond$}
+$\elle_x$ is of the form $\HH_i\tts!\_$ for some $i\in I$ and $\tts\not\in\Set{\HH_i}_{i\in I}\cup\rolescsint$ (i.e. $\tts\in\roles_i$).\\
+More explicitly, let $s_x\lts{\HH_i\tts!\msg[a]}s$. 
+%$s_x\lts{\HH_i\tts!\msg[a]}s$, with $i \in I$ and $\tts\not\in\Set{\HH_i}_{i\in I}$.\\
+Then, by~\cref{lem:swap-rolf}(\ref{lem:swap-rolf-item3}), there exist
+transitions
+$s_y \lts{\ttr\HH_i?\msg[a]}s_x\lts{\HH_i\tts!\msg[a]}s$
+such that $s_y = (\vec{q_y},\vec{w_y})\in \RS(S)$ is reachable from $s_0$ in $n-2$ steps.
+Moreover, by definition of gateways and since $\tts\not\in\Set{\HH_i}_{i\in I}\cup\rolescsint$, we have $\ttr \in\Set{\HH_i}_{i\in I}\cup\rolescsint$ and %\HH_j$ for some $j \in I \setminus \{i\}$. 
+%Hence, $s_y \lts{\HH_j\HH_i?\msg[a]}s_x\lts{\HH_i\tts!\msg[a]}s$ where 
+$$({q_y}_{\HH_i},\ttr\HH_i?\msg[a],\hat q),
+    (\hat q, \HH_i\tts!\msg[a], {q}_{\HH_i})\in\delta_{\HH_i}
+\quad\text{ and }\quad {w_y}_{\ttr\HH_i} = \msg[a]\cdot {w}_{\ttr\HH_i}.$$
+Then,  by  \cref{fact:uniquesending}(\ref{fact:uniquesending-iiia}),  %definition of gateway and connection policy,
+$$(\dot{q_y}_{\HH_i},\ttr\KK_i?\msg[a],\dot{q_{\HH_i}})\in \delta^\cs_{\KK_i}.$$
+
+Since, by definition of gateway, we have
+${q_y}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ and since
+${q_y}_{\HH_k} = q_{\HH_k}\not\in\widehat{Q_{\HH_k}}$
+for all $k\in I\setminus\{i\}$ (by assumption),
+we have also that ${q_y}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$. 
+ So $\restrict{s_y}{\cs}$ is defined.
+Then we can apply the induction hypothesis for $s_y$ and get 
+$\restrict{s_y}{\cs}\in \RS(\cs)$. 
+
+If $\restrict{s_y}{\cs} = (\vec{q'},\vec{w'})$
+and $\restrict{s}{\cs} = (\vec{q''},\vec{w''})$ then,
+ by definition of projection and the above, we have 
+$$q'_{\KK_i} = \dot{{{q}}_y}_{\HH_i} \quad
+q''_{\KK_i} = \dot{{{q}}}_{\HH_i} \quad
+%\quad\text{and}\quad 
+w'_{\ttr\KK_i} = {w_y}_{\ttr\HH_i} = \msg[a]\cdot {w}_{\ttr\HH_i} = \msg[a]\cdot {w''}_{\ttr\KK_i}.$$
+Since $(\dot{q_y}_{\HH_i},\ttr\KK_i?\msg[a],\dot{q}_{\HH_i})\in \delta^\cs_{\KK_i}$, we get $\restrict{s_y}{\cs}\lts{\ttr\KK_i?\msg[a]}\restrict{s}{\cs}$ and thus $\restrict{s}{\cs}\in \RS(\cs)$.
+%
+\item
+
+\underline{$\diamond$}
+$\elle_x$ is of the form $\HH_i\tts!\_$ for some $i\in I$ and $\tts\in\Set{\HH_i}_{i\in I}\cup\rolescsint$ (i.e. $\tts\not\in\roles_i$).\\
+More explicitly, let $s_x\lts{\HH_i\tts!\msg[a]}s$. 
+%$s_y\lts{\HH_i\HH_j!\msg[a]}s$ with $i,j \in I, i\neq j$.\\
+Then, by~\cref{lem:swap-rolf}(\ref{lem:swap-rolf-item3}), there exist transitions
+$s_y \lts{\ttr\HH_i?\msg[a]}s_x\lts{\HH_i\tts!\msg[a]}s$
+such that $s_y = (\vec{q_y},\vec{w_y})\in \RS(S)$ is reachable from $s_0$ in $n-2$ steps.
+Moreover, by definition of gateways and since 
+$\tts\in\Set{\HH_i}_{i\in I}\cup\rolescsint$, we have $\ttr\in\roles_i$ and
+$$({q_y}_{\HH_i},\ttr\HH_i?\msg[a],\hat q),
+    (\hat q, \HH_i\tts!\msg[a], q_{\HH_i})\in\delta_{\HH_i}
+\quad\text{ and }\quad w_{\HH_i\tts} = {w_y}_{\HH_i\tts}\cdot \msg[a]$$
+Then,  by \cref{fact:uniquesending}(\ref{fact:uniquesending-iiib}) %by definition of gateway and connection policy,
+$$(\dot{q_y}_{\HH_i} %{\HH_j}
+,\KK_i\tts!\msg[a],\dot{q}_{\HH_i})\in \delta^\cs_{\KK_i}.$$
+
+Since, by definition of gateway, we have
+${q_y}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ and since
+${q_y}_{\HH_k} = q_{\HH_k}\not\in\widehat{Q_{\HH_k}}$
+for all $k\in I\setminus\{i\}$ (by assumption),
+we have also that ${q_y}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$. 
+So  $\restrict{s_y}{\cs}$ is defined.
+Then we can apply the induction hypothesis for $s_y$ and get 
+$\restrict{s_y}{\cs}\in \RS(\cs)$. 
+
+If $\restrict{s_y}{\cs} = (\vec{q'},\vec{w'})$
+and $\restrict{s}{\cs} = (\vec{q''},\vec{w''})$ then,
+ by definition of projection and the above, we have 
+$$q'_{\KK_i} = \dot{{{q}}_y}_{\HH_i} \quad
+q''_{\KK_i} = \dot{{{q}}}_{\HH_i} \quad
+%\quad\text{and}\quad 
+w''_{\KK_i\tts} = w_{\HH_i\tts} = {w_y}_{\HH_i\tts}\cdot \msg[a] = {w'}_{\KK_i\tts}\cdot \msg[a].$$
+
+Since $(\dot{q_y}_{\HH_i} %{\HH_j}
+,\KK_i\tts!\msg[a],\dot{q}_{\HH_i})\in \delta^\cs_{\KK_i}$,
+we get $\restrict{s_y}{\cs}\lts{\KK_i\tts!\msg[a]}\restrict{s}{\cs}$ and thus $\restrict{s}{\cs}\in \RS(\cs)$.
+\end{description}
+\end{proof}
+
+
+
+%Item (\ref{lem:nohatrestrict-b}) of the previous lemma could actually be strengthened \bmc how? \emc to
+%$\restrict{s}{\cs}\in RS(\cs)$, but we actually do not need such a stronger statement in
+%the following results. The following lemma would in fact suffice when we shall deal with
+%a $\restrict{s}{\cs}\in RS(\cs)$ projection in case $({q}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I)$ does not hold.
+
+The following lemma will be handy to prove the preservation of reception-error freedom (\cref{prop:nurPreservation}). Roughly, it states that from any reachable configuration we can reach
+configurations not containing any of the gateway intermediate states. 
+In fact, the single outgoing transitions out of them are, by definition of gateway, output transitions. They can hence be always fired, so increasing the lengths of the corresponding buffers.
+\begin{lemma}
+\label{lem:addendum}
+Let $s = (\vec{q},\vec{w}) \in \RS(S)$. Then there exists $s'= (\vec{q'},\vec{w'}) \in \RS(S)$ such that $s \to^* s'$,
+$|w_{\ttp\ttq}| \leq |w'_{\ttp\ttq}|$ for all $\ttp\ttq \in C$
+and,  for each $i \in I$, $q'_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ and
+ $(q_{\HH_i}\not\in\widehat{Q_{\HH_i}} \implies q'_{\HH_i}= q_{\HH_i})$.
+%Let $s = (\vec{q},\vec{w}) \in RS(S)$. % where $S = \MC(\Set{S_i}_{i\in I}, \cs)$.
+%Then $s \lts{}^* s'= (\vec{q}',\vec{w}') $ such that 
+%${q'}_{\HH_k}\not\in\widehat{Q_{\HH_k}}$ for each $k\in I$.
+%Moreover, for each $k\in I$, $q_{\HH_k}\not\in\widehat{Q_{\HH_k}} \implies q'_{\HH_k}= q_{\HH_k}$.
+\end{lemma}
+\begin{proof}
+If ${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$  for each $i\in I$, we are done by setting $s'=s$.
+Otherwise, given an $i\in I$ such that  ${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$, 
+%\brc : ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ replaced by
+%${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$\erc 
+by~\cref{fact:uniquesending}(\ref{fact:uniquesending-i}) we can infer that there exists a configuration transition of the form
+$$
+s \lts{\HH_k\tts!\msg[a]} s''
+$$
+such that, for $s'' = (\vec{q''}, \vec{w''})$, it holds that 
+$|w_{\ttp\ttq}| \leq |w''_{\ttp\ttq}|$ for all $\ttp\ttq \in C$,
+$q''_{\HH_i}\not\in \widehat{Q_{\HH_i}}$ 
+and, for each $j\in I$ with $j\neq i$, $q_{\HH_j}\not\in\widehat{Q_{\HH_j}} \implies q''_{\HH_j}= q_{\HH_j}$.
+By iterating this sort of transitions, we get the thesis.
+\end{proof}
+
+
+
+
+
+
+
+%\bigskip
+%Notice that our previous results do not guarantee preservation of  deadlock freedom.
+%Assume we had two systems $S_1$ and $S_2$ which are both  deadlock-free in the sense of 
+%Definition \ref{def:safeness}(\ref{def:safeness-i})
+%but at least one of them is not strongly deadlock free (= no orphan + progress).
+%Then our current results would not help to say anything about the composed system.
+%In the following subsection we hence provide such a preservation proof
+
+
+
+
+
+
+
+
+
+
+

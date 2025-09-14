@@ -1,0 +1,328 @@
+%!TEX root = JLAMP-Main.tex
+
+
+
+
+\subsection{Gateways versus direct communications}
+
+In Remark \ref{rem:dircomm}, we pointed out how difficult it could be
+ to try and use direct communications to connect systems
+instead of using gateways. We mentioned that using direct communications
+to connect systems $S$ and $S'$ of our working example, 
+the automaton for role $\MM$ should be completely redesigned.
+We provide now a further example supporting the
+gateway approach, in which, to preserve the communication properties
+the whole system needs to be redesigned. 
+
+Let $S_1$ and $S_2$ be the systems of Figure \ref{fig:dircomm}.
+It is not difficult to check that both $S_1$ and $S_2$ are ``well-behaved'' for what concerns communication properties.
+ Moreover, they could be connected through $\HH$ and $\KK$ because these two roles are compatible.\\
+
+\begin{figure}
+
+{\footnotesize
+$$
+\begin{array}{@{\hspace{-6mm}}c@{\hspace{0cm}}c}
+      
+ 
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt A}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+      %      (two)  edge                                   node {\edgelabel{JM}!{text}} (one)
+           (one) edge       [bend left=100]       node [ left] {\edgelabel{AH}{!}{n}} (two)
+                   edge        [bend right=100]      node [ left] {\edgelabel{AH}{!}{m}} (two)
+           (two) edge   node{\edgelabel{AB}{!}{f}} (three);
+           
+       \end{tikzpicture}
+      &
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt H}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+      %      (two)  edge                                   node {\edgelabel{JM}!{text}} (one)
+           (one) edge       [bend left=100]       node [ left] {\edgelabel{AH}{?}{n}} (two)
+                   edge        [bend right=100]      node [ left] {\edgelabel{AH}{?}{m}} (two)
+           (two) edge   node{\edgelabel{BH}{?}{r}} (three);
+           
+       \end{tikzpicture}\\[8mm]
+  \multicolumn{2}{c}{
+                   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt B}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+      %      (two)  edge                                   node {\edgelabel{JM}!{text}} (one)
+           (one) edge        node [ left] {\edgelabel{AB}{?}{f}}  (two)
+           (two) edge   node{\edgelabel{BH}{!}{r}} (three);
+           
+       \end{tikzpicture}
+                              }
+   \end{array}                 
+                              
+       &
+            
+  
+    
+\end{array}
+\hspace{8mm}
+\begin{array}{c@{}c}
+            \begin{array}{c}
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt K}};
+  \node[state]            (two) [below  left of=one] {$2$};
+  \node[state]            (three) [below right of=one] {$3$};
+  \node[state]            (four) [below left of=three] {$4$};
+
+
+   \path  (start) edge node {} (one) 
+           (one) edge       [bend left]       node [ right] {\edgelabel{KD}{!}{n}} (three)
+                   edge        [bend right]      node [ left] {\edgelabel{KC}{!}{m}} (two)
+           (two) edge [bend right]   node[ left]{\edgelabel{KC}{!}{r}} (four)
+           (three) edge [bend left]  node[ right]{\edgelabel{KD}{!}{r}} (four);
+           
+       \end{tikzpicture}
+       \\
+       \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{C}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{KC}{?}{m}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{DC}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{KC}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{CD}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+       \end{array}
+ &
+     \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{D}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{KD}{?}{n}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{CD}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{KD}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{DC}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+\end{array}
+$$
+}
+
+\caption{$S_1$ and $S_2$ for the direct-communications example}\label{fig:dircomm}
+\end{figure}
+
+ Now let us try using direct communications to connect the two systems, getting rid of the gateways $\HH$ and $\KK$.
+ For what concerns role $\AA$, one could think of simply modifying the target roles of communications in the following way:
+ 
+ {\footnotesize
+$$
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt A}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+      %      (two)  edge                                   node {\edgelabel{JM}!{text}} (one)
+           (one) edge       [bend left=100]       node [ left] {\edgelabel{AD}{!}{n}} (two)
+                   edge        [bend right=100]      node [ left] {\edgelabel{AC}{!}{m}} (two)
+           (two) edge   node{\edgelabel{AB}{!}{f}} (three);
+           
+       \end{tikzpicture}
+$$
+}
+
+For what concerns roles $\CC$ and $\DD$, the source roles of some of their communication
+could be simply renamed as follows:
+
+{\footnotesize
+$$
+\begin{array}{c@{}c}
+            \begin{array}{c}
+       
+       \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{C}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{AC}{?}{m}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{DC}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{BC}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{CD}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+       \end{array}
+ &
+     \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{D}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{AD}{?}{n}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{CD}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{BD}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{DC}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+\end{array}
+$$
+}
+
+It remains to modify $\BB$ for getting direct communications.
+The transition from state 2 to 3 could be relabelled either to $\BB\CC\texttt{!r}$ or to
+$\BB\DD\texttt{!r}$. 
+It is, however, not difficult to check that none of the two modification of $\BB$ would lead to a system enjoying the progress property.
+In fact, $\BB$ has no way to know whether $\AA$ has chosen to send $\texttt{m}$ to $\CC$ or
+$\texttt{n}$ to $\DD$. Without such an information, the system could reach a weak-deadlock configuration.
+
+The only possibility to recover progress would be to redesign the system as shown in Figure \ref{fig:recprogr}.
+In particular, we must redesign the machines for $\AA$ and for $\BB$, by adding several new states and communications.
+
+
+
+
+
+
+\begin{figure}
+{\footnotesize
+$$
+\begin{array}{@{\hspace{-6mm}}c@{\hspace{0cm}}c}
+      
+ 
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt A}};
+  \node[state]            (two) [below left of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+  \node[state]            (four) [below right of=three] {$4$};
+  \node[state]            (five) [below right of=one] {$5$};
+  \node[state]            (six) [below of=five] {$6$};
+
+   \path  (start) edge node {} (one) 
+            (one) edge       [bend right]       node [ left] {\edgelabel{AC}{!}{m}} (two)
+                   edge        [bend left]      node [ right] {\edgelabel{AD}{!}{n}} (five)
+           (two) edge   node{\edgelabel{AB}{!}{f}} (three)
+           (five) edge   node{\edgelabel{AB}{!}{f}} (six)
+           (three) edge  [bend right] node  [ left]{\edgelabel{AB}{!}{m}} (four)
+           (six) edge  [bend left] node{\edgelabel{AB}{!}{n}} (four);
+           
+       \end{tikzpicture}
+      &
+                   \\[8mm]
+  \multicolumn{2}{c}{
+                  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt B}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below left  of=two] {$3$};
+  \node[state]            (four) [below right of=three] {$4$};
+  \node[state]            (five) [below right of=two] {$5$};
+
+
+   \path  (start) edge node {} (one) 
+           (one) edge   node{\edgelabel{AB}{?}{f}} (two)
+            (two) edge       [bend right]       node [ left] {\edgelabel{AB}{?}{m}} (three)
+                   edge        [bend left]      node [ right] {\edgelabel{AB}{?}{n}} (five)
+           (three) edge  [bend right] node  [ left]{\edgelabel{BC}{!}{m}} (four)
+           (six) edge  [bend left] node{\edgelabel{BD}{!}{n}} (four);
+           
+       \end{tikzpicture}
+                              }
+   \end{array}                 
+                              
+       &
+            
+  
+    
+\end{array}
+\hspace{8mm}
+\begin{array}{c@{}c}
+            \begin{array}{c}
+       
+       \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{C}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{AC}{?}{m}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{DC}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{BC}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{CD}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+       \end{array}
+ &
+     \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{D}$};
+                     \node[state]            (two) [below left  of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                      \node[state]            (four) [below of=three] {$4$};
+                     \node[state]            (five) [below right of=one] {$5$};
+                     
+             \path  (start) edge node {} (one) 
+                      (one)  edge           node [pos=0.2, left] {\edgelabel{AD}{?}{n}} (two)
+                                edge           node [pos=0.2, right] {\edgelabel{CD}{?}{g}} (five)
+                      (two)  edge           node [left] {\edgelabel{BD}{?}{r}} (three)        
+                      (three)  edge         node [left] {\edgelabel{DC}{!}{g}} (four);
+                     \end{tikzpicture}
+      \end{array}
+\end{array}
+$$
+}
+\caption{Recovering progress in the direct-communications example}\label{fig:recprogr}
+\end{figure}
+
+
+
+ 
+ 
+ 
+

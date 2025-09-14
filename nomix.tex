@@ -1,0 +1,1047 @@
+%!TEX root = JLAMP-Main.tex
+
+
+\section{Discussion  of the Assumptions and Usefulness of Gateways}
+\label{sec:nomix}
+
+In this section we discuss {\em no mixed state} and {\em ?!-determinsm} assumptions and provide for each case counterexamples showing that, by omitting one of the two assumptions preservation results fail. The literature gives already a hint that both assumptions are important.
+In~\cite{GMY80} it has been shown that two compatible finite state machines which are deterministic and have no mixed states are free from deadlocks and unspecified receptions. 
+C{\'{e}}c{\'{e} and Finkel show in~\cite{CF05} that two compatible finite state machines
+yield a half-duplex system under the restriction that both don't have mixed states and are deterministic.
+Moreover, they show that for half-duplex systems of two CFSMs several properties, among them deadlock-freeness and the absence of unspecified receptions, are decidable. It is still worth to discuss the relevance
+of our two restrictions, since we are dealing with a different problem, namely preservation of communication properties under composition of open systems, and we use distinguished gateways for their connection.
+
+
+\subsection{The no mixed state assumption}
+\label{sec:nomix-assumption}
+
+The impact of the no mixed state assumption for interface compatibility is interesting,
+since for interfaces whose machines have mixed states, their gateways do, by definition, not have mixed states.
+Nevertheless the no mixed state assumption is important since a mixed state $q$ of an interface machine
+gives rise to two types of receiving actions in the state $q$ of its gateway, one coming from inside and one coming from outside. %; see the example below.  
+
+
+%\paragraph{Mixed states and orphan messages}
+%
+%Let us consider 
+%a system $S_1$ with roles {\tt A} and $\HH$,  where $\HH$ is the interface,
+%and let $S_2$ be a system with roles {\tt B} and $\KK$, where $\KK$ is the interface.
+%Let us assume $M_\HH$ and $M_\KK$ to be the following CFSMs:
+%
+%{\footnotesize
+%$$
+%\begin{array}{c@{\hspace{2cm}}c}
+%      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+% 
+%  \node[state]           (one)                        {$1$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+%  \node[state]            (two) [below left of=one] {$2$};
+%  \node[state]           (three) [below right of=one] {$3$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (two)
+%                      edge                                   node  {\edgelabel{HA}!{b}} (three);
+%
+%       \end{tikzpicture}
+%       &
+%       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+%  
+%
+%  \node[state]           (one)                        {$1$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+%  \node[state]            (two) [below left of=one] {$2$};
+%  \node[state]           (three) [below right of=one] {$3$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+%                      edge                                   node  {\edgelabel{BK}?{b}} (three);
+%
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%}
+%
+%The two machines have dual languages and are ?!-deterministic, 
+%but both have a mixed state.
+%Let us now consider the following CFSMs representing
+%$\gateway{M_\HH,\KK}$ and $\gateway{M_\KK,\HH}$:
+%
+%
+%{\footnotesize
+%$$
+%\begin{array}{c@{\hspace{2cm}}c}
+%      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+% 
+%  \node[state]           (one)                        {$1$};
+%  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+%  \node[state]            (two) [below left of=hatonetwo] {$2$};
+%  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+%  \node[state]           (three) [below right of=hatonethree] {$3$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (hatonetwo)
+%                  edge                                   node  {\edgelabel{KH}?{b}} (hatonethree)
+%             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{HK}!{a}} (two)
+%             (hatonethree)  edge                                   node {\edgelabel{HA}!{b}} (three);
+%
+%       \end{tikzpicture}
+%       &
+%       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+%  
+%
+%   \node[state]           (one)                        {$1$};
+%  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+%  \node[state]            (two) [below left of=hatonetwo] {$2$};
+%  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+%  \node[state]           (three) [below right of=hatonethree] {$3$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [pos=0.1,left] {\edgelabel{HK}?{a}} (hatonetwo)
+%                  edge                                   node  {\edgelabel{BK}?{b}} (hatonethree)
+%             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+%             (hatonethree)  edge                                   node {\edgelabel{KH}!{b}} (three);
+%
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%}
+%
+%Assume that in $S_1$ the machine of {\tt A} sends {\sf a} to {\tt H} and then terminates,
+%and in $S_2$ the machine of {\tt B} sends {\sf b} to {\tt K} and then terminates.
+%Obviously, both $S_1$ and $S_2$ are free from orphan messages.
+%But if $S_1$ and $S_2$ were connected by using the above gateway machines
+%then all machines can get into final states where the buffers between $\HH$ and $\KK$ are not empty;
+%more precisely,  $\gateway{M_\HH,\KK}$ has reached state {\tt 2}, $w_{\HH\KK}=\mess{a}$, 
+%$\gateway{M_\KK,\HH}$ has reached state {\tt 3}, and $w_{\KK\HH}=\mess{b}$.
+%Thus $S={S_{1}}\connect{\HH}{\KK} {S_{2}}$ has an orphan-message configuration.
+
+
+%\paragraph{Mixed states, deadlock, progress and unspecified reception}
+\paragraph{Mixed states, deadlock and progress}
+Let us consider 
+a system $S_1$ with roles {\tt A} and $\HH$,  where $\HH$ is the interface,
+and let $S_2$ be a system with roles {\tt B} and $\KK$, where $\KK$ is the interface.
+Let us assume $M_\HH$ and $M_\KK$ to be the following CFSMs:
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{2cm}}c}
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+ 
+  \node[state]           (one)                        {$1$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+  \node[state]            (two) [below left of=one] {$2$};
+  \node[state]           (three) [below right of=one] {$3$};
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (two)
+                      edge                                   node  {\edgelabel{HA}!{b}} (three);
+
+       \end{tikzpicture}
+       &
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+  \node[state]           (one)                        {$1$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+  \node[state]            (two) [below left of=one] {$2$};
+  \node[state]           (three) [below right of=one] {$3$};
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+                      edge                                   node  {\edgelabel{BK}?{b}} (three);
+
+       \end{tikzpicture}
+\end{array}
+$$
+}
+
+The two machines have dual languages and are ?!-deterministic, 
+but both have a mixed state.
+Let us now consider the following CFSMs representing
+$\gateway{M_\HH,\KK}$ and $\gateway{M_\KK,\HH}$:
+
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{2cm}}c}
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+ 
+  \node[state]           (one)                        {$1$};
+  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+  \node[state]            (two) [below left of=hatonetwo] {$2$};
+  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+  \node[state]           (three) [below right of=hatonethree] {$3$};
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (hatonetwo)
+                  edge                                   node  {\edgelabel{KH}?{b}} (hatonethree)
+             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{HK}!{a}} (two)
+             (hatonethree)  edge                                   node {\edgelabel{HA}!{b}} (three);
+
+       \end{tikzpicture}
+       &
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+   \node[state]           (one)                        {$1$};
+  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+  \node[state]            (two) [below left of=hatonetwo] {$2$};
+  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+  \node[state]           (three) [below right of=hatonethree] {$3$};
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{HK}?{a}} (hatonetwo)
+                  edge                                   node  {\edgelabel{BK}?{b}} (hatonethree)
+             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+             (hatonethree)  edge                                   node {\edgelabel{KH}!{b}} (three);
+
+       \end{tikzpicture}
+\end{array}
+$$
+}
+
+%Now suppose 
+Suppose that in $S_1$ above the machine of {\tt A} has a single transition waiting to receive {\sf b} from $\HH$ and terminates when it has received {\sf b}.
+Similarly, in $S_2$ the machine of {\tt B} waits to receive {\sf a} from $\KK$ and terminates when it has received {\sf a}.
+Obviously, both $S_1$ and $S_2$ satisfy the progress property and therefore are also deadlock-free.
+(Moreover, $S_1$ and $S_2$ are orphan-message free and reception-error free.)
+But if $S_1$ and $S_2$ were connected by the gateways, the system $S={S_{1}}\connect{\HH}{\KK} {S_{2}}$
+is immediately in a deadlock configuration where all machines wait for the reception of a message
+and all buffers are empty. Moreover, this shows that $S$ does also not satisfy the progress property.
+
+\paragraph{Mixed states and unspecified reception}
+
+To get a counterexample in the case of unspecified receptions, we extend the two machines
+$M_\HH$ and $M_\KK$ as follows:
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{2cm}}c}
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+ 
+  \node[state]           (one)                        {$1$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+  \node[state]            (two) [below left of=one] {$2$};
+  \node[state]           (three) [below right of=one] {$3$};
+   \node[state]           (four) [below left of=two] {$4$};
+    \node[state]           (five) [below right of=two] {$5$};
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (two)
+                      edge                                   node  {\edgelabel{HA}!{b}} (three)
+            (two)  edge                                   node [pos=0.1,left] {\edgelabel{HA}!{c}} (four)
+ 			edge                                   node {\edgelabel{AH}?{d}} (five);
+
+       \end{tikzpicture}
+       &
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+  \node[state]           (one)                        {$1$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+  \node[state]            (two) [below left of=one] {$2$};
+  \node[state]           (three) [below right of=one] {$3$};
+    \node[state]           (four) [below left of=two] {$4$};
+        \node[state]           (five) [below right of=two] {$5$};
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+                      edge                                   node  {\edgelabel{BK}?{b}} (three)
+	     (two)  edge                                   node [pos=0.1,left] {\edgelabel{BK}?{c}} (four)
+	              edge                                   node {\edgelabel{KB}!{d}} (five);
+
+       \end{tikzpicture}
+\end{array}
+$$
+}
+
+The two machines have dual languages and are ?!-deterministic, 
+%satisfy conditions 1) and 3) of our compatibility notion in Definition~\ref{interface-comp}, part i),
+but both have mixed states.
+The gateway machines $\gateway{M_\HH,\KK}$ and $\gateway{M_\KK,\HH}$
+are the following CFSMs:
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{2cm}}c}
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+ 
+  \node[state]           (one)                        {$1$};
+  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+  \node[state]            (two) [below left of=hatonetwo] {$2$};
+  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+  \node[state]           (three) [below right of=hatonethree] {$3$};
+      \node[state]           (hattwofour) [below left of=two] {$\widehat{2}'$};
+    \node[state]           (four) [below left of=hattwofour] {$4$};
+        \node[state]           (hattwofive) [below right of=two] {$\widehat{2}''$};
+    \node[state]           (five) [below right of=hattwofive] {$5$};
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{AH}?{a}} (hatonetwo)
+                  edge                                   node  {\edgelabel{KH}?{b}} (hatonethree)
+             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{HK}!{a}} (two)
+             (hatonethree)  edge                                   node {\edgelabel{HA}!{b}} (three)
+              (two)  edge                                   node [pos=0.1,left] {\edgelabel{KH}?{c}} (hattwofour)
+                  edge                                   node  {\edgelabel{AH}?{d}} (hattwofive)
+            (hattwofour)  edge                                   node [pos=0.1,left] {\edgelabel{HA}!{c}} (four)
+             (hattwofive)  edge                                   node {\edgelabel{HK}!{d}} (five);
+       \end{tikzpicture}
+\end{array}
+$$
+}
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{2cm}}c}
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+   \node[state]           (one)                        {$1$};
+  \node[state]           (hatonetwo)          [below left of=one]              {$\widehat{1}'$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+  \node[state]            (two) [below left of=hatonetwo] {$2$};
+  \node[state]           (hatonethree) [below right of=one] {$\widehat{1}''$};
+  \node[state]           (three) [below right of=hatonethree] {$3$};
+    \node[state]           (hattwofour) [below left of=two] {$\widehat{2}'$};
+    \node[state]           (four) [below left of=hattwofour] {$4$};
+        \node[state]           (hattwofive) [below right of=two] {$\widehat{2}''$};
+    \node[state]           (five) [below right of=hattwofive] {$5$};
+ 
+    
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{HK}?{a}} (hatonetwo)
+                  edge                                   node  {\edgelabel{BK}?{b}} (hatonethree)
+             (hatonetwo)  edge                                   node [pos=0.1,left] {\edgelabel{KB}!{a}} (two)
+             (hatonethree)  edge                                   node {\edgelabel{KH}!{b}} (three)
+            (two)  edge                                   node [pos=0.1,left] {\edgelabel{BK}?{c}} (hattwofour)
+                  edge                                   node  {\edgelabel{HK}?{d}} (hattwofive)
+            (hattwofour)  edge                                   node [pos=0.1,left] {\edgelabel{KH}!{c}} (four)
+             (hattwofive)  edge                                   node {\edgelabel{KB}!{d}} (five);
+
+
+       \end{tikzpicture}
+\end{array}
+$$
+}
+
+Assume that in $S_1$ the machine of {\tt A} sends % two times {\sf a} and then terminates.
+repeatedly (in a loop) message {\sf a} and then terminates,
+and in $S_2$ the machine of {\tt B} sends %{\sf b} and then terminates.
+repeatedly (in a loop) message {\sf b} and then terminates.
+Both $S_1$ and $S_2$ are free from unspecified reception errors since none of their machines has a receiving state.
+(Moreover, $S_1$ and $S_2$ are deadlock-free, orphan-message free and satisfy the progress property.)
+To see that $S={S_{1}}\connect{\HH}{\KK} {S_{2}}$ has an unspecified reception configuration we
+perform the following execution in $S$:
+
+\vspace{2mm}
+\noindent{\tt B} puts {\sf b} into the buffer $w_{\BB\KK}$;\\
+{\tt K} consumes {\sf b} from the buffer $w_{\BB\KK}$;\\
+{\tt K} puts {\sf b} into the buffer $w_{\KK\HH}$;\\
+{\tt A} puts {\sf a} into the buffer $w_{\AA\HH}$;\\
+{\tt H} consumes {\sf a} from the buffer $w_{\AA\HH}$;\\
+{\tt H} puts {\sf a} into the buffer $w_{\HH\KK}$;\\
+{\tt A} puts {\sf a} into the buffer $w_{\AA\HH}$;
+
+\vspace{2mm}
+Now $w_{\KK\HH} = {\sf b}, w_{\AA\HH} = {\sf a}$
+and the machine $\gateway{M_\HH,\KK}$ is in receiving state {\tt 2}
+expecting either the element {\sf c} in the buffer $w_{\KK\HH}$
+or the element {\sf d} in the buffer $w_{\AA\HH}$.
+Thus we have reached an unspecified reception configuration.\footnote{ 
+Let us remark here that it is an open question whether 
+the no mixed state assumption is really needed for preservation of orphan-message freeness.} 
+
+\subsection{The ?!-determinism assumption}
+\label{sec:det-assumption}
+
+The notion of  ?!-determinsm requires that interfaces should have a deterministic
+behaviour when focusing just on the names of the messages and on their type (input or output).
+To abstract away the roles involved in sending and receiving messages to and from an interface
+looks quite natural.
+While in CFSM systems the presentation of a message 
+depends also on the involved channel, an open system
+receives or sends a message via an interface playing the role of an environment whose constitution is unknown.
+Thus an open system simply knows that the message is coming from or going to another open system; the information about the specific role which sent or received it is necessarily to be abstracted away.
+%For what concerns the second conditions, it intuitively states that
+%the meaning of messages passed between connected systems must not {\em depend} on
+%the participant that actually sent it (i.e. the gateways must be sort of {\em  deterministic with respect to the messages}).
+%This does not come as an actual surprise.
+%In CFSMs systems the meaning of a message 
+%depends also on the role which sent it. However, if a system receives it through a gateway,
+%it simply knows that the message is coming from another system; the information about the specific role which sent it is necessarily abstracted from.
+%So, any message exchanged between connected systems must have an unambiguos meaning.\\
+For a more precise understanding, we illustrate the above intuitive argument by means of examples.
+
+\paragraph{Non $?!$-determinism and orphan-messages}
+
+
+Let $S_1 = (M_\ttp)_{\ttp\in\Set{\HH,\AA}}$ and $S_2 = (M_\ttp)_{\ttp\in\Set{\KK,\BB,\CC}}$ be the systems
+with the following components:
+
+{\footnotesize
+$$
+\begin{array}{@{\hspace{0mm}}c@{\hspace{0cm}}c}
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\AA$};
+                     \node[state]            (two) [below of=one] {$2$};
+                     \node[state]           (three)          [below of=two]              {$3$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge           node [left] {\edgelabel{HA}?{a}} (two)
+                                              (two)  edge           node [left] {\edgelabel{AH}!{b}} (three);
+                     \end{tikzpicture}
+      &
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+                     \node[state]            (two) [below of=one] {$2$};
+                     \node[state]           (three)          [below of=two]              {$3$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge           node [left] {\edgelabel{HA}!{a}} (two)
+                                              (two)  edge           node [left] {\edgelabel{AH}?{b}} (three);
+                     \end{tikzpicture}
+   \end{array}                   
+\hspace{22mm}
+ \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+                     \node[state]            (two) [below of=one] {$2$};
+                     \node[state]           (three)          [below of=two]              {$3$};
+                     \node[state]           (four)          [below right of=one]              {$4$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge           node [left] {\edgelabel{CK}?{a}} (two)
+                                              (two)  edge           node [left] {\edgelabel{KC}!{b}} (three)
+                                              (one)  edge           node [pos = 0.1, right] {\edgelabel{BK}?{a}} (four);
+                     \end{tikzpicture}
+      &
+                 \begin{array}{c} 
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\BB$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{BK}!{a}} (two);
+                     \end{tikzpicture}\\
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\CC$};
+                     
+                                  \path  (start) edge node {} (one);
+                     \end{tikzpicture}
+                  \end{array} 
+   \end{array}    
+\end{array}     
+$$
+}
+
+%S1 consists of the following H and A:
+%
+%H:
+%0 --HA!a--> 1 --AH?b--> 2
+%A:
+%0 --HA?a--> 1 --AH!b--> 2
+%
+%S2 consists of the following K, C, D:
+%
+%K:
+%0 --CK?a--> 1 --KC!b--> 2
+%0 --DK?a--> 3
+%C:
+%0 (no transition)
+%D:
+%0 --DK!a--> 1
+Obviously, both $M_\HH$ and $M_\KK$
+ have no mixed state and are compatible, but %are not $?!$-deterministic. In particular, 
+ $M_\KK$ is not $?$-deterministic.
+ Moreover, both systems $S_1$ and $S_2$ are orphan-message free (and deadlock-free, reception-error free and progressing). In fact:\\
+ In $S_1$, $\AA$ and $\HH$ exchange messages $\mess{a}$ and $\mess{b}$ and the system so terminates in a final configuration with
+ all the buffers empty.
+ In $S_2$, $\BB$ can send $\mess{a}$ to $\KK$ which consumes the message from the buffer and then 
+ the system terminates with all buffers empty.
+ %the only first possible two transitions consists in $\BB$ sending the message $\mess{b}$ to $\KK$, which receives it and the systems so terminates in a final configuration with
+%all the buffers empty. 
+ The left branch of $\KK$ can never be followed,
+  %it starts with an input from $\CC$, which can never be fired,
+since $\CC$ is unable to send any message. %, being it made of a single state.\\
+However, the composed system $S_1\connect{\HH}{\KK}S_2$, described in  Figure~\ref{fig:ompgw},  is not
+ orphan-message free. In fact, the following can happen:
+ 
+\begin{figure}[ht]
+%\label{fig:ompgw} moved to caption
+{\footnotesize
+$$
+\begin{array}{@{\hspace{0mm}}c@{\hspace{0cm}}c}
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\AA$};
+                     \node[state]            (two) [below of=one] {$2$};
+                     \node[state]           (three)          [below of=two]              {$3$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge           node [left] {\edgelabel{HA}?{a}} (two)
+                                              (two)  edge           node [left] {\edgelabel{AH}!{b}} (three);
+                     \end{tikzpicture}
+      &
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[state]           (onew)          [below of=one]              {$\widehat{1}$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+                     \node[state]            (two) [below of=onew] {$2$};
+                     \node[state]            (twow) [below of=two] {$\widehat{2}$};
+                     \node[state]           (three)          [below of=twow]              {$3$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge           node [left] {\edgelabel{KH}?{a}} (onew)
+                                             (onew)  edge           node [left] {\edgelabel{HA}!{a}} (two)
+                                             (two)  edge           node [left] {\edgelabel{AH}?{b}} (twow)
+                                              (twow)  edge           node [left] {\edgelabel{HK}!{b}} (three);
+                     \end{tikzpicture}
+   \end{array}                   
+\hspace{6mm}
+ \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[state]           (onew)       [below of=one]        {$\widehat{1}$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+                     \node[state]            (two) [below of=onew] {$2$};
+                     \node[state]            (twow) [below of=two] {$\widehat{2}$};
+                     \node[state]           (three)          [below of=twow]              {$3$};
+                     \node[state]           (fourw)          [below right of=one]              {$\widehat{1'}$};
+                     \node[state]           (four)          [below  of=four]              {$4$};
+                                  \path  (start) edge node {} (one) 
+                                              (one)  edge           node [left] {\edgelabel{CK}?{a}} (onew)
+                                             (onew)  edge           node [left] {\edgelabel{KH}!{a}} (two)
+                                             (two)  edge           node [left] {\edgelabel{HK}?{b}} (twow)
+                                              (twow)  edge           node [left] {\edgelabel{KC}!{b}} (three)
+                                              (one)  edge           node [pos = 0.1, right] {\edgelabel{BK}?{a}} (fourw)
+                                              (fourw)  edge           node [left] {\edgelabel{KH}!{a}} (four);
+                     \end{tikzpicture}
+      &
+                 \begin{array}{c} 
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\BB$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{BK}!{a}} (two);
+                     \end{tikzpicture}\\
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\CC$};
+                     
+                                  \path  (start) edge node {} (one);
+                     \end{tikzpicture}
+                  \end{array} 
+   \end{array}    
+\end{array}     
+$$
+}
+\caption{$S_1\connect{\HH}{\KK}S_2$ of the counterexample for orphan-message freeness preservation in absence of $?!$-determinism}\label{fig:ompgw}
+\end{figure}
+
+
+\vspace{2mm}
+\noindent{\tt B} puts {\sf a} into the buffer $w_{\BB\KK}$ and reaches its final state;\\
+{\tt K} consumes {\sf a} from the buffer $w_{\BB\KK}$;\\
+{\tt K} puts {\sf a} into the buffer $w_{\KK\HH}$ and reaches a final state;\\
+{\tt H} consumes {\sf a} from the buffer $w_{\KK\HH}$;\\
+{\tt H} puts {\sf a} into the buffer $w_{\HH\AA}$;\\
+{\tt A} consumes {\sf a} from the buffer $w_{\HH\AA}$;\\
+{\tt A} puts {\sf b} into the buffer $w_{\AA\HH}$ and reaches its final state;\\
+{\tt H} consumes {\sf b} from the buffer $w_{\AA\HH}$;\\
+{\tt H} puts {\sf b} into the buffer $w_{\HH\KK}$ and reaches its final state.
+\vspace{2mm}
+
+Notice that $\CC$ is already in its final state (which is also the initial one).
+So, by the above transition sequence,  system $S_1\connect{\HH}{\KK}S_2$ reaches
+a  configuration where all the machines are in a final state, whereas not all the buffers are empty,
+since  $w_{\HH\KK}=\mess{b}$. This means that an orphan-message configuration  belongs to 
+the set of reachable configurations of $S_1\connect{\HH}{\KK}S_2$.
+The crucial point of the counterexample is that compatibility of interface roles
+based on comparing languages cannot discover incompatible behaviours
+if nondeterminism is involved.
+
+
+%=======================
+%
+%\noindent
+%Let us consider the following systems $S_1$ and $S_2$:
+%In $S_1$ the interface  role $\II$ receives twice a message {\sf a} from the role {\tt A} and terminates, but
+%can also receive once the message {\sf a} from the role {\tt B} and terminate.
+%In $S_2$ the interface role $\JJ$ sends twice a message {\sf a} to  role {\tt C} and terminates,
+%but can also send  once a message {\sf a} to  role {\tt D} and terminate.
+%The CFSMs corresponding to $\II$ and $\JJ$ look as follows:
+%
+%
+%{\footnotesize
+%$$
+%\begin{array}{c@{\hspace{2cm}}c}
+%      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+% 
+%  \node[state]           (one)                        {$1$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\II$};
+%  \node[state]            (two) [left of=one] {$2$};
+%  \node[state]           (three) [left of=two] {$3$};
+%  \node[state]           (four)  [below of=two] {$4$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [above] {\edgelabel{AI}?{a}} (two)
+%                      edge                                   node  {\edgelabel{BI}?{a}} (four)
+%           (two) edge                                     node  [above] {\edgelabel{AI}{?}{a}} (three);
+%
+%       \end{tikzpicture}
+%       &
+%       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+%  
+%   \node[state]           (one)                        {$1$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\JJ$};
+%  \node[state]            (two) [left of=one] {$2$};
+%  \node[state]           (three) [left of=two] {$3$};
+%  \node[state]           (four)  [below of=two] {$4$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [above] {\edgelabel{JC}!{a}} (two)
+%                      edge                                   node  {\edgelabel{JD}!{a}} (four)
+%           (two) edge                                     node  [above] {\edgelabel{JC}{!}{a}} (three);
+%           
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%}
+%
+%
+%Obviously, the above CFSMs have dual languages and no mixed states.
+%But they are not ?!-deterministic.
+%Let us now take into account the CFSMs
+%$\gateway{M_\II,\JJ}$ and $\gateway{M_\JJ,\II}$ depicted below.
+%
+%
+%{\footnotesize
+%$$
+%\begin{array}{c@{\hspace{2cm}}c}
+%      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+% 
+%  \node[state]           (one)                        {$1$};
+%  \node[state]           (hatone)              [left of=one]          {$\widehat {1}'$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\II$};
+%  \node[state]            (two) [left of=hatone] {$2$};
+%  \node[state]            (hattwo) [left of=two] {$\widehat 2$};
+%  \node[state]           (three) [left of=hattwo] {$3$};
+%  \node[state]           (hatfour)  [below of=hatone] {$\widehat {1}''$};
+%  \node[state]           (four)  [below of=two] {$4$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [above] {\edgelabel{AI}?{a}} (hatone)
+%                      edge                                   node  {\edgelabel{BI}?{a}} (hatfour)
+%            (hatone) edge                                     node  [above] {\edgelabel{IJ}{!}{a}} (two)
+%           (two) edge                                     node  [above] {\edgelabel{AI}{?}{a}} (hattwo)
+%           (hatfour) edge                                     node  [above] {\edgelabel{IJ}{!}{a}} (four)
+%             (hattwo) edge                                     node  [above] {\edgelabel{IJ}{!}{a}} (three);
+%       
+%
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%}
+%
+%{\footnotesize
+%$$
+%\begin{array}{c@{\hspace{2cm}}c}
+%       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+%  
+%   \node[state]           (one)                        {$1$};
+%  \node[state]           (hatone)              [left of=one]          {$\widehat {1}'$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\JJ$};
+%  \node[state]            (two) [left of=hatone] {$2$};
+%  \node[state]            (hattwo) [left of=two] {$\widehat 2$};
+%  \node[state]           (three) [left of=hattwo] {$3$};
+%  \node[state]           (hatfour)  [below of=hatone] {$\widehat {1}''$};
+%  \node[state]           (four)  [below of=two] {$4$};
+%
+%
+%   \path  (start) edge node {} (one) 
+%            (one)  edge                                   node [above] {\edgelabel{IJ}?{a}} (hatone)
+%                      edge                                   node  {\edgelabel{IJ}?{a}} (hatfour)
+%            (hatone) edge                                     node  [above] {\edgelabel{JC}{!}{a}} (two)
+%           (two) edge                                     node  [above] {\edgelabel{IJ}{?}{a}} (hattwo)
+%           (hatfour) edge                                     node  [above] {\edgelabel{JD}{!}{a}} (four)
+%             (hattwo) edge                                     node  [above] {\edgelabel{JC}{!}{a}} (three);
+%       
+%           
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%}
+%
+%
+%
+%\noindent
+%
+%Assume that in $S_1$ the machine of {\tt A} sends two times {\sf a} and then terminates
+%and {\tt B} does nothing.
+%For system $S_2$ we assume that the machine of {\tt C} receives two times {\sf a} and then terminates
+%and {\tt D} receives one {\sf a} and then terminates.
+%%Obviously, both $S_1$ and $S_2$ are orphan message-free.
+%
+%\vspace{2mm}
+%\textbf{!!Rolf:} I have a problem with this example. To get a counterexample,
+%we must be able to choose {\tt A, B, C, D} such that $S_1$ and $S_2$ are orphan message-free
+%but the composed system is not. What I wrote above is not good, since $S_2$ is not orphan message-free
+%in this case. The reason is that either {\tt C} or {\tt D} would not reach a final state.
+%Also your argument below
+%``We would end up with an orphan message configuration, where all the states are final''
+%would not be true for my choice of {\tt A, B, C, D}. But I don't see an easy solution
+%how to choose {\tt A, B, C, D}?}
+%
+%Moreoever, do we have counterexamples as well for the other properties?
+%\vspace{2mm}
+%
+% Let us see what could happen  if $S_1$ and $S_2$ were connected by using the above machines as gateways:\\
+%{\tt A} sends a message {\sf a} to $\gateway{M_\II,\JJ}$, which is 
+%then passed to $\gateway{M_\JJ,\II}$. Notice that $\gateway{M_\JJ,\II}$ has two different transitions labelled
+%by $\II\JJ?a$. Assume that the transition leading to state $\widehat{1}''$ of $\gateway{M_\JJ,\II}$ is fired, and then the message {\sf a} is
+%delivered to  {\tt D} which consumes the message.
+%Now {\tt A} sends a second message {\sf a} to $\gateway{M_\II,\JJ}$
+%which is put in the buffer to $\gateway{M_\JJ,\II}$.
+%We would end up with an orphan message configuration, where all the states are final, but a message {\sf a} lies unconsumed
+%in the channel from $\gateway{M_\II,\JJ}$ to $\gateway{M_\JJ,\II}$. 
+%Such a  behaviour does not come as a surprise, actually. In system $S'$, the meaning of the message {\sf a}
+%depends also on whom sends it. In case $\JJ$ is an interface role, this role represents the environment.
+%The environment necessarily looks at the message as coming from the system, not as coming from some specific role of the system.
+%So, any message must be unambiguous.
+%=============================================
+
+
+
+\paragraph{Non $?!$-determinism, unspecified reception and progress}
+
+Let us consider the systems $S_1 = (M_\ttp)_{\ttp\in\Set{\HH,\AA,\BB,\CC}}$ and $S_2 = (M_\ttp)_{\ttp\in\Set{\KK,\DD,\EE}}$ as described in Figure~\ref{fig:urfpp}. It is easy to check that both $M_\HH$ and $M_\KK$
+ have no mixed state and are compatible, but are not $?!$-deterministic. In particular, $M_\HH$ is not $!$-deterministic
+ and $M_\KK$ is not $?$-deterministic.
+  Moreover, both systems $S_1$ and $S_2$ are free from unspecified receptions (as well as deadlock-free, orphan-message free and progressing). In particular:\\
+ $S_1$ is free from unspecified receptions since from the initial state machine $\HH$  sends in sequence either the messages 
+ $\mess{a}$, $\mess{c}$ and $\mess{a}$ to, respectively, $\AA$, $\CC$ and $\BB$, or the messages 
+ $\mess{a}$, $\mess{b}$ and $\mess{a}$ to, respectively $\BB$, $\CC$ and $\AA$. In both cases the messages are
+ received and the system arrives at a final configuration with all buffers empty.\\
+ $S_2$ is  free from unspecified receptions since from the initial configuration the only machine that can send messages is
+ $\DD$ and it sends in  sequence the messages 
+ $\mess{a}$, $\mess{c}$ and $\mess{a}$ to $\KK$, which is able to receive all of them by following its left branch.
+ The system hence arrives at a final configuration  with all buffers empty. Notice that $\KK$ cannot ever take its right branch since
+ it starts with an input from $\EE$, which is made of by a single state and no transitions.\\
+ The composed system $S_1\connect{\HH}{\KK}S_2$ is described in  Figure \ref{fig:urfppgw}.
+ It is not free from unspecified receptions since the following can happen:
+  
+  \vspace{2mm}
+\noindent$\DD$ puts $\mess{a}$ into the buffer $w_{\DD\KK}$;\\
+$\KK$ consumes $\mess{a}$ from the buffer $w_{\DD\KK}$;\\
+$\KK$ puts $\mess{a}$ into the buffer $w_{\KK\HH}$;\\
+$\HH$ consumes $\mess{a}$ from the buffer $w_{\KK\HH}$ by going from state $1$ to state $\widehat{1'}$. i.e. by taking its right branch;\\
+$\HH$ puts $\mess{a}$ into the buffer $w_{\HH\BB}$, going from state $\widehat{1'}$ to state $5$;\\
+$\BB$ consumes $\mess{a}$ from the buffer $w_{\HH\BB}$;\\
+$\DD$ puts $\mess{c}$ into the buffer $w_{\DD\KK}$;\\
+$\KK$ consumes $\mess{c}$ from the buffer $w_{\DD\KK}$;\\
+$\KK$ puts $\mess{c}$ into the buffer $w_{\KK\HH}$;\\
+\vspace{2mm}
+
+By the above transition sequence, $S_1\connect{\HH}{\KK}S_2$ reaches a configuration where 
+$\HH$ is in a receiving state, namely $5$, waiting for a message $\mess{b}$, whereas from the nonempty buffer $w_{\KK\HH}$ 
+only the message $\mess{c}$ could be consumed. Moreover $w_{\KK\HH}$ is the only buffer $\HH$ can consume messages from. This means that $S_1\connect{\HH}{\KK}S_2$ can reach an unspecified reception configuration.\\
+
+\begin{figure}
+%\label{fig:urfpp}
+{\footnotesize
+$$
+\begin{array}{@{\hspace{-6mm}}c@{\hspace{0cm}}c}
+      
+ 
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{A}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{HA}?{a}} (two);
+                     \end{tikzpicture}
+      &
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{B}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{HB}?{a}} (two);
+                     \end{tikzpicture}\\[8mm]
+  \multicolumn{2}{c}{
+                   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                   \node[state]           (one)                        {$1$};
+                   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{C}$};
+                   \node[state]            (two) [below left of=one] {$2$};
+                   \node[state]           (three) [below right of=one] {$3$};
+
+                           \path  (start) edge node {} (one) 
+                                    (one)  edge                                   node [pos=0.1,left] {\edgelabel{HC}?{c}} (two)
+                                              edge                                   node  {\edgelabel{HC}?{b}} (three);
+                   \end{tikzpicture}
+                              }
+   \end{array}                 
+                              
+       &
+            
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+       \node[state]           (one)                        {$1$};
+       \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+       \node[state]            (two) [below left of=one] {$2$};
+       \node[state]           (five) [below right of=one] {$5$};
+       \node[state]           (three) [below  of=two] {$3$};
+       \node[state]            (four) [below right of=three] {$4$};
+       \node[state]           (six) [below  of=five] {$6$};
+    %   \node[state]            (seven) [below  of=six] {$7$};
+
+       
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{HA}!{a}} (two)
+                      edge                                   node  {\edgelabel{HB}!{a}} (five)
+             (two)  edge                                   node [left] {\edgelabel{HC}!{c}} (three)        
+             (three)  edge                                  node [pos=0.7,left] {\edgelabel{HB}!{a}} (four)
+              (five)  edge                                   node [left] {\edgelabel{HC}!{b}} (six)        
+             (six)  edge                                  node [pos=0.7, right] {\edgelabel{HA}!{a}} (four);
+
+       \end{tikzpicture}
+    
+\end{array}
+\hspace{12mm}
+\begin{array}{c@{}c}
+            \begin{array}{c}
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+       \node[state]           (one)                        {$1$};
+       \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+       \node[state]            (two) [below left of=one] {$2$};
+       \node[state]           (five) [below right of=one] {$5$};
+       \node[state]           (three) [below  of=two] {$3$};
+       \node[state]            (four) [below right of=three] {$4$};
+       \node[state]           (six) [below  of=five] {$6$};
+  %     \node[state]            (seven) [below  of=six] {$7$};
+
+       
+
+
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{DK}?{a}} (two)
+                      edge                                   node  {\edgelabel{EK}?{a}} (five)
+             (two)  edge                                   node [left] {\edgelabel{DK}?{c}} (three)        
+             (three)  edge                                  node [pos=0.7, left] {\edgelabel{DK}?{a}} (four)
+              (five)  edge                                   node [left] {\edgelabel{EK}?{b}} (six)        
+             (six)  edge                                  node [pos=0.7, right] {\edgelabel{EK}?{a}} (four);
+
+       \end{tikzpicture}\\
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{E}$};
+                              \path  (start) edge node {} (one) ;
+                     \end{tikzpicture}
+       \end{array}
+ &
+   
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{D}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                       \node[state]            (four) [below of=three] {$4$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{DK}!{a}} (two)
+                                            (two)  edge                                   node [left] {\edgelabel{DK}!{c}} (three)        
+                                            (three)  edge                                  node [left] {\edgelabel{DK}!{a}} (four) ;
+                     \end{tikzpicture}
+\end{array}
+$$
+}
+\caption{$S_1$ and $S_2$ of the counterexample for reception-error freeness and progress preservation in absence of $?!$-determinism}\label{fig:urfpp}
+\end{figure}
+
+
+\begin{figure}
+%\label{fig:urfppgw}
+{\footnotesize
+$$
+\begin{array}{@{\hspace{-6mm}}c@{\hspace{0cm}}c}
+      
+ 
+   \begin{array}{cc}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{A}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{HA}?{a}} (two);
+                     \end{tikzpicture}
+      &
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{B}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{HB}?{a}} (two);
+                     \end{tikzpicture}\\[8mm]
+  \multicolumn{2}{c}{
+                   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                   \node[state]           (one)                        {$1$};
+                   \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{C}$};
+                   \node[state]            (two) [below left of=one] {$2$};
+                   \node[state]           (three) [below right of=one] {$3$};
+
+                           \path  (start) edge node {} (one) 
+                                    (one)  edge                                   node [pos=0.1,left] {\edgelabel{HC}?{c}} (two)
+                                              edge                                   node  {\edgelabel{HC}?{b}} (three);
+                   \end{tikzpicture}
+                              }
+   \end{array}                 
+                              
+       &
+            
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+       \node[state]           (one)                        {$1$};
+       \node[state]           (onew)                [below left of=one]         {$\widehat{1}$};
+       \node[state]           (oneww)                [below right of=one]         {$\widehat{1'}$};
+       \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+       \node[state]            (two) [below  of=onew] {$2$};
+       \node[state]            (twow) [below  of=two] {$\widehat{2}$};
+       \node[state]           (five) [below of=oneww] {$5$};
+       \node[state]            (fivew) [below  of=five] {$\widehat{5}$};
+       \node[state]           (three) [below  of=twow] {$3$};
+        \node[state]            (threew) [below  of=three] {$\widehat{3}$};
+       \node[state]            (four) [below right  of=threew] {$4$};
+       \node[state]           (six) [below  of=fivew] {$6$};
+       \node[state]            (sixw) [below  of=six] {$\widehat{6}$};
+  %     \node[state]            (seven) [below  of=sixw] {$7$};
+
+       
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{KH}?{a}} (onew)
+                      edge                                   node  {\edgelabel{KH}?{a}} (oneww)
+              (onew)  edge                                   node [left] {\edgelabel{HA}!{a}} (two)      
+             (oneww)  edge                                   node  [left]   {\edgelabel{HB}!{a}} (five)  
+             (five)  edge                                   node [left] {\edgelabel{KH}?{b}} (fivew) 
+              (two)  edge                                   node [left] {\edgelabel{KH}?{c}} (twow) 
+             (twow)  edge                                   node [left] {\edgelabel{HC}!{c}} (three)    
+              (three)  edge                                   node  [left]  {\edgelabel{KH}?{a}} (threew)    
+             (threew)  edge                                  node [pos=0.7,left] {\edgelabel{HB}!{a}} (four)
+              (fivew)  edge                                   node [left] {\edgelabel{HC}!{b}} (six)    
+              (six)  edge                                   node  [left]  {\edgelabel{KH}?{a}} (sixw)     
+             (sixw)  edge                                  node [pos=0.7,right] {\edgelabel{HA}!{a}} (four);
+
+       \end{tikzpicture}
+    
+\end{array}
+\hspace{6mm}
+\begin{array}{c@{}c}
+            \begin{array}{c}
+       \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+
+      \node[state]           (one)                        {$1$};
+       \node[state]           (onew)                [below left of=one]         {$\widehat{1}$};
+       \node[state]           (oneww)                [below right of=one]         {$\widehat{1'}$};
+       \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\KK$};
+       \node[state]            (two) [below  of=onew] {$2$};
+       \node[state]            (twow) [below  of=two] {$\widehat{2}$};
+       \node[state]           (five) [below of=oneww] {$5$};
+       \node[state]            (fivew) [below  of=five] {$\widehat{5}$};
+       \node[state]           (three) [below  of=twow] {$3$};
+        \node[state]            (threew) [below  of=three] {$\widehat{3}$};
+       \node[state]            (four) [below  right of=threew] {$4$};
+       \node[state]           (six) [below  of=fivew] {$6$};
+       \node[state]            (sixw) [below  of=six] {$\widehat{6}$};
+   %    \node[state]            (seven) [below  of=sixw] {$7$};
+
+       
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node [pos=0.1,left] {\edgelabel{DK}?{a}} (onew)
+                      edge                                   node  {\edgelabel{EK}?{a}} (oneww)
+              (onew)  edge                                   node [left] {\edgelabel{KH}!{a}} (two)      
+             (oneww)  edge                                   node  [left]   {\edgelabel{KH}!{a}} (five)  
+             (five)  edge                                   node [left] {\edgelabel{EK}?{b}} (fivew) 
+              (two)  edge                                   node [left] {\edgelabel{DK}?{c}} (twow) 
+             (twow)  edge                                   node [left] {\edgelabel{KH}!{c}} (three)    
+              (three)  edge                                   node  [left]  {\edgelabel{DK}?{a}} (threew)    
+             (threew)  edge                                  node [pos=0.7, left] {\edgelabel{KH}!{a}} (four)
+              (fivew)  edge                                   node [left] {\edgelabel{KH}!{b}} (six)    
+              (six)  edge                                   node  [left]  {\edgelabel{EK}?{a}} (sixw)     
+             (sixw)  edge                                  node [pos=0.7, right] {\edgelabel{KH}!{a}} (four);
+       \end{tikzpicture}
+       \end{array}
+ &
+     \begin{array}{c}
+                     \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{D}$};
+                     \node[state]            (two) [below of=one] {$2$};
+                      \node[state]            (three) [below of=two] {$3$};
+                       \node[state]            (four) [below of=three] {$4$};
+                                  \path  (start) edge node {} (one) 
+                                             (one)  edge                                   node [left] {\edgelabel{DK}!{a}} (two)
+                                            (two)  edge                                   node [left] {\edgelabel{DK}!{c}} (three)        
+                                            (three)  edge                                  node [left] {\edgelabel{DK}!{a}} (four) ;
+                     \end{tikzpicture}\\
+                    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+                     \node[state]           (one)                        {$1$};
+                     \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\mathtt{E}$};
+                              \path  (start) edge node {} (one) ;
+                     \end{tikzpicture}
+      \end{array}
+\end{array}
+$$
+}
+\caption{$S_1\connect{\HH}{\KK}S_2$ of the counterexample for reception-error freeness and progress preservation in absence of $?!$-determinsm}\label{fig:urfppgw}
+\end{figure}
+
+Systems $S_1$ and $S_2$ are actually a counterexample also to the progress property. In fact, by the previous short descriptions
+of the behaviours of $S_1$ and $S_2$, it can be checked that both of them enjoy the progress property.
+Moreover, the  transition sequence described above, leads to a stuck configuration which is not made by final states only.
+
+As before, the counterexample relies on the fact that due to nondeterminism
+the compatibility of $M_\HH$ and $M_\KK$ (based on comparing languages)
+cannot avoid incompatible behaviours.
+
+
+
+
+
+ 
+

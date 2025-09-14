@@ -1,0 +1,185 @@
+
+\documentclass[copyright,creativecommons]{eptcs} 
+\providecommand{\event}{ICE 26} % Name of the event you are submitting to
+\usepackage{underscore}           % Only needed if you use pdflatex.
+ 
+\usepackage{breakurl}
+
+\usepackage{wrapfig}
+
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsbsy}
+\usepackage{enumerate}
+\usepackage{stackrel}
+\usepackage{bm}
+%\usepackage[toc,page]{appendix}
+\usepackage{stmaryrd}
+\usepackage{wasysym}
+\usepackage{color}
+\usepackage[utf8]{inputenc}
+\usepackage{dashbox}
+%\usepackage{pgfkeys}
+\usepackage[capitalise]{cleveref}
+\usepackage{accents}
+\crefformat{enumi}{condition~#2#1#3}
+\crefname{fact}{Fact}{Facts}
+\Crefname{fact}{Fact}{Facts}
+\crefformat{fact}{Fact~#2#1#3}
+
+%%% The following setting
+%%% enable figures not to float too much
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.7}
+%%%%%%%%%%%%%%%%%%%
+%%%%%
+%%%%%%%%
+%
+%
+%
+%\usepackage{derivation}
+%
+%
+%\usepackage{mathtools}
+%\usepackage{stmaryrd}
+%
+%\usepackage{pifont}
+%\newcommand{\cmark}{\mbox{\tiny \ding{51}}}%
+%\newcommand{\xmark}{\mbox{\tiny \ding{55}}}%
+%%\newcommand{\cmark}{\mbox{\tt ok}}% 
+%%\newcommand{\xmark}{\mbox{\tt no}}%
+%
+%\newcommand{\Der}{{\cal D}}
+%
+%
+%
+%
+%\bibliographystyle{plainurl}
+%
+%%\usepackage{cmll}
+%
+\input{ggstyle}
+%
+\input{macros}
+
+%\modulolinenumbers[5]
+\def \bmr {\begin{color}{red}} 
+\def \emr {\end{color}}
+\def \bfr {\begin{color}{Fuchsia}} 
+\def \efr {\end{color}}
+\def \bmc {\begin{color}{magenta}Mariangiola: } 
+\def \emc {\end{color}}
+\def \bfc {\begin{color}{brown}Franco: } 
+\def \efc {\end{color}}
+\def \brc {\begin{color}{blue}Rolf: } 
+\def \erc {\end{color}}
+\def \brr {\begin{color}{olive}} 
+\def \err {\end{color}}
+
+ 
+\author{Franco Barbanera\thanks{ Partially supported by 
+Project “National Center for HPC, Big Data e Quantum Computing”,  Programma M4C2, Investimento 1.3.}
+\institute{Dipartimento di Matematica e Informatica\\
+University of Catania}
+\email{franco.barbanera@unict.it}
+\and 
+Rolf Hennicker
+\institute{Institute for Informatics\\
+LMU Munich}
+\email{hennicke@pst.ifi.lmu.de}
+}
+
+
+
+
+\begin{document}
+
+%\title{Multicomposition
+% of Systems \\ of Communicating Finite State Machines
+%}
+
+\title{Partial Fusion
+}
+
+\def\titlerunning{Partial Fusion}
+\def\authorrunning{
+%F.\,Barbanera \& R.\,Hennicker
+}
+
+\maketitle
+
+\begin{abstract}
+The {\em Participants-as-Interfaces\/} (PaI) approach to system composition 
+suggests that participants of a system may be viewed as interfaces.
+Given a set of systems,
+% of communicating finite state machines (CFSMs),  
+one participant per system is chosen to play the role of an interface. When systems are composed, the %each CFSM
+% of an 
+interface participants are replaced by  \emph{gateways} which communicate to each other
+%gateways of other systems 
+by forwarding messages.
+The PaI-approach for 
+systems of asynchronous  communicating finite state machines (CFSMs)
+has been exploited in the literature for binary composition only, with
+a  (necessarily)  unique forwarding policy.
+In this paper we consider the case of multiple system composition
+when  forwarding gateways  are not uniquely determined and
+their interactions depend on specific {\em connection policies\/}  complying with a
+{\em connection model\/}.
+We represent connection policies as CFSM systems and prove that a bunch of relevant 
+communication properties (deadlock-freeness, reception-error-freeness, etc.) are preserved by {\em PaI multicomposition\/}, with the proviso that also the used connection policy does enjoy the communication property taken into account.
+\end{abstract}
+
+
+%\input{Introduction}
+\input{cfsm}
+%\input{ConnectingSystems}
+\input{safeness-of-binary-partial-fusion}
+%\input{conclusions}
+%\paragraph*{\bf Acknowledgements}
+% We warmly thank the ICE'24 reviewers for their careful reading, their thoughtful comments/suggestions and the helpful discussion in the forum. We also thank Emilio Tuosto for his nice tikz style for automata.
+%
+%
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{\abovedisplayskip}
+
+\bibliographystyle{eptcs}
+\bibliography{session}
+
+%------APPENDIX--------
+%\newpage
+%\appendix
+%
+%\input{safenessPreservation}
+%\input{weakDeadlockPreservation}
+%\input{strong-deadlock-free-Preservation}
+%---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+%------------------------------------------------------------------------------
+% Index
+%\printindex
+
+%------------------------------------------------------------------------------
+\end{document}
+
+% EOF

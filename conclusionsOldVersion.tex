@@ -1,0 +1,401 @@
+%!TEX root = Main-JLAMP-asynchCFSM-multicomp.tex
+
+
+
+
+\section{Conclusions Old Version}
+\label{sect:conclusions}
+
+The necessity of supporting the modular development of concurrent/distributed systems,
+as well as the need to extend/modify/adapt/upgrade them, urged the investigation
+ of composition methods. Focusing on such investigations in the setting of abstract formalisms
+for the description and verification of systems enables to get general and formal guarantees of relevant features
+of the composition methods. 
+
+An investigation of composition in a formalism for choreographic programming was carried out in \cite{MY13}. 
+In \cite{KFG04} a modular technique was developed for the verification of 
+aspect-oriented programs expressed as state machines.
+Team Automata is another formalism in which compositionality issues have been addressed
+\cite{BK03,BHK-ictac20},
+as well as in assembly theories considered in~\cite{HK-acta15}. 
+Composition for protocols described via a process algebra has been investigated in \cite{BOV23}.
+In \cite{CMV18,SGV20} a technique for modular design in the setting of reactive programming
+is proposed. A possible approach to composition for a MultiParty Session Type (MPST) formalism
+is developed in \cite{SMG23}. 
+The mentioned papers provide just a glimpse of the variety of approaches to system composition in the literature.
+
+
+
+%In~\cite{BdLH19} a quite general approach to (binary) composition of systems
+%(dubbed {\em participants-as-interfaces\/} -- PaI -- in subsequent papers) was introduced
+%and exploited for the asynchronous formalism of Communicating Finite State Machines (CFSM).
+%It was also investigated in \cite{BLT20,BLP22b,BLT23}, always for binary composition, for 
+%a synchronous version of such a formalism, as well in~\cite{BDL22,BDLT21} for synchronous MPTS
+%formalisms.
+%The PaI approach distils to the interpretation of participants as interfaces 
+%and to their replacement with forwarders for the composition of systems. 
+%The extension of such an approach in order to compose more than two systems
+%was investigated in a synchronous MPTS formalism in \cite{BDGY23}.
+
+Papers dealing with the (binary) composition of systems on the basis of the
+{\em participants-as-interfaces\/} (PaI) approach have been pointed out already in~\cref{sec:Intro} and the idea of PaI for multicomposition of systems has been explained in~\cref{sec:pai-multicomp}.
+In the present paper we  extend  the PaI approach to orchestrated multicomposition
+ of systems of \emph{asynchronously} communicating finite state machines (CFSMs).
+We show that  (under mild assumptions) important 
+communication properties relevant  in the context of asynchronous communication, like freeness of orphan messages and unspecified receptions,  are preserved by composition (a feature dubbed 
+{\em safety\/} in \cite{BDGY23}).
+ For this we assume that 
+for each single system one participant is chosen as an interface. 
+A key role in our work, inspired by  \cite{BDGY23}, is played by
+{\em orchestrated connection policies}, which are CFSM systems which determine the ways %how
+ interfaces can interact when they are replaced by gateways (forwarders) and, possibly, orchestrating participants are added. % in system compositions. 
+ 
+ \bfr
+In the setting of {\em coordination models}, in \cite{Arbab98} the author proposes 
+a distinction between {\em endogenous} and {\em exogenous} coordination models.
+In endogenous coordination models the primitives that cause and affect the coordination of an
+entity with others can reside only inside of that entity itself \cite{Arbab04}.
+Our approach does not precisely fit in the context of coordination models,
+since these are mostly independent of the computational entities they compose/coordinate
+and suitable for dealing with {\em etherogeneus} entities.
+We consider instead entities that are {\em homogeneusly} representable as CFSM systems.
+Nonetheless we could look at PaI as a {\em totally endogenous} coordination model since
+the composition is based on no concept outside those at the basis of CFSM,
+like the one of {\em channel}. The latter notion is actually at core of a widely investigated
+coordination model: Reo \cite{Arbab04}. 
+The connectors in our connection models correspond to channels in Reo, whereas 
+our notion of orchestrated connection policy can be assimilated to that of
+Reo connector (roughly a coordination infrastructure using channels as structured building blocks).
+As discussed later on, the PaI approach has been investigated also for formalisms other than CFSM.
+%, namely MultiParty Session Types (MPST). 
+It is hence natural to wonder whether our approach can be adapted 
+(at the cost of loosening its total endogenicity) in order to deal with systems possessing
+a certain amount of heterogeneity (always keeping in mind that our approach hardly fits outside
+one-to-one communication models).
+Said that, it is worth recalling however that our interest is deeply focused on
+{\em safe} approaches to composition/coordination. 
+\efr
+
+
+For an ``unstructured'' formalism like CFSM,
+the natural generalisation from multicomposition with
+single interfaces to multicomposition with multiple interfaces  (per system)  is not trouble-free,
+as discussed in \cite[Sect.6]{BdLH19} for binary composition.
+This is mainly due to the possible indirect  interactions  which could occur  among the interfaces inside the single systems.
+In more structured formalisms, however, such possible interactions can be controlled. 
+This is the case, for instance, in MPST formalisms.
+In fact, in \cite{GY23} the authors devise a  
+\bfr {\em  direct} \efr composition mechanism \bfr -- i.e. \efr without using gateways -- for MPST systems.
+Such a mechanism allows for the presence of multiple interfaces thanks to a hybridisation with local and external information of the standard notion of global type.  
+A combination of global and local constructs in order to get flexible specifications
+(uniformly describing both the internal and the interface behavior of systems) is also present in \cite{CV10}.
+\bfr
+As usual for choreographic formalisms, in MPTS  
+two distinct but related views of concurrent systems are taken into account:
+$(a)$ the {\em global view}, a formal specification via {\em global types} of the overall behaviour 
+of a system; $(b)$ the {\em local view}, namely a description, at different  levels 
+of abstraction, of the behaviours of the single components. 
+In \cite{BDLT21} the PaI approach was exploited for the (synchronous) MPST choreographic formalism
+for both the above mentioned views. In particular showing that it is possible to represent 
+PaI binary composition at the global level, such that composition of well-formed global types
+is still a well-formed global type. Extending such a result to other formalisms, like those
+at the basis of platforms like CHOReVOLUTION~\cite{CHOReVOLUTION} (aimed at the development and execution of distributed applications, based on service choreography), would be worth investigating.
+
+
+Whereas the PaI approach naturally proposes itself as a general framework for the {\em safe} modular 
+development of systems, further investigation is needed in order to exploit its potentiality
+inside compositional analysis of systems. 
+Broadly speaking, compositional analysis frameworks enable to ``brake'' a system into components.
+The critical behaviors of components
+are then individually identified and analysed, with the aim of getting larger proof of correctness for
+the system out of the ones devised for the component.
+
+A method for decomposing a CFSM system into components by relying on the presence of gateways
+would be hardly viable. A decomposition mechanism could instead be devised as the dual
+correspondent of a direct composition mechanism, similar to the one proposed in \cite{BDLT21}
+in a MPST setting, where it is actually equipped with a dual decomposition.
+Adapting that idea to the present less structured setting would be entailed by the possibility of 
+identifying subsets of participants corresponding to direct compositions,
+in turn subsumed by the virtual presence of gateways.
+As hinted above such an investigation would broaden the scope of the PaI approach to  
+compositional analysis of systems. From a very general point of view it could be slightly akin to 
+the so called compositional assume-guarantee reasoning which stemmed from works in temporal logics, like \cite{Pnueli84}, and were further developed in component-based software engineering, like in~\cite{}.
+\brc The reference is commented out. Please insert it.
+%@inproceedings{DBLP:conf/fase/BauerDHLLNW12,
+%  author       = {Sebastian S. Bauer and
+%                  Alexandre David and
+%                  Rolf Hennicker and
+%                  Kim Guldstrand Larsen and
+%                  Axel Legay and
+%                  Ulrik Nyman and
+%                  Andrzej Wasowski},
+%  editor       = {Juan de Lara and
+%                  Andrea Zisman},
+%  title        = {Moving from Specifications to Contracts in Component-Based Design},
+%  booktitle    = {Fundamental Approaches to Software Engineering - 15th International
+%                  Conference, {FASE} 2012, Held as Part of the European Joint Conferences
+%                  on Theory and Practice of Software, {ETAPS} 2012, Tallinn, Estonia,
+%                  March 24 - April 1, 2012. Proceedings},
+%  series       = {Lecture Notes in Computer Science},
+%  volume       = {7212},
+%  pages        = {43--58},
+%  publisher    = {Springer},
+%  year         = {2012},
+%  url          = {https://doi.org/10.1007/978-3-642-28872-2\_3},
+%  doi          = {10.1007/978-3-642-28872-2\_3},
+%  timestamp    = {Tue, 07 May 2024 20:13:13 +0200},
+%  biburl       = {https://dblp.org/rec/conf/fase/BauerDHLLNW12.bib},
+%  bibsource    = {dblp computer science bibliography, https://dblp.org}
+%}
+\erc
+The properties to be {\em guaranteed} for the components would hence be communication properties that would immediately transfer over the overall system.
+The absence of {\em assumed} properties would however limit the potential of the approach,
+so stimulating, in the long run, a possible investigation of the definition and use  of the notion
+of assumption in the envisaged PaI approach to compositional assume-guarantee reasoning.
+\efr   
+  
+
+ \brc
+ The following part was non-connected in the conclusion. What to do with it?:
+ ``composition is naturally orthogonal to 
+Direct composition mechanisms are likely amenable to be equipped with corresponding
+decomposition mechanism.''
+\erc
+
+
+
+
+%We have proposed {\em open} systems of communicating finite state machines
+%where, according to the current needs,
+%a machine can be interpreted as the  description of an interface role, namely the description of the environment's behaviour instead of the behaviour of a proper participant. 
+%From this point of view, two systems possessing two {\em compatible}
+%interface machines can be connected by replacing such machines with automatically generated ``gateway'' automata,
+%which enable messages to be exchanged between the two systems.
+%As a crucial contribution of this work we 
+%have proved that important communication properties (deadlock-freeness, freeness of orphan messages and unspecified receptions, and progress) are preserved when open systems are connected in such a way.
+%
+%By means of suitable counterexamples, we have  shown that the conditions of no mixed-state and $?!$-determinism, imposed on the notion of compatibility,
+%cannot be taken out without loosing the communication properties preservation.
+%The preservation results have also been proved for the extension of the connection procedure to its multiple gateways version,
+%but for the progress property, which is not preserved by multiple connections
+%as shown by a counterexample.
+%
+%It is known from the literature on global types that CFSM systems enjoying the communication properties
+%can be obtained by {\em end-point} projecting (well-formed) global descriptions in formalisms like
+%~\cite{DY12,TY15,TG18}. We have hence proposed a (parametric) syntax for Global Types with Interface Roles
+%(GTIRs) to describe systems obtained by connecting via gateways the end-point projections of global descriptions in formalisms like the above mentioned ones. Our preservation results imply that in such a way
+%communication properties guaranteed by global type frameworks are propagated when (open) global types
+%are composed to larger ones.\\
+%
+%
+%
+%A prominent approach to model open systems and their compatibility is the theory of
+%{\em interface automata}~\cite{deAlfaro2001,deAlfaro2005}.
+%Even though some loose connections can be envisaged with interface automata
+%our approach to open systems is different in many relevant points:
+%First of all, an interface automaton describes the communication abilities of an automaton
+%with its environment in terms of input and output actions while internal behavior is described by internal actions.
+%In our open systems, however, the expected behavior of the environment is  emulated by interface roles
+%and their CFSMs, identified according to the current need, while internal behavior is modeled by message exchange between the CFSMs of the other roles.
+%Interface automata
+%rely on synchronous communication while we consider asynchronous communication via FIFO buffers.
+%The crucial idea of compatibility for interface automata is that no error state should be reachable in the synchronous product
+%of two automata. An error state is a state, in which one automaton wants to send a message to the other but the other
+%automaton is not ready to accept it. This situation is related to unspecified reception in the asynchronous context.
+%The speciality of interface automata is, however, that an error state must be autonomously reachable,
+%i.e.\ without interaction with the environment.
+%In other words, in open systems a ``helpful'' environment can avoid to reach an error state.
+%Since interface automata use synchronous message passing, the problem of orphans is empty.
+%Moreover, the theory of interface automata does not consider deadlock-freedom.
+%On the other hand, interface automata consider also refinement and preservation of compatibility by refinement.
+%On the background of the ideas of interface automata several other frameworks have been proposed
+%which study in an automata-theoretic setting compatibility notions mostly for synchronous (handshake) communication; see, e.g.,~\cite{productlines,DBLP:journals/tcs/CarmonaK13,tacas2010}. 
+%For asynchronous systems in~\cite[Sect. 6]{GMY80}, the authors use the same compatibility notion for CFSMs showing that a system made of just two CFSMs, which both are deterministic and do not have mixed states, is free from deadlocks and unspecified receptions. In~\cite{HB18}, weaker notions of asynchronous compatibility are
+%considered and characterisations and criteria based on synchronous compatibility are provided still in the context of two component systems. 
+%
+%
+%In the future, we first want to study  whether our conditions for compatibility could be relaxed
+%still guaranteeing preservation of communication properties.
+%For instance, consider the working example and a system $S''$ with the same roles as $S'$,
+%where the CFSM $\LL$  is the one described below %in Fig. \ref{eq:K} 
+%instead of the one described in Fig.~\ref{eq:L}.
+%
+%%\begin{figure}[th]
+%%\hrule
+%%\vspace{2mm}
+%{\footnotesize
+%$$
+%      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.8cm,semithick]
+%  
+%  \node[state]           (zero)                        {$0$};
+%  \node[state]           (one)  [below right of=zero]{$1$};
+%  \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{{\tt L}};
+%  \node[state]            (two) [below  left of=one] {$2$};
+%  \node[state]           (three) [right= 1.3cm of one] {$3$};
+%  \node[state]           (four) [left = 1.0 of two] {$4$};
+%  \node[state]           (five) [ left =1.7cm of one] {$5$};
+%  \node[state]           (six) [ above = 0.45cm of three] {$6$};
+% 
+%   \path     (start) edge node {} (zero) 
+%            (zero)  edge     [bend right]                node     [pos=0.5,above] {\edgelabel{AL}{?}{text}} (one)
+%               (one)   edge                                       node     [pos=0.3,below] {\edgelabel{LA}{!}{ok}} (three)
+%                          edge      [bend right]               node     [right] {\edgelabel{LA}{!}{fail}} (zero)
+%                          edge      [bend right]               node      [pos=0.7,above] {\edgelabel{BL}{?}{text}} (two) 
+%               (two)   edge                                      node      [below] {\edgelabel{LA}{!}{ok}} (four)
+%                          edge                                       node      [pos=0.1,above]      {\!\!\!\!\edgelabel{LA}{!}{fail}} (five)
+%                          edge      [bend right]               node      [pos=0.1,right]      {\edgelabel{LB}{!}{fail}} (one)
+%               (five)   edge                                       node      [left] {\edgelabel{LB}{!}{fail}} (zero) 
+%               (six)    edge                                       node      [pos=0.3, above] {\edgelabel{LB}{!}{ok}} (zero) 
+%                          edge      [bend left]                 node      [pos=0.1, right] {\edgelabel{LB}{!}{fail}} (three) 
+%               (three) edge      [bend left]                 node     [pos=0.1, left]  {\edgelabel{BL}{?}{text}} (six)
+%               (four)   edge      [bend  left = 60]        node     [pos=0.1,left] {\edgelabel{LB}{!}{ok}} (zero) 
+%                           edge      [bend right = 60]      node      [pos=0.2,left] {\edgelabel{LB}{!}{fail}} (three) ;
+%           
+%       \end{tikzpicture}
+%       $$
+%       }
+%%\hrule
+%%\caption{The $\L$ for system $S''$}
+%%\label{eq:L}
+%%\end{figure} 
+%
+%Through the above interface, {\tt B} keeps on sending a text message after {\tt A} does it.
+%A new message can be sent only after an acknowledgment has been received ({\sf ok}). 
+%A message is resent in case of failure. {\tt B}'s message failure forces {\tt A} to send its message again.
+%{\tt A} can receive an ack also after {\tt B} has sent its message.
+%We have that now $\lang{M_\JJ}^\mC\subsetneq\Dual{\lang{M_\LL}}^\mC$, but the interaction between $S$ and $S''$
+%(which is possible to guarantee in our present setting only by means of a ``mediating'' system)
+%would still safely proceed. Such a possibility could hence suggest the introduction and the use of a ``sub-behavior''
+%relation for CFSMs, somewhat related to a form of asynchronous subtyping \cite{CMS18,MY15,LY17}.\\ 
+%
+%
+% The equivalence of multiple connections and single connections (together with self-connections) suggests that, in order to overcome problems like the one exploited by the example of non preservation of progress for multiple connections, severe restrictions should be imposed on the systems to be connected, rather than simply on our compatibility relation.
+%To provide such restrictions is a complex problem.
+%It was recognised already for the case of synchronous message exchange in several papers.
+%Most papers just assume acyclic (tree-like) architectures to get results on compositional verification
+%of deadlock-freeness (see for instance the discussion and references on page 2, paragraph 3, of \cite{LM13}).
+%\cite{LM13} provides a generalisation of acyclic architectures by considering so-called
+%``disjoint circular wait free component systems''.
+%In future we may want to study whether such architectures can also be useful for asynchronous composition,
+%like the one described in the present paper.\\
+%
+%
+%
+%
+%
+% In the future it would also be worth taking into account, besides our communication properties, 
+%cerrtain liveness properties.
+%In particular,  the  generalised global types of  \cite{DY12}, 
+%at the cost of being less expressive than global types in \cite{TY15,TG18},
+%guarantee also liveness.
+%A collection of further communication properties and their preservation by composition
+%has been studied in~\cite{HaddadHM13}. This approach uses bags as communication channels.
+%It would be interesting to see to what extent the preservation results of~\cite{HaddadHM13}
+%could be formulated when FIFO buffers are used instead of bags.
+
+
+
+
+
+
+%There are several directions to be pursued in future work starting from our results.
+%On the first place, we want to generalise the notion of orchestrated connection policies such
+%that PaI  multicomposition could actually be obtained by replacing interfaces
+%by gateways which, instead of interacting directly with each other, can interact  through an ``interfacing infrastructure'' represented via a system of CFSMs. Such a generalisation would be equivalent to multicomposition
+%where exactly one system can have multiple interfaces.
+% Let us consider a possible application of the above idea. 
+%In \cref{ex:simplewe}, in the resulting composed system, both participants $\ttp$ and $\ttq$ 
+%do emit a $\msg[react]$ message. 
+%It would be more natural to have only one of them producing such a message, e.g., to have $\ttp$ be the sole sensor registering reactions which then passes that information to both $\ttr$ and $\tts$.
+%This would not be possible by our composition mechanism and
+%we cannot but make the best of the fact that we are dealing with two sensors.
+%One could think, instead, about using an “interfacing infrastructure”  containing some further participant enabling to ignore the messages from one sensor and properly duplicating the messages from the other.
+
+%\brc
+%Here I am wondering whether our goal shouldn't be to get
+%multicomposition where each system is enabled to have multiple interfaces
+%?
+%Then I would rewrite the last part to:
+%\erc
+%
+%\brr
+%There are several directions to be pursued in future work starting from our results.
+%On the first place, we want to generalise the notion of connection policy such
+%that PaI  multicomposition could be based on composition with
+%several interfaces per system following ideas of the hybrid approach above
+%but using asynchronous communication and CFSM systems. 
+%\err
+
+%\bfr
+%In the composition approach exploited in the present paper, every communication of an interface must be received/forwarded by the correponding gateway from/to some other gateway. It is reasonable to generalise this approach such that only  certain messages are received/forwarded, while for others the interface keeps aquiring/producing them by itself. Such an idea was actually implemented in \cite{BDL22} in a MPTS setting for a restricted client-multiserver composition with synchronous communications.
+%
+
+
+%It is worth noticing that, in Examples \ref{ex:lackprogdfpres}, \ref{ex:refpres} and \ref{rem:lfnotpres},
+%the interfaces of the systems we compose do have unreachable states.
+%It is hence natural to wonder whether it is the presence of unreachable states in interfaces that entails the possibility of getting counterexamples for the properties taken into account. 
+
+
+
+\bfr Apart from the above, \efr we are planning to consider further communication properties, like strong lock-freeness
+(any participant can eventually progress in any continuation of any reachable configuration),
+as well as to investigate conditions to get lock-freeness preservation, not guaranteed yet. 
+
+
+%\brc
+%OLD version:\\
+%\erc
+%
+%There are several relevant directions to be pursued for future work starting from our results,
+%the most interesting one being, in our opinion, that of generalising the notion
+%of connection policy.
+%PaI  multicomposition could actually be obtained by replacing interfaces
+%by gateways which, instead interacting directly with each others, can interact 
+%through an ``interfacing infrastructure'' represented via a system of CFSMs.
+%A possible interfacing infrastructure and the resulting composition for the 
+%systems $S_1$,  $S_2$, $S_3$ and $S_4$ of the Introduction
+%% \cref{fig:foursys}
+%could be those represented, respectively, in \cref{fig:intinfra}. 
+% The composition would hence consists
+% in replacing gateways for the interfaces $\hh$, $\kk$, $\ttv$ and $\ttw$ in the systems as well
+% in the infrastructure. 
+% We expect that it is possible to extend the proofs in the present paper to encompass such a natural
+% generalisation of the PaI multicomposition. 
+% Notice that such a generalisation would be equivalent to multicomposition
+%where exactly one system is enabled to have multiple interfaces. It is immediate to check that
+%the notion of connection policy of the present paper would turn out to be a particular
+%interfacing intrastructure.
+%
+%We are also planning to consider further communication properties, like strong lock-freeness
+%(any participant can eventually progress in any continuation of any reachable configuration),
+%as well as to investigate conditions enabling to get lock-freeness preservation, not guaranteed 
+%by the conditions for the other properties. One could also investigate whether the
+%lack of orphan-message freeness for $\cp$ in \cref{rem:lfnotpres} does play any essential role in  that counterexample.
+
+Unlike the present paper, in \cite{BdLH19} safety is ensured for the binary case by assuming 
+compatibility of interfaces and an extra condition (called ?!-determinism) on them.
+We  intend to consider 
+a generalisation of the binary compatibility relation
+ in the style of the {\em multiparty compatibility} in \cite{DY13}. 
+Such a generalisation should imply relevant communication properties for the 
+unorchestrated connection policy it induces.  In the present context, the above mentioned
+multiparty compatibility can be used to prove communication properties for orchestrated connection policies. 
+
+
+% We are also planning to identify some conditions  ensuring
+%\cref{th:paisafenesse} to hold for any communication property $\mathcal{P}$ satisfying them.
+
+ Finally, we are interested in considering “partial” gateways, where only some communications of an interface are interpreted as communications with the environment.
+Such an idea was actually implemented in \cite{BDL22,BBD25} in a MPTS setting for a restricted client-multiserver composition with synchronous communications.
+% Such an extension can be worth investigating, as partially done, in the context of MPTS with synchronous communications, in \cite{BDL22}.
+
+
+ 
+
+
+
+
+%\paragraph{Acknowledgements}
+%We are grateful to the anonymous referees for several helpful comments and suggestions.
+%We also thank Emilio Tuosto for some macros used to draw Figure \ref{fig:examplegg}.
+%The first author is also thankful to Mariangiola Dezani for her everlasting support.

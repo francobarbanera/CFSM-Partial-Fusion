@@ -1,0 +1,70 @@
+\documentclass{standalone}
+
+\input{ggstyle}
+
+\begin{document}
+
+      \begin{tikzpicture}
+        \mkint{}{g}[];
+        \mkint{right=of g}{gp}[][@][n];
+        \mkfork{g,gp}[fork][@][25pt];
+        \mkjoin{g,gp}[join][@][25pt];
+        \mkgraph{fork}{join};
+      \end{tikzpicture}
+
+
+      \begin{tikzpicture}
+        % Note: optional parameters are in square brackets and '[@]' tells latex to use the default value
+        %
+        % lets makes some basic interaction blocks
+        % the 1st par. is the position of the block, the 2nd is the 'latex' name of the block
+        % to be used to make fork, branches, loops (see below)
+        %
+        \mkint{}{bw}[][@][bwin];
+        \mkint{right=of bw}{cw}[][@][cwin][c];  % the first parameter tells the position of the block (in this case relatively to block 'bw'
+        \mkint{below=of bw}{cl}[i][b][close][c];
+        \mkint{below=of cw}{bl}[i][c][blose][b];
+        %
+        % Let's connect some blocks now
+        %
+        \mkseq{bw}{cl};
+        \mkseq{cw}{bl};
+        %
+        % Now it's time for some gates...
+        \mkbranch{bw,cw}[branching][1][20pt];  % note the use of latex refs (the 2nd parameter of \mkint above
+        \mkmerge{cl,bl}[merging][-1][20pt];    % try to remove the last 2 parameters
+        %
+        % yet another couple of interactions
+        %
+        \mkint{left = 3cm of branching}{b}[][c][busy][d];
+        \mkint{below = 1cm of merging}{s}[][B][sig][A];
+        %
+        % Another fork
+        %
+        \mkfork{b,branching}[outfork];;
+        %
+        % some auxiliary gates
+        %
+        \node[agate, left = 3cm of s] (j1) {};
+        \mkfork{s,j1}[f1][][-90pt];
+        \mkseq{b}{j1.north west};
+        \mkseq{merging}{f1};
+        %
+        % The rest should be clear
+        %
+        \mkint{below = of j1}{m}[][C][msg][a];
+        \mkseq{j1}{m};
+        \mkjoin{m,s}[join][@][30pt];
+        \mkint{below = of join}{free}[][@][free][d];
+        \mkseq{join}{free};
+        %
+        % now a loop
+        %
+        \mkloop{outfork}{free};
+        %
+        \mkgraph{entryoutfork}{exitfree}
+        % Note that the entry and exit points of the loop
+        % are named by concatenating 'entry' and 'exit' to
+        % the names of the first and last nodes of the body of the loop
+      \end{tikzpicture}
+\end{document}

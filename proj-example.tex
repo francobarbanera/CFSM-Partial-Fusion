@@ -1,0 +1,401 @@
+\begin{example}[A configuration and two projections of its] {\em
+We consider the following reachable configuration of the orchestrated composition illustrated in 
+\cref{fig:orchsyscomp}
+$$s=\big((4_{\ttp},2_{\hh_1},0_{\hh_4},0_{\tts},0_{\ttb},0_{\ttd},0_{\ttq},0_{\hh_2},1_{\hh_3},1_{\ttr}),\, (w_{\ttp\hh_1}=\msg[nc],w_{\hh_1\ttb}=\msg[react],w_{\ptp[x]\ptp[y]}=\varepsilon\, \forall \ptp[x]\ptp[y]\not\in\Set{\ttp\hh_1,\hh_1\ttb})\big)
+$$
+This configuration is reachable starting from the initial one after the following actions:\\[2mm] 
+- $\ttr$ put $\msg[start]$ in the $\ttr\hh_3$ channel;\\
+- $\msg[start]$ is then taken by $\hh_3$ which, in turn, puts the same message in $\hh_3\hh_1$ that is afterwards taken by $\hh_1$;\\
+- after receiving $\msg[start]$, $\hh_1$ puts the same message in $\hh_1\ttp$;\\
+-  after taking  $\msg[start]$ from$\hh_1\ttp$, $\ttp$ puts $\msg[react]$ in $\ttp\hh_1$;\\
+ - $\msg[react]$ is hence taken by $\hh_1$ which then puts the same message in $\hh_1\ttb$;\\
+- in the meantime, $\ttp$ puts $\msg[nc]$ in $\ttp\hh_1$.\\
+
+The configuration $s$ is graphically depicted on top of \cref{eq:JK}, where, for the sake of readability,
+empty channels are not indicated.
+
+By \cref{def:projectedconf} the projection on  $S_1$ (top left of \cref{eq:JK}) is
+$$\restrict{s}{1}=\big((4_{\ttp},2_{\hh_1}),\, \vec{\varepsilon}\,\big)$$
+as depicted in the middle of \cref{eq:JK}.
+
+Also by \cref{def:projectedconf}, the projection of $s$ on the orchestrated connection policy $\cs$ (the second policy of \cref{ex:connsys}) is
+$$\restrict{s}{\cs}=\big((\dot{2}_{\kk_1},\dot{0}_{\kk_2},\dot{1}_{\kk_3},\dot{0}_{\kk_4},\dot{0}_{\ttb},\dot{0}_{\ttd}),\, (w_{\kk_1\ttb}=\msg[react],w_{\ptp[x]\ptp[y]}=\varepsilon\, \forall \ptp[x]\ptp[y]\neq\kk_1\ttb)\big)$$
+as depicted on the bottom of \cref{eq:JK}.
+
+It is easy to check that the configuration $s'$ reachable from $s$ in case $\hh_1$ takes the message
+$\msg[nc]$ from channel $\ttp\hh_1$ would have a projection on $S_1$ which would not be a configuration of $S_1$. Moreover, also the projection of $s'$ on $\cs$ would not be defined.
+ 
+\begin{figure*}[ht]
+$$
+\begin{array}{c@{\hspace{-2mm}}c}
+     \begin{array}{cc} %%% SYSTEM 1
+            \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[draw=none,fill=none] (wph1) [below  of=2,yshift=12mm]   {\scalebox{1.3}{$w_{\ttp\hh_1}=\msg[nc]$}};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm, fill=black]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+           \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state] (0) {$0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_1$};
+		  \node[draw=none,fill=none] (wh1b) [below  of=0,yshift=-8mm,xshift=10mm]   {\scalebox{1.3}{$w_{\hh_1\ttb}=\msg[react]$}};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm, fill=black]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		  (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[h_3][h_1][][start]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge   node[above] {$\ain[p][h_1][][react]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_1][h_2][][rc]$} (3)
+		  (3) edge node[above] {$\ain[h_2][h_1][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_1][h_2][][nc]$} (4)
+		  (4) edge node[above] {$\ain[h_2][h_1][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+    \end{array}
+&
+    \begin{array}{cc} %%% SYSTEM 4
+          \begin{tikzpicture}[mycfsm]
+  \node[state, fill=black]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+  \node[draw=none,fill=none] (none) [below  of=hat0,yshift=8mm]   {};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_4$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttd\hh_4}?{\msg[react]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_4\tts}!{\msg[react]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\tts\HH_4}?{\msg[pars]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_4\hh_2}!{\msg[pars]}$} (0);                 
+             \end{tikzpicture}
+             &
+                   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state, fill=black] (zero) {$0$};
+      \node[state] (one) [below of=zero]   {$1$}; 
+      \node[draw=none,fill=none] (none) [below  of=one,yshift=8mm]   {};
+            \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\tts$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\ain[h_4][s][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[s][h_4][][pars]$} (zero)
+      ;
+      \end{tikzpicture}           
+      \end{array}
+\\[-12mm]
+\multicolumn{2}{@{\hspace{35mm}}c}{ %%% ORCHESTRATING SYSTEM
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = left, initial text={$\ptp[b]$}, fill=black] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[h_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black]{$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  left= 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[h_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][h_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][h_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+    }
+\\[-6mm]
+\begin{array}{cc} %%% SYSTEM 2
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttq]$}, fill=black] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[q][h_2][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_2][q][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_2][q][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[q][h_2][][img]$} (0)
+		  (2) edge  node[below] {$\ain[h_2][q][][reset]$} (0)
+		  ;
+		\end{tikzpicture}
+&
+\begin{tikzpicture}[mycfsm]
+		  % 
+		   \node[state]           (0)     [fill=black]                   {$0$};
+		  \node[state] (hat0) [above right of=0,yshift=-4mm]   {$\widehat 0$};
+		  \node[draw=none,fill=none] (start) [above  left  = 0.3cm  of zero]{$\hh_2$};
+		  \node[state] (1) [right of=hat0]   {$1$};
+		  \node[state] (hat1) [right of=1]   {$\widehat 1$};
+		  \node[state] (2) [right of=0, xshift=48mm]   {$2$};
+		  \node[state] (hat2) [below of=hat1, yshift=2mm]   {$\widehat 2$};
+		  \node[state] (hat2p) [below of=hat1, yshift=-6mm]   {$\widehat{2}'$};
+		  \node[state] (3) [below of=1,yshift=-6mm]   {$3$};
+		  \node[state] (4) [below of=1, yshift=2mm  ] {$4$};
+		  \node[state] (hat3) [below of=hat0,yshift=-6mm]   {$\widehat 3$};
+		  \node[state] (hat4) [below of=hat0, yshift=2mm  ] {$\widehat 4$};
+		  % 
+		  \path
+		   (start) edge  node {} (0)
+		  (0) edge [bend left] node[above] {$\ain[q][h_2][][react]$} (hat0)
+		  (hat0) edge node[above] {$\aout[h_2][d][][react]$} (1)
+		  (1) edge   node[above] {$\ain[h_4][h_2][][pars]$} (hat1)
+		  (hat1) edge  [bend left] node[above] {$\aout[h_2][q][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[h_1][h_2][][rc]$} (hat2p)
+		  (hat2p) edge   node[above] {$\aout[h_2][q][][rc]$} (3)
+		  (3) edge node[above] {$\ain[q][h_2][][img]$} (hat3)
+		  (hat3) edge[bend left] node[below] {$\aout[h_2][h_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[h_1][h_2][][nc]$} (hat2)
+		  (hat2) edge   node[above] {$\aout[h_2][q][][nc]$} (4)
+		  (4) edge node[above] {$\ain[q][h_2][][img]$} (hat4)
+		  (hat4) edge[bend left] node[above] {$\aout[h_2][h_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+      \end{array}
+&
+   \begin{array}{c@{\hspace{-2mm}}c} %%% SYSTEM 3
+             \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH_3$};
+  \node[state]            (1) [above right of=hat0, yshift=-5mm, fill=black] {$1$};
+  \node[state]           (hat0') [above right of=0, yshift=-5mm] {$\widehat{0}'$};
+  %\node[state]           (2) [right of=hat0'] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge    [bend left]               node [above] {${\ttr\hh_3}?{\msg[start]}$} (hat0')
+             (hat0')  edge   [bend left]          node [above]  {${\hh_3\hh_1}!{\msg[start]}$} (1)
+             (1)  edge   [bend left]      node [below] {${\ttd\HH_3}?{\msg[react]}$} (hat0)
+             (hat0)  edge   [bend left]            node [below] {${\hh_3\ttr}!{\msg[react]}$} (0);       \end{tikzpicture}
+    &
+    \begin{array}{c}
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      \node[state] (one) [below right of=zero, xshift=-6mm, fill=black]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=6mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\aout[r][h_3][][start]$} (one)
+      (one) edge[bend left] node[below] {$\ain[h_3][r][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[r][r'][][greet]$} (zero)
+      ;
+  \end{tikzpicture}
+   \\
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$0$};
+      %\node[state] (one) [below of=zero]   {$1$};
+      \node[draw=none,fill=none] (start) [above left = 0.3cm  of zero]{$\ttr'$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[loop right,looseness=40]  node[above] {$\ain[r][\ttr'][][greet]$} (zero)
+      %(zero) edge[bend right] node[below] {$\aout[h_4][r][][react]$} (one)
+      ;
+  \end{tikzpicture}
+  \end{array}
+    \end{array}
+\end{array}
+$$
+\hrule
+\vspace{2mm}
+$$
+\begin{array}{c} 
+  \begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\ttp]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm, fill=black]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[h_{1}][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\HH_1]$}] (0) {$0$};
+		  \node[state] (1) [below right of=0]   {$1$};
+		  \node[state] (2) [below left of=1, fill=black]   {$2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[h_1][p][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[p][h_1][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[p][h_1][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[h_1][p][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[p][h_1][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[h_1][p][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+ $$
+ \hrule
+ \vspace{-6mm}
+ $$
+ \begin{array}{c}
+    \begin{array}{c@{\hspace{5mm}}c@{\hspace{5mm}}c@{\hspace{5mm}}c}
+    \begin{array}{c}
+    \\[4mm]
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_1]$}] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1, fill=black]   {$\dot 2$};
+		  \node[draw=none,fill=none] (wk1b) [below  of=2,yshift=8mm]   {\scalebox{1.3}{$w_{\kk_1\ttb}=\msg[react]$}};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\ain[k_3][k_1][][start]$} (1)
+		  (1) edge [bend left]  node[below] {$\aout[k_1][b][][react]$} (2)
+		  (2) edge [bend left]  node[below] {$\aout[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\ain[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\aout[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\ain[k_2][ k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+ \begin{array}{c}
+		\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[\KK_2]$}, fill=black] (0) {$\dot 0$};
+		  \node[state] (1) [below right of=0]   {$\dot 1$};
+		  \node[state] (2) [below left of=1]   {$\dot 2$};
+		  \node[state] (3) [above left of=2,xshift=-4mm]   {$\dot 3$};
+		  \node[state] (4) [above left of=2,xshift=4mm]   {$\dot 4$};
+		  % 
+		  \path
+		  (0) edge [bend left] node[above] {$\aout[k_2][d][][react]$} (1)
+		  (1) edge [bend left]  node[below] {$\ain[k_4][k_2][][pars]$} (2)
+		  (2) edge [bend left]  node[below] {$\ain[k_1][k_2][][rc]$} (3)
+		  (3) edge[bend left] node[above] {$\aout[k_2][k_1][][img]$} (0)
+		  (2) edge [bend left]  node[above] {$\ain[k_1][k_2][][nc]$} (4)
+		  (4) edge [bend left]  node[below] {$\aout[k_2][k_1][][img]$} (0)
+		  ;
+		\end{tikzpicture}
+ \end{array}
+&
+\begin{array}{c}
+   \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every state}=[cnode]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) {$\dot 0$};
+      \node[state] (one) [below of=zero, fill=black]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_3$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left]  node[above] {$\aout[k_3][k_1][][start]$} (one)
+      (one) edge[bend left] node[above] {$\ain[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ &
+  \begin{array}{c}
+     \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black] {$\dot 0$};
+      \node[state] (one) [below of=zero]   {$\dot 1$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\KK_4$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[d][k_4][][react]$} (one)
+      (one) edge[bend left] node[above] {$\aout[k_4][k_2][][pars]$} (zero)
+      ;
+      \end{tikzpicture}
+ \end{array}
+ \end{array}
+ \\[-10mm]
+\begin{tikzpicture}[mycfsm]
+		  % 
+		  \node[state, initial, initial where = above, initial text={$\ptp[b]$}, fill=black] (zero) {$0$};
+		  % 
+		  \path
+		  (zero) edge [loop below,looseness=40] node[below] {$\ain[k_1][b][][react]$} (zero)
+		  ;
+		\end{tikzpicture}
+  \qquad\quad
+      \begin{tikzpicture}[mycfsm]
+      %\tikzstyle{every edge}=[carrow]
+      % 
+      \node[state] (zero) [fill=black] {$0$};
+      \node[state] (one) [below right of=zero, xshift=-3mm]   {$1$};
+      \node[state] (two) [below left  of=zero, xshift=3mm]   {$2$};
+      \node[draw=none,fill=none] (start) [above  = 0.3cm  of zero]{$\ptp[d]$};
+      % 
+      \path
+      (start) edge node {} (zero) 
+      (zero) edge[bend left] node[above] {$\ain[k_2][d][][react]$} (one)
+      (one) edge[bend left = 40] node[below] {$\aout[d][k_4][][react]$} (two)
+      (two) edge[bend left] node[above] {$\aout[d][k_3][][react]$} (zero)
+      ;
+  \end{tikzpicture}
+ \end{array}
+ $$
+   \caption{\label{fig:orchsyscompproj}A configuration $s$ and two projections: $\restrict{s}{1}$ and $\restrict{s}{\cs}$}
+\end{figure*}
+
+\finex
+}
+\end{example}

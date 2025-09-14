@@ -1,0 +1,625 @@
+%!TEX root = Main-CFSM-partial-fusion.tex
+\section{Systems of Communicating Finite State Machines}
+\label{sect:cfsm}
+
+Communicating Finite State Machines (CFSM)   are 
+ a widely investigated
+formalism for the description and analysis of distributed systems, originally proposed in \cite{BZ83}.
+CFSM are a variant of finite state I/O-automata that represent processes which communicate by asynchronous exchanges of messages via FIFO channels. 
+We now recall (partly following \cite{CF05,DY12,TY15,BdLH19}) the definitions of CFSM and systems of CFSMs.
+
+We assume %given 
+a countably infinite set  
+$\roles_\mathfrak{U}$ of participant names (ranged over by $\ttp,\ttq,\ttr,\HH,\KK,\ttv,\ttw\ldots$) and a countably infinite alphabet $\mathbb{A}_\mathfrak{U}$ 
+of messages (ranged over by $\msg[a]$, $\msg[b]$, $\msg[c]$, $\msg[m],\ldots$).\\
+
+\begin{definition}[FSA and $\varepsilon$-FSA with no final states]
+ 
+\end{definition}
+** Explain that we start from the very general definition of FSA since we shall use results on FSA like
+the elimination of $\varepsilon$-transitions-
+
+\begin{definition}[CFSM**TO BE DEFINED SIMPLY AS FSA on $\textit{Act}_{\roles,\mathbb{A}}$ with NO FINAL STATES**]\label{def:cfsm}%\hfill\\
+Let $\roles$  and $\mathbb{A}$ be finite subsets of $\roles_\mathfrak{U}$ and $\mathbb{A}_\mathfrak{U}$, respectively.
+\begin{enumerate}[i)] 
+\item
+The set $C_\roles$ of {\em channels} over $\roles$ is defined by\ \
+$C_\roles=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles, \ttp\neq\ttq}$
+\item
+The set $\mathit{Act}_{\roles,\mathbb{A}}$ of {\em actions}  over $\roles$ and $\mathbb{A}$ is defined by\ 
+$\textit{Act}_{\roles,\mathbb{A}} = C_\roles\times\Set{!,?}\times\mathbb{A}$
+
+The {\em subject} of an output action $\ttp\ttq!\msg[m]$ and of an input action $\ttq\ttp?\msg[m]$ is 
+$\ttp$.
+\item
+\label{def:cfsm-iii}
+A {\em communicating finite state machine over} $\roles$ \emph{and} $\mathbb{A}$
+is a finite transition system given by a tuple\\
+\centerline{ $M=(Q,q_0,\mathbb{A},\delta)$ }
+where $Q$ is a finite set of states, $q_0\in Q$ is the initial state, and
+$\delta\subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q$ is a set of transitions
+such that all the actions have the same subject, to which we refer as the {\em name} of $M$.
+\end{enumerate}
+\end{definition}
+\noindent
+We shall write $M_{\ttp}$ to denote a CFSM with name $\ttp$. 
+Where no ambiguity arises we shall refer to a CFSM by its name.
+
+
+Notice that the above definition of CFSM is generic with respect to the underlying sets
+$\roles$ and $\mathbb{A}$.
+This is necessary,  since we shall not deal with a single system of CFSMs but with an arbitrary number of  systems of CFSMs that can be {\em composed}.
+We shall write $C$ and $\mathit{Act}$ instead of $C_\roles$ and $\mathit{Act}_{\roles,\mathbb{A}}$ when no ambiguity can arise.
+%\brc Let us check whether we ever use $C$ and $\mathit{Act}$.
+%But even then, I would prefer to see $C_\roles$ and $\mathit{Act}_{\roles,\mathbb{A}}$ which is minimal longer.\erc
+ We assume $\elle,\elle',\ldots$ to range over $\textit{Act}$
+%$\varphi,\varphi',\ldots$ to range over $\textit{Act}^*$ (the set of finite words over $\textit{Act}$), 
+and $w,w',\ldots$ to range over $\mathbb{A}^*$ (the set of finite words over $\mathbb{A}$).
+The symbol $\varepsilon\,(\notin \mathbb{A}\cup\textit{Act})$ denotes the empty word and 
+$\mid w\mid$ the length of a word $w\in \mathbb{A}^*$.
+%$\mid v\mid$ the lenght of a word $v\in \textit{Act}^*\cup\mathbb{A}^*$.
+
+%%>>>>>>>> DEFINITIONS NOT USED in the present paper
+%Given a word $v$ with prefix $v'$, i.e. such that $v=v'\cdot v''$ for a certain $v''$, we define $v\setminus v' =v''$.
+%Moreover, given a  word $v$ with $\msg[a]$ as last  element, i.e. $v=v'\cdot \msg[a]$ for a certain (possibly empty) $v'$, we define
+%$\mathsf{init}(v) = v'$ and  $\mathsf{last}(v) = \msg[a]$. 
+%Moreover, we shall denote by $\widetilde{v}$ the reverse of the word $v$. \\
+
+
+The transitions of a CFSM are labelled by actions; a label $\tts\ttr!\msg[a]$ represents
+the asynchronous sending of message $\msg[a]$ from machine $\tts$ to $\ttr$ through channel $\tts\ttr$ and, dually,
+$\tts\ttr?\msg[a]$ represents the reception (consumption) of $\msg[a]$ by $\ttr$ from channel
+$\tts\ttr$. 
+
+ Given a CFSM $M=(Q,q_0,\mathbb{A},\delta)$,
+we also define \\
+\centerline{$\inn{M}=\Set{\msg[a] \mid (\_,\_\,\_?\msg[a],\_)\in \delta }$
+\quad \text{ and }\quad $\outt{M}=\Set{\msg[a] \mid (\_,\_\,\_!\msg[a],\_)\in \delta }$.}
+ If $M$ is a CFSM with name $\ttp$, we also write $\inn{\ttp}$ for $\inn{M}$ and
+ $\outt{\ttp}$ for $\outt{M}$.
+  Note that, in concrete examples, the name of a CFSM together with its input and output messages can be graphically depicted as in~\cref{fig:four-ips}. 
+
+
+
+
+%We write $\lang{M}\subseteq\textit{Act}^*$ for
+%the language over $\textit{Act}$ accepted by the automaton corresponding
+%to machine $M$, where each state of $M$ is an accepting state. 
+A state
+$q\in Q$ with no outgoing transition is {\em final}; 
+$q$ is a {\em sending} (resp. {\em receiving}) state if it is not final and
+all outgoing transitions are labelled with sending (resp. receiving) actions;
+$q$  is a {\em mixed} state if there are at least two outgoing transitions such that one is labelled with a sending action and the other one is labelled with a receiving action.
+
+
+
+%
+%  ?!-DETERMINISM DEFINITION <<<<<<<<<<<<<<<<<<<<<<<<
+% 
+%\vspace{2mm}
+%A CFSM $M = (Q,q_0,\mathbb{A},\delta)$ is:
+%\begin{enumerate}[a)]
+%\item
+% {\em deterministic} if for all transitions:\quad % states $q\in Q$ and all actions $\elle$: 
+%$(q,\elle, q'), (q,\elle,q'')\in \delta$ imply $q'=q''$;
+%\item
+%{\em ?-deterministic} (resp. {\em !-deterministic}) if for all transitions:\\ % all states  $q\in Q$ and all actions:\\
+%$\qquad$ $(q,\ttr\tts?\msg[a], q'), (q,\ttp\ttq?\msg[a],q'')\in \delta$ (resp. $(q,\ttr\tts!\msg[a], q'), (q,\ttp\ttq!\msg[a],q'')\in \delta$) imply $q'=q''$;\footnote{Note that, by Definition \ref{def:cfsm}(\ref{def:cfsm-iii}), we have
+%necessarily that $\tts=\ttq$ in the clause for ?-determinism and $\ttr=\ttp$ in the one for
+%!-determinism.}
+%\item
+%{\em ?!-deterministic} if it is both ?-deterministic and !-deterministic.
+%\end{enumerate}
+%
+%The notion of ?!-deterministic machine is more demanding than in usual CFSM settings. It will be needed in order to guarantee preservation of communication properties when systems are connected. 
+%Note that a ?!-deterministic CFSM is also deterministic, but the converse does not hold
+%(since the channel names are abstracted away in the definition of ?!-determinism). \\
+
+A {\em communicating system}, called ``protocol'' in \cite{BZ83}, is a finite set of CFSMs.
+% over some vocabulary of messages such that senders and receivers are identified by the 
+%names of CFSMs. 
+ In~\cite{CF05,DY12,TY15} the names of the CFSMs in a system are called {\em roles}. In the present paper we call them {\em participants}.
+ 
+
+The dynamics of a system are
+formalised as a transition relation on configurations, where a configuration is a
+pair of tuples: a tuple of states of the machines in the system and a tuple of buffers representing the content of the channels. A buffer is described as an element of $\mathbb{A^*}$. 
+
+\begin{definition}[Communicating system and configuration]%\hfill\\
+Let $\roles$  and $\mathbb{A}$ be as in Def.~\ref{def:cfsm}.
+\begin{enumerate}[i)]
+\item
+A {\em communicating system (CS)
+over} $\roles$ \emph{and} $\mathbb{A}$ is a  set  %tuple 
+$S= (M_\ttp)_{\ttp\in\roles}$
+%\centerline{$S= (M_\ttp)_{\ttp\in\roles}$}
+where\\
+%\\
+%-  $\roles\subseteq_{\text{fin}}\roles_\mathfrak{U}$   is the set of {\em roles} (participants) of $S$, and\\
+for each $\ttp\in \roles$,
+$M_\ttp=(Q_\ttp,q_{0\ttp},\mathbb{A},\delta_\ttp)$ is a CFSM  over $\roles$ and $\mathbb{A}$.
+\item
+A {\em configuration} of a system $S$ is a pair $s = (\vec{q},\vec{w})$
+%\centerline{$s = (\vec{q},\vec{w})$}
+where\\
+\centerline{$\vec{q}= (q_\ttp)_{\ttp\in\roles}$ with $q_\ttp \in Q_\ttp$,
+\qquad and \qquad  $\vec{w}  = (w_{\ttp\ttq})_{\ttp\ttq\in C}$ with $w_{\ttp\ttq}\in\mathbb{A^*}$.}
+%\begin{itemize}
+%\item[-]  $\vec{q}= (q_\ttp)_{\ttp\in\roles}$ with $q_\ttp \in Q_\ttp$,
+%\item[-]  $\vec{w}  = (w_{\ttp\ttq})_{\ttp\ttq\in C}$ with $w_{\ttp\ttq}\in\mathbb{A^*}$.
+%\end{itemize}
+
+The component $\vec{q}$ is the {\em control state\/} of the system and $q_\ttp \in Q_\ttp$ is the 
+{\em local state\/} of machine $M_\ttp$. 
+The component $\vec{w}$ represents the state of the channels of the system and $w_{\ttp\ttq} \in \mathbb{A}^*$ is the state of the channel $\ttp\ttq$, i.e. the messages sent from $\ttp$ to $\ttq$. The initial configuration of $S$ is $s_0=  (\vec{q_0},\vec{\varepsilon})$
+with $\vec{{q_0}} = (q_{0_\ttp})_{\ttp\in\roles}$.
+\end{enumerate}
+\end{definition}
+
+\noindent
+In the following we will often denote a communicating system $(M_{\ttp})_{\ttp\in \Set{\ttr_i}_{i\in I}}$ by $(M_{\ttr_i})_{i\in I}$.
+
+
+
+\begin{definition}[Transitions and reachable configurations]
+Let $S$ be a communicating system over $\roles$ and $\mathbb{A}$, and let $s= (\vec{q},\vec{w})$ and $s'= (\vec{q'},\vec{w'})$ 
+be two configurations of $S$. %\\
+Configuration $s'$ {\em is reachable from} $s$
+{\em by firing  a transition} with action $\elle$, written $s\lts{\elle}s'$, if there is $\msg[a]\in\mathbb{A}$
+such that one of the following conditions holds:
+%\begin{center}
+%\begin{tabular}{ r l r l}
+%$1.$ & $\elle = \tts\ttr!\msg[a]$ and $(q_\tts,\elle,q'_\tts)\in\delta_\tts$ and &  
+%$2.$ & $\elle = \tts\ttr?\msg[a]$ and $(q_\ttr,\elle,q'_\ttr)\in\delta_\ttr$ and\\
+%        & $a)$ for all $\ttp\neq\tts: ~ q'_\ttp =  q_\ttp$  and &
+%        & $a)$ for all $\ttp\neq\ttr: ~ q'_\ttp =  q_\ttp$  and \\
+%        & $b)$ $w'_{\tts\ttr} =  w_{\tts\ttr}\cdot \msg[a]$ and for all $\ttp\ttq\neq\tts\ttr: ~ w'_{\ttp\ttq} =  w_{\ttp\ttq}$; &
+%        & $b)$  $w_{\tts\ttr} =  \msg[a]\cdot w'_{\tts\ttr}$ and for all $\ttp\ttq\neq\tts\ttr: ~w'_{\ttp\ttq} =  w_{\ttp\ttq}$.
+%\end{tabular}
+%\end{center}
+\begin{enumerate}
+\item
+$\elle = \tts\ttr!\msg[a]$ and $(q_\tts,\elle,q'_\tts)\in\delta_\tts$ and
+\qquad \begin{enumerate}[a)]
+\item
+for all $\ttp\neq\tts: ~ q'_\ttp =  q_\ttp$  and
+\item
+$w'_{\tts\ttr} =  w_{\tts\ttr}\cdot \msg[a]$ and for all $\ttp\ttq\neq\tts\ttr: ~ w'_{\ttp\ttq} =  w_{\ttp\ttq}$;
+\end{enumerate}
+\item 
+$\elle = \tts\ttr?\msg[a]$ and $(q_\ttr,\elle,q'_\ttr)\in\delta_\ttr$ and
+\begin{enumerate}[a)]
+\item
+for all $\ttp\neq\ttr: ~ q'_\ttp =  q_\ttp$  and
+\item
+$w_{\tts\ttr} =  \msg[a]\cdot w'_{\tts\ttr}$ and for all $\ttp\ttq\neq\tts\ttr: ~w'_{\ttp\ttq} =  w_{\ttp\ttq}$.
+\end{enumerate}
+\end{enumerate}
+We write $s\lts{}s'$ if there exists $\elle$ such that  $s\lts{\elle}s'$
+ and we write $s\notlts{}\hspace{2mm}$ if no $s'$ and no $\elle$ exist with
+$s\lts{\elle}s'$.
+As usual, we denote the reflexive and transitive 
+closure of $\lts{}$ by $\to^*$.
+The set of {\em reachable configurations} of S is $\RS(S) = \Set{s \mid s_0 \to^* s}.$
+\end{definition}
+\noindent
+According to the above definition, communication happens asynchronously via buffered channels following the FIFO principle.\\
+
+
+\begin{example}{\em
+As sketched in the Introduction, CFSMs can be graphically represented as in the following
+simple example of a communicating system describing an asynchronous protocol of mutually exclusive use of
+a resource by two participants $\msg[p]$ and $\msg[q]$ controlled  by a participant $\msg[c]$.
+$$
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (idle)                        {\small $\mathit{Idle}$};
+  \node[draw=none,fill=none] (wpc) [right of = idle, xshift=10mm,yshift=-4mm]{\small$\mathit{w}_{\ptp[p]\ptp[c]}=\varepsilon$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of idle]{$\ptp[p]$};
+  \node[state]           (wait) [below right of=idle] {\small $\mathit{Wait}$};
+  \node[state]            (busy) [below left of=wait] {\small $\mathit{Busy}$};
+    \node[draw=none,fill=none] (wcp) [right of = busy, xshift=10mm,yshift=4mm]{\small$\mathit{w}_{\ptp[c]\ptp[p]}=\varepsilon$};
+
+   \path  (start) edge node {} (idle) 
+             (idle)        edge   [bend left]      node [above]  {${\ttp\ttc}!{\msg[request]}$} (wait)
+             (busy)        edge  [bend left]         node [above] {${\ttp\ttc}!{\msg[release]}$} (idle)
+             (wait)  edge  [bend left]      node [below] {${\ttc\ttp}?{\msg[granted]}$} (busy);       
+             \end{tikzpicture}
+\qquad
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (noreq)                        {\small $\mathit{no\text{-}reqs}$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of idle]{$\ptp[c]$};
+  \node[state]           (qreq) [below right of=idle,xshift=8mm] {\small $\mathit{\mathtt{q}\text{-}req}$};
+  \node[state]           (preq) [below left of=idle,xshift=-8mm] {\small $\mathit{\mathtt{p}\text{-}req}$};
+  \node[state]            (qgrant) [below left of=wait,xshift=8mm,yshift=-4mm] {\small $\mathit{\mathit{\mathtt{q}\text{-}grant}}$};
+  \node[state]            (pgrant) [below left of=wait,xshift=-8mm,yshift=-4mm] {\small $\mathit{\mathit{\mathtt{p}\text{-}grant}}$};
+%
+   \path  (start) edge node {} (noreq) 
+             (noreq)        edge   [bend left]      node [above]  {${\ttq\ttc}?{\msg[request]}$} (qreq)
+             (qgrant)        edge          node [above] {${\ttq\ttc}?{\msg[release]}$} (noreq)
+             (qreq)  edge  [bend left]      node [below] {${\ttc\ttq}!{\msg[granted]}$} (qgrant)
+             (noreq)        edge   [bend right]      node [above]  {${\ttp\ttc}?{\msg[request]}$} (preq)
+             (pgrant)        edge          node [above] {${\ttp\ttc}?{\msg[release]}$} (noreq)
+             (preq)  edge  [bend right]      node [below] {${\ttc\ttp}!{\msg[granted]}$} (pgrant);       
+             \end{tikzpicture}
+\qquad
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (idle)                        {\small $\mathit{Idle}$};
+  \node[draw=none,fill=none] (wpc) [left of = idle, xshift=-10mm,yshift=-4mm]{\small$\mathit{w}_{\ptp[q]\ptp[c]}=\varepsilon$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of idle]{$\ptp[q]$};
+  \node[state]           (wait) [below right of=idle] {\small $\mathit{Wait}$};
+  \node[state]            (busy) [below left of=wait] {\small $\mathit{Busy}$};
+    \node[draw=none,fill=none] (wcp) [left of = busy, xshift=-10mm,yshift=4mm]{\small$\mathit{w}_{\ptp[c]\ptp[q]}=\varepsilon$};
+
+   \path  (start) edge node {} (idle) 
+             (idle)        edge   [bend left]      node [above]  {${\ttq\ttc}!{\msg[request]}$} (wait)
+             (busy)        edge  [bend left]         node [above] {${\ttq\ttc}!{\msg[release]}$} (idle)
+             (wait)  edge  [bend left]      node [below] {${\ttc\ttq}?{\msg[granted]}$} (busy);       
+             \end{tikzpicture}
+ $$
+ The following configuration
+ $$
+ ((\mathit{Idle}_{\ttp},\mathit{\mathtt{q}\text{-}grant}_{\ttc},\mathit{Wait}_{\ttq}),
+  (\mathit{w}_{\ptp[p]\ptp[c]}=\langle\msg[release]\rangle,
+   \mathit{w}_{\ptp[c]\ptp[p]}=\varepsilon,
+   \mathit{w}_{\ptp[q]\ptp[c]}=\langle\msg[request]\rangle,
+    \mathit{w}_{\ptp[c]\ptp[q]}=\varepsilon)
+)
+$$
+is reachable from the initial configuration after that both $\ptp[p]$ and $\ptp[q]$ have requested the resource,
+$\ptp[c]$ has granted it to $\ptp[p]$ and, after acquiring it, $\ptp[p]$ has sent to $\ptp[c]$ the information
+about its release. In the rest of the paper we do not show channels in drawings 
+%draw the channel 
+when their representation is not strictly necessary.
+\finex
+}\end{example}
+
+
+%DEFINITIONS NOT USED in the present paper 
+%%>>>>>>>>>>>
+%We shall use $\xi, \xi', \ldots$ to range over sequences of transitions of the form 
+%$s_1\lts{\elle_2}s_2\lts{\elle_3} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_{n}}s_{n}$.
+%If $\xi = s_1\lts{\elle_2} \ldots \lts{\elle_{n}}s_{n}$ we denote by $|\xi|$ its length, defined as $|\xi| = n-1$.
+%In case $n=1$ we have a degenerate transition sequence of lenght $0$ made of a single configuration.\\
+%We shall denote by
+%$\upto{\xi}{i}$ the subsequence of the first $i$ transitions of a sequence $\xi$.\\
+%Let $\xi$ be a sequence of the form $s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}$, and let $s_{n-1}\lts{\elle_n}s_n$.
+%We shall denote by $\xi\lts{\elle_n}s_n$  the transition sequence
+%$s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n$.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%\textbf{Rolf: I have changed reference \cite{BZ83} in the title of the next definition to  \cite{DY12} because the latter uses exactly the definition that you give in i) below
+%and which is different from our submitted paper.\\
+%I have adjusted the proofs later to the new deadlock definition which is,
+%if there are final states, in general not equivalent to the old one given in the submission.\\
+%\cite{DY12}
+%and~\cite{CF05} use the same definition of deadlock as in i) below. 
+%The definition in~\cite{TY15} is different (it is the one used in our submitted version). Also the definition in~\cite{TG18} is different, see page 23 in~\cite{TG18}.
+%There they say ``This defintion is adpated from~\cite{CF05}.''  
+%By ``adapted'' they mean obviously that the definition has been slightly changed.
+%The deadlock definition in~\cite{BZ83} is still different, because there a deadlock would already occur if all CFSMs are in a final state. This would also be a deadlock 
+%in~\cite{TG18} if not all buffers are empty. 
+%\\
+%In summay:\\
+%Deadlock in~\cite{CF05} = deadlock in~\cite{DY12} = deadlock above in i).\\
+%Deadlock in~\cite{DY12} implies deadlock in~\cite{TY15} implies deadlock in~\cite{TG18} implies deadlock in~\cite{BZ83}.} \\
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%\begin{definition}[Interfacing Policy]\label{def:intpol}
+%An {\em interfacing policy} $\inp$ for a multiparty session $\Pi_{i\in I}{\pP{\hh_i}{\PH_i}}$ is a multiparty session $\Pi_{i\in I}{\pP{\hh_i}{\PK_i}}$ such that
+%$\PK_i\in\GS{\PH_i}{\SP\setminus\set{\hh_i}}$ for all $i\in I$,  where $\SP=\set{\hh_i\mid i\in I}$.
+%% $\SP=\set{\hh_i\mid i\in I}$ and $\PK_i\in\GS{\PH_i}{\SP\setminus\set{\hh_i}}$ for all $i\in I$.
+%An interfacing policy is {\em valid} if $\inp$ is typable.
+%\end{definition}
+
+%\begin{example}[Interfacing policies]\label{simplewe3}
+% Let us consider the four sessions of Example~\ref{simplewe4}. 
+%Then an interfacing policy for the multiparty session $\Pi_{i=1}^{4}\pP{\hh_i}{\PH_i}$ is the multiparty session $\Pi_{i=1}^{4}\pP{\hh_i}{\PK_i}$
+% where
+% \Cline{
+% \PK_1=
+%\hh_3 ?\msg{start}.\,\hh_4!\msg{react}.\hh_2 !
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_2 ?\msg{img}.\,\PK_1                                                                                                                                \\
+%\msg{nc}.\,\hh_2 ?\msg{img}.\,\PK_1                                                                          \end{array}\right.
+%}
+% \Cline{\PK_2=
+%\hh_3 !\msg{react}.\,\hh_4 ?\msg{pars}.\,\hh_1 ?
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_1!\msg{img}.\,\PK_2                                                                                                                                \\
+%\msg{nc}.\,\hh_1!\msg{img}.\,\PK_2
+%       \end{array}\right.
+%}
+% \Cline{\PK_3=
+%\hh_1 !\msg{start}.\,\hh_2 ?\msg{react}.\,\PK_3
+%\qquad
+% \PK_4=
+%\hh_1 ?\msg{react}.\,\hh_2 ! \msg{pars}.\,\PK_4
+%}
+%
+%\noindent
+% This policy is valid, since the multiparty session $\Pi_{i=1}^{4}\pP{\hh_i}{\PK_i}$ can be typed by the following global type
+% \Cline{
+% \G=
+%\hh_3\to\hh_1{:}\msg{start}.\,\hh_2\to\hh_3{:}\msg{react}.\,\hh_1\to\hh_4{:}\msg{react}.\, \hat\G}
+%where
+%\Cline{ \hat\G=\hh_4\to\hh_2{:}\msg{pars}.\,
+%\hh_1\to\hh_2{:}
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_2\to\hh_1{:}\msg{img}.\,\G \\
+%\msg{nc}.\,\hh_2\to\hh_1{:}\msg{img}.\,\G                                                                          \end{array}\right.}
+%Note that, according to the above interfacing policy, the greeting depends on the reactions sent by the sensor driven by $\pq$.
+% It is not difficult to check that there exists another valid interfacing policy for $\Pi_{i=1}^4{\pP{\hh_i}{\PH_i}}$, namely the one according to which the greeting depends on the reactions sent by the sensor driven by $\pp$.  I.e.  also  $\Pi_{i=1}^{4}\pP{\hh_i}{\PK_i'}$  is  an interfacing policy for the multiparty session $\Pi_{i=1}^{4}\pP{\hh_i}{\PH_i}$ 
+% where
+% \Cline{
+% \PK'_1=
+%\hh_3 ?\msg{start}.\,  \hh_3 !\msg{react}.\,  %\hh_4!\msg{react}.
+%\hh_2 !
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_2 ?\msg{img}.\,\PK'_1                                                                                                                                \\
+%\msg{nc}.\,\hh_2 ?\msg{img}.\,  \PK'_1  %\PK_1                                                                         
+%\end{array}\right.
+%}
+% \Cline{\PK'_2=  \hh_4 !\msg{react}.\, 
+%\hh_4 ?\msg{pars}.\,\hh_1 ?
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_1!\msg{img}.\,  \PK'_2  %\PK_2                                                                                                                               
+% \\
+%\msg{nc}.\,\hh_1!\msg{img}.\,\PK'_2
+%       \end{array}\right.
+%}
+% \Cline{\PK'_3=
+%\hh_1 !\msg{start}.\,\hh_1 ?\msg{react}.\,\PK'_3
+%\qquad
+% \PK'_4=
+% \hh_2  %\hh_1 
+%?\msg{react}.\,\hh_2 ! \msg{pars}.\,\PK'_4
+%}
+%
+%\noindent
+% This policy is valid, since the multiparty session $\Pi_{i=1}^{4}\pP{\hh_i}{\PK'_i}$ can be typed by the following global type
+% \Cline{
+% \G'=
+%\hh_3\to\hh_1{:}\msg{start}.\,\hh_1\to\hh_3{:}\msg{react}.\,  \hh_2  %\hh_1
+%\to\hh_4{:}\msg{react}.\,\hat{\G'}}
+%where
+%%\Clinefe{
+%\Cline{
+%\hat{\G'}=\hh_4\to\hh_2{:}\msg{pars}.\,
+%\hh_1\to\hh_2{:}
+%\left\{ \begin{array}{l}                                                                                                                                           \msg{rc}.\,\hh_2\to\hh_1{:}\msg{img}.\,\G' \\
+%\msg{nc}.\,\hh_2\to\hh_1{:}\msg{img}.\,\G'                                                                            \end{array}\right.}  
+% \\[-5.5mm] \finex
+%%\finex
+%\end{example}
+%\begin{definition}[Safety properties \cite{BZ83,CF05}]\hfill\\
+
+The overall behaviour of a system can be described (at least) by the traces of configurations that are reachable from a distinguished initial one. Configurations may exhibit some pathological properties, like various forms of {\em deadlock} or {\em progress violation}, channels containing messages that will never be consumed ({\em orphan messages}) or 
+participants expecting messages which are different from those 
+present in their input channels
+({\em unspecified receptions}). 
+
+The goal of the analysis of communicating systems is to check whether certain kinds of configurations
+are not reachable, like, e.g., deadlock configurations or configurations with reception error. 
+Although the desirable system properties are undecidable in general~\cite{BZ83}, sufficient conditions are known that are effectively checkable
+relying, for instance, on half-duplex communication~\cite{CF05}, on the form of network topologies~\cite{DBLP:conf/concur/ClementeHS14}, or on synchronous compatibility checking~\cite{HB18}.
+
+We formalise now a number of relevant communication properties for systems of CFSMs
+that we deal with in the present paper.  
+
+\begin{definition}[Communication properties]%\hfill\\
+\label{def:safeness}
+Let $S$ be a communicating system, and let $s= (\vec{q},\vec{w})$ be a configuration of $S$.
+\begin{enumerate}[i)]
+\item
+\label{def:safeness-i}
+$s$ is a {\em deadlock configuration} of $S$ if \hspace{2mm}
+$\vec{w}=\vec{\varepsilon}\quad\text{and}\quad \forall \ttp\in\roles.~q_\ttp \text{ is a receiving state}$.\\
+I.e. all buffers are empty, but all machines are waiting for a message.\\
+We say that $S$ is {\em deadlock-free} whenever, for any $s\in \RS(S)$, $s$ is not a  deadlock configuration.
+
+%\item
+%\label{def:safeness-i}
+%$s$ is a {\em deadlock configuration} if $s\, \not\!\!\lts{}$ and either
+%\begin{enumerate}[a)]
+%\item $\exists \ttr\in\roles$ such that $q_\ttr \lts{\ttr\tts?a} q'_\ttr$ , or
+%\item
+%\label{def:safeness-wnotem}
+%$\vec{w}\neq\vec{\varepsilon}$ 
+%\end{enumerate}
+%i.e. $s$ is stuck  because all machines which are not in a final state are in a receiving state waiting for messages that cannot be read from the buffer; moreover if  $\vec{q}$ is final all buffers are empty.\\
+%We say that $S$ is {\em deadlock-free} whenever, for any $s\in \RS(S)$, $s$ is not a  deadlock configuration.
+
+\item
+$s$ is an {\em  orphan-message  configuration} of $S$ if \hspace{2mm}
+$\forall \ttp\in\roles. ~ q_\ttp \text{ is final} \quad\text{and}\quad  \vec{w}\neq \vec{\varepsilon}$.\\
+I.e. each machine is in a final state, but there is still  at least one non-empty buffer.
+We say that $S$ is {\em orphan-message free} whenever, for any $s\in \RS(S)$, $s$ is not an orphan-message configuration.
+
+\item
+\label{def:safeness-ur}
+$s$ is an {\em unspecified reception configuration} of $S$  if ~$\exists \ttr \in\roles$ such that  
+\begin{enumerate}[a)]
+\item
+%$\exists \ttr \in\roles. ~ 
+$q_\ttr \text{ is a receiving state}$; and
+\item
+$\forall\tts\in\roles.[~(q_\ttr,\tts\ttr?\msg[a],q'_\ttr)\in\delta_\ttr  \implies
+(|w_{\tts\ttr}| > 0~~\wedge~~ w_{\tts\ttr}\not\in  \msg[a]\cdot\mathbb{A}^*)~ ]$.
+\end{enumerate}
+I.e. there is a receiving  state $q_\ttr$ 
+which is prevented from
+receiving any message from any of its buffers.
+(In other words, in each channel $\tts\ttr$ from which participant $\ttr$ could consume, there
+is a message which cannot be received by $\ttr$ in state $q_\ttr$.)
+We say that $S$ is {\em reception-error free} whenever, for any $s\in \RS(S)$, $s$ is not an unspecified reception configuration.
+\item
+\label{def:progress-i}
+$S$ satisfies the {\em progress property} if for all $s= (\vec{q},\vec{w}) \in \RS(S)$, either there exists $s'$ such that $s\lts{} s'$
+or $~\forall \ttp\in\roles. ~ q_\ttp \text{ is final}$. 
+\item
+\label{def:lock-freedom}
+$s$ is a $\ttp$-{\em lock configuration} of $S$ if $\ttp\in\roles$ and such that
+\begin{enumerate}[a)]
+\item
+$q_{\ttp}$ is a receiving state; and
+\item 
+ $\ttp$ does not appear as subject in any label of any transition sequence from $s$.
+\end{enumerate}
+I.e. $\ttp$ remains stuck in all possible transition sequences from $s$.
+We say that $S$ is {\em lock-free} whenever, for each $\ttp\in\roles$ and each $s\in \RS(S)$, $s$ is not a $\ttp$-lock configuration.
+\end{enumerate}
+\end{definition}
+
+Note that progress property (\ref{def:progress-i}) implies deadlock-freedom, whereas the inverse implication does not hold: just consider a stuck configuration with at least a non final state and a non empty buffer.
+Moreover, an unspecified reception configuration is trivially a $\ttp$-lock for some 
+$\ttp$. This immediately implies that lock-freedom implies
+reception-error-freedom.
+It is also straightforward to check that lock-freedom does imply  both  deadlock-freedom
+ and progress. 
+The other properties are mutually independent. 
+%\brc I believe that lock-freedom also implies progress.
+%Then we have that lock-freedom implies everything but orphan-message freedom
+%and the converse does also not hold. Also we know from our previous paper that
+%all other properties are mutually independent which then should also hold here.
+%But before we must say that  lock-freedom also implies progress if you agree.
+%\erc
+ Communication properties above are essentially as presented in~\cite{DY12,TY15,CF05,BZ83,DY12}. 
+
+%The above definitions of communication properties (\ref{def:safeness-i})--(\ref{def:progress-i}) are the same as the properties considered in~\cite{DY12},
+%though the above formulation of progress is slightly simpler but equivalent to the one in~\cite{DY12}.
+%The notions of orphan message and unspecified reception are also the same as in~\cite{TY15}.
+%The same notions of deadlock and unspecified reception are given in~\cite{CF05} and inspired by~\cite{BZ83}. The deadlock notions in~\cite{BZ83} and~\cite{TY15} coincide with~\cite{CF05} and~\cite{DY12} if the local CFSMs have no final states. Otherwise, deadlock in~\cite{TY15} is weaker than deadlock above.
+%A still weaker notion of deadlock configuration, and hence a stronger notion of deadlock-freedom, has been suggested in~\cite{TG18}. 
+%This deadlock notion has been formally related to the above 
+%communication properties in~\cite{BdLH19}.
+
+%\brc
+%A further comment: If we can save enough space, I would so much
+%prefer to move the definition of projection and~\cref{lem:nohatrestrict}
+%to the main part of the paper as a hint for the most important proposition in our proofs.
+%\erc
+
+%To distinguish it from the notion above, we call it \emph{strong deadlock-freedom}, as done in \cite{BdLH19}.
+
+\begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
+A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
+where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas
+$$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$$
+\end{definition}
+
+A CFSM can be looked at as a CFSM with interface edges where all the edges are non interface ones.
+
+We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
+ $q
+ \raisebox{2.7mm}
+{\begin{tikzpicture}[mycfsm]
+      % 
+      \node[state, draw=none] (zero) [yshift=-4mm, xshift=5mm] {$~$};
+      \node[state, draw=none] (one) [right of=zero, xshift=-10mm]   {$~$};
+      % 
+      \draw (zero) edge[-to,line width=0.5mm] node[above]{$l$} (one)
+      ;
+ \end{tikzpicture}
+ } 
+\!\! q'$
+for $(q,l,q',\intf)$.
+
+\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
+Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
+\begin{enumerate}[i)]
+\item
+$\bm{\varepsilon}(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
+\centerline{
+$\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid \exists l.(q,l,q',\intf) \in \bm{\delta}}$  }
+\item
+$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
+to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
+Roughly:\\ 
+- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+\end{enumerate}
+\end{definition}
+
+** Composition must require $\I(M)$ to be deterministic ??.
+
+
+\begin{definition}[Interface decorations]\label{def:IDM}
+Let $M=(Q,q_0,\textit{Act},\delta)$ be a CFSM. We define the {\em interface decorations set} of $M$
+as the following set of CFSMs with interface edges:
+$$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
+\end{definition}
+
+
+\section{Partial-fusion Composition}
+
+
+\begin{definition}[CFSM embedding]
+Let $M=(Q,q_0,\mathbb{A},\delta)$ and $M'=(Q',q'_0,\mathbb{A}',\delta')$
+be two CFSMs.
+We say that $M$ is {\em embedded} in $M'$ (${M}{M'}$) whenever there exists an injective $f:\delta\to\delta'$ such that
+\begin{itemize}[-]
+\item
+$q_1\lts{l_1} q_2\lts{l_2} q_3$ in $M$ implies  $q'_2\to^*q''_2$ in $M'$ \\
+where 
+$f(q_1\lts{l_1} q_2)= q'_1\lts{l'_1} q'_2$ and $f(q_2\lts{l_2} q_3)= q''_2\lts{l'_2} q'_3$
+\end{itemize}
+
+\end{definition}
+
+Definition: Structurally identical.
+
+\begin{definition}[$\bm{\delta}$-complementarity]
+Let $M_\ttr = (Q, q_0, \textit{Act}, \delta)$ and $M_\tts = (Q', q'_0, \textit{Act}, \delta')$  be two CFSMs.
+We say that
+\begin{enumerate}[i)]
+\item
+$M_\tts$ is {\em $\bm{\delta}$-complementary} with $M_\ttr$, written $\emb{\bm{\delta}}{M_\tts}{M_\ttr}$, whenever 
+\begin{itemize}
+\item[-] 
+there exixts $M''_\ttr = (Q'', q''_0, \textit{Act}, \bm{\delta})\in\IDS(M_\ttr)$;
+\item[-]
+$M_\tts$ is structurally identical to $\I(M''_\ttr)$;
+\item[-]
+$q_1 \lts{\ttr\ttp!\msg[m]} q_2 \in \delta$ for some $\ttp$ \quad iff \quad 
+$\eps(q_1)\lts{\ttp'\tts?\msg[m]}\eps(q_2)\in \delta'$ for some $\ttp'$;
+\item[-]
+$q_1 \lts{\ttp\ttr?\msg[m]} q_2 \in \delta$ for some $\ttp$ \quad iff \quad 
+$\eps(q_1)\lts{\tts\ttp'!\msg[m]}\eps(q_2)\in \delta'$  for some $\ttp'$.
+\end{itemize}
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Partial Fusion]
+Let $M_\hh = (Q, q_0, \textit{Act}, \delta)$ and $M_{\hh'} = (Q', q'_0, \textit{Act}, \delta')$
+be two CFSMs such that $\emb{\bm{\delta}}{M_{\hh'}}{M_\hh}$.
+We define the {\em partial fusion of $M_{\hh}$ and $M_{\hh'}$ via $\bm{\delta}$} as
+$$\fusion_{\!\bm{\delta}}(M_{\hh},M_{\hh'}) = (Q\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
+\begin{tabular}{lc@{\hspace{2mm}}l}
+where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta}}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta}}\,\cup$\\ 
+           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH'?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm\delta, (\eps(q),\ttr\KK?\msg[a],\ \eps(q'))\in\delta',\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm\delta,\ (\eps(q),\hh'\ttr!\msg[a],\eps(q'))\in\delta',\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+ \end{tabular} 
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

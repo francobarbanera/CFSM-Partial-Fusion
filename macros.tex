@@ -1,0 +1,1139 @@
+
+
+%%% BEGIN MACROS
+
+% Environments
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{example}[definition]{Example}
+\newtheorem{claim}[definition]{Claim}
+\newtheorem{fact}[definition]{Fact}
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+%\newcommand{\Proof}{\noindent {\bf Proof. }}
+%\newcommand{\qde}{\begin{flushright}$\Box$\end{flushright}}
+\newcommand{\qde}{\hfill $\Box$}
+
+%\newcommand{\qed}{\qde}
+
+\newcommand{\mc}[1]{\stackrel{\mbox{\tiny $#1$}}{\asymp}}
+
+\renewcommand*{\dot}[1]{%
+  \accentset{\mbox{\large\bfseries .}}{#1}}
+
+
+%\renewcommand{\vec}[1]{\bm{#1}}
+\newcommand{\set}[1]{\{#1\}}
+
+%\newenvironment{proof}{{\em Proof.~}}{~~\qde \medskip}
+
+\newcommand{\Comment}[1]{ }
+
+
+%\newenvironment{proof}{{\em Proof.~}}{~~\qde \medskip}
+
+\newcommand{\ByDef}{\triangleq}
+\def\Pred[#1]{~[\,#1\,]}
+
+%\newcommand{\rev}[1]{\underline{#1}}
+\newcommand{\rev}[1]{{\not\! #1}}
+
+
+\newcommand{\ckpt}{_{\tiny\mbox{$\blacktriangle$}}\!}
+\newcommand{\whiteckpt}{_{\tiny\mbox{$\triangle$}}\!}
+%\newcommand{\ckpt}{\!\!\stackrel{~}{{\tiny \mbox{$\blacktriangle$}}}\!\!}
+\newcommand{\mop}{\varobslash}
+
+%\newcommand{\Rel}{{\cal R}}
+\newcommand{\Rel}{\mathpzc R}
+\newcommand{\RelKK}{\mathpzc K}
+\newcommand{\RelK}{{\cal K}}
+\newcommand{\Fun}{{\cal F}}
+\newcommand{\FunH}{{\cal H}}
+\newcommand{\FunK}{{\cal K}}
+\newcommand{\FunJ}{{\cal J}}
+\newcommand{\FunC}{{\cal C}}
+
+\newcommand{\RS}{\mathsf{RC}}
+
+\newcommand{\I}{\mathcal{I}\!}
+
+\newcommand{\IDS}{\mathsf{IDS}\!}
+
+
+
+\newcommand{\rcv}[2]{{\sf rcv}_{1}^{n}#1.#2}
+
+\newcommand{\cons}{\!:\!}
+
+\newcommand{\congr}{\equiv}
+
+\newcommand{\gts}{{\looparrowleft}}
+
+% constants and ground operators
+
+\newcommand{\true}{{\sf true}}
+\newcommand{\false}{{\sf false}}
+\newcommand{\notOp}{{\sf not}}
+
+% Macros for process syntax
+
+\newcommand{\PiS}{$\pi_S$}
+
+\newcommand{\Orch}{\mbox{\sf Orch}}
+
+\newcommand{\Ports}{{\cal P}}
+\newcommand{\Channels} {{\cal C}}
+%\newcommand{\ProcVariables} {{\cal PV}}
+\newcommand{\Synth}{\textbf{Synth}}
+\newcommand{\Synthesis}{\textbf{Synthesis}}
+%\newcommand{\SynthL}{\textbf{Synth}^{\!\bm{\exists}}}
+\newcommand{\SynthL}{\textbf{Synth}^{\!\textbf{fst}}}
+\newcommand{\SynthA}{\textbf{Synth}^{\!\textbf{all}}}
+\newcommand{\SynthUD}{\textbf{Synth}^{\!\!\textbf{\tiny UD}}}
+
+
+\newcommand{\io}{\bullet}
+\newcommand{\hoprefix}[1]{\langle#1\rangle}
+
+\newcommand{\by}{\textsf{~by~}}
+
+\newcommand{\init}{\mathsf{init}}
+\newcommand{\last}{\mathsf{last}}
+\newcommand{\inn}[1]{\mathsf{in}(#1)}
+\newcommand{\Msgs}[1]{\mathsf{Msg}(#1)}
+\newcommand{\outt}[1]{\mathsf{out}(#1)}
+\newcommand{\cm}{\text{\sc cm}}
+
+\newcommand{\state}[1]{\mathbf{x}_{#1}}
+\newcommand{\Msg}[4]{\mathtt{#1} \rightarrow \mathtt{#2} :\mathit{#3}\langle \mathsf{#4}\rangle}
+
+\newcommand{\bMsg}[2]{\mathit{#1}\langle \mathsf{#2}\rangle}
+
+\newcommand{\GT}{\mathbf{G}}
+
+\newcommand{\implements}{\,\mathbf{imp}\,}
+
+\newcommand{\dom}{\textit{dom}}
+\newcommand{\domS}{\dom_{S}}
+\newcommand{\domO}{\dom_{O}}
+
+%\newcommand{\oftype}{{\hspace{4pt}\triangleright\hspace{-8pt}>}\;}
+\newcommand{\oftype}{\rhd}
+
+
+\newcommand{\bvdash}{\bm{\vdash}\hspace{-5.5pt}\bm{\vdash}}
+
+\newcommand{\List}[1]{[ #1 ]}
+
+\newcommand{\compatible}{\asymp}
+
+\newcommand{\OrchStep}[1]{\stackrel{#1}{\mapsto}}
+
+%\newcommand{\namedorch}[2]{\mbox{\scriptsize$\langle#1\!\rangle$}\!\langle#2\rangle}
+\newcommand{\namedorch}[2]{\langle #1 \rangle #2}
+
+\newcommand{\orchres}[2]{\nu #1\!\langle#2\!\rangle}
+
+\newcommand{\eval}[2]{#1\!\downarrow\!#2}
+\newcommand{\clean}[2]{\mathbf{Cln}(#1,#2)}
+
+\newcommand{\termination}[1]{\langle#1\rangle\inact}
+
+\newcommand{\interpol}{\cap^{\!\pm}}
+
+\newcommand{\outputtype}[3]{\bm{!}\langle\mathtt{#1},\mathit{#2}\langle\mathsf{#3}\rangle\rangle}
+\newcommand{\mpoutputtype}[2]{\bm{!}\langle\mathtt{#1},#2\rangle}
+\newcommand{\inputtype}[3]{\bm{?}\langle\mathtt{#1},#2\langle#3\rangle\rangle}
+\newcommand{\mpinputtype}[2]{\bm{?}\langle\mathtt{#1},#2\rangle}
+%\newcommand{\branchtype}[1]{\bm{\oplus}\Set{#1}}
+\newcommand{\branchtype}[1]{ {\bm \with} \hspace{-2pt}\Set{ #1}}
+\newcommand{\mpbranchtype}[2]{ {\bm \with}\hspace{-2pt}\langle \mathtt{#1},\Set{ #2}\rangle}
+
+
+\newcommand{\projecton}[2]{#1\!\!\downharpoonright\!#2}
+%\newcommand{\projectongw}[2]{#1\!\upharpoonright_{\!\mathtt{gw}}\!#2}
+\newcommand{\projectongw}[2]{#1\!\!\bm{\mid}\hspace{-3pt}\bm{\downharpoonright}\!#2}
+\newcommand{\projectGon}[3]{#1\upharpoonright_{#2}#3}
+
+\newcommand{\proj}[2]{#1\!\!\downharpoonright\!_{#2}}
+
+
+%\newcommand{\selectiontype}[1]{\bm{\with}\!\Set{#1}}
+\newcommand{\selectiontype}[1]{\mbox{\large ${\bm \oplus}$}\hspace{-2pt} \Set{ #1 }}
+\newcommand{\mpselectiontype}[2]{\mbox{\large ${\bm \oplus}$}\hspace{-2pt}\langle \mathtt{#1}, \Set{ #2 }\rangle}
+
+\newcommand{\prtyselectiontype}[1]{\mathbf{P\!r}\!\langle#1\rangle}
+\newcommand{\prtybranchtype}[1]{\mathbf{P\!r}\!\langle#1\rangle}
+%\newcommand{\prtyselectiontype}[1]{\bm{\parr}\langle#1\rangle}
+
+\newcommand{\retrseltype}[1]{{\bm \boxplus} \Set{ #1 }}
+\newcommand{\retrselop}[2]{#1 \! \triangleleft [ #2 ]}
+\newcommand{\prtyretrseltype}[1]{{\bm \boxplus} \!\, \langle\!\langle #1 \rangle\!\rangle}
+\newcommand{\prtyretrselop}[2]{#1 \! \triangleleft \langle\!\langle  #2 \rangle\!\rangle}
+\newcommand{\Labels}{{\cal L}}
+\newcommand{\orchF}{\mathsf{f}}
+\newcommand{\orchG}{\mathsf{g}}
+\newcommand{\orchPlus}{\mbox{\small $\sum$}}
+\newcommand{\orchOplus}{\oplus}
+\newcommand{\orchComply}[3]{#1 : \, #2 \comply #3}
+
+\newcommand{\prty}[1]{[\hspace{-0.5pt}#1\hspace{-0.5pt}]}
+
+\newcommand{\complyOF}{\complyF^{\!\mbox{\tiny {\sf Orch}}}}
+
+\newcommand{\emb}[3]{#2\ {^{\mbox{\tiny $?$}}_{\mbox{\tiny $!$}}\hspace{-8pt}\hookrightarrow_{\!#1\,}}#3}
+\newcommand{\intf}{\iota}
+\newcommand{\nintf}{\not\intf}
+
+
+\newcommand{\inact}{\mbox{$\mathbf{0}$}}
+%\newcommand{\accept}[3]{\mbox{\sf accept}\; #1 (#2).#3}
+\newcommand{\accept}[4]{#1 (#2)(#3).#4}
+\newcommand{\typedaccept}[4]{\mathtt{accept}_{#2} (#3)#4}
+%\newcommand{\typedaccept}[4]{#1_{#2} (#3)#4}
+\newcommand{\Paccept}[2]{\mbox{\sf accept}\; #1 (#2)}
+%\newcommand{\request}[3]{\mbox{\sf request}\; #1 (#2).#3}
+\newcommand{\request}[4]{\Dual{#1} (#2)(#3).#4}
+%\newcommand{\typedrequest}[4]{\Dual{#1}_{#2} (#3)#4}
+\newcommand{\typedrequest}[4]{\mathtt{request}_{#2} (#3)#4}
+\newcommand{\Prequest}[2]{\mbox{\sf request}\; #1 (#2)}
+%\newcommand{\send}[3]{#1 ! [#2].#3}
+\newcommand{\send}[2]{#1 ! [#2]}
+%\newcommand{\receive}[3]{#1 ? (#2).#3}
+\newcommand{\receive}[2]{#1 ? (#2)}
+\newcommand{\catch}[3]{\mbox{\tt catch\,} #1 (#2).#3}
+\newcommand{\Pcatch}[2]{\mbox{\tt catch\;} #1 (#2)}
+\newcommand{\throw}[3]{\mbox{\tt throw\,} #1 [#2].#3}
+\newcommand{\throwname}{{\sf throw}}
+\newcommand{\Pthrow}[2]{\mbox{\sf throw\;} #1 [#2]}
+%\newcommand{\select}[3]{#1 \triangleleft #2.#3}
+\newcommand{\select}[2]{#1 {\triangleleft\,} #2}
+%\newcommand{\branch}[2]{#1 \triangleright \{#2\}}
+\newcommand{\branch}[2]{#1 \triangleright #2}
+\newcommand{\singlebranch}[2]{#1 \triangleright\! #2}
+\newcommand{\prtysel}[2]{#1\, _{\mathtt{p\hspace{-1pt}r\hspace{-1pt}t\hspace{-1pt}y}}\!\!\triangleleft #2}
+\newcommand{\chA}[2]{#1\!\triangleleft#2}
+\newcommand{\Subst}[2]{\{#1/#2\}}
+\newcommand{\DefIn}[2]{\mbox{\sf def} \; #1\; \mbox{\sf in} \; #2}
+\newcommand{\AndInDef}{~\mbox{\sf and}~}
+\newcommand{\IfThenElse}[3]{\mbox{\tt if}\; #1 \; \mbox{\tt then}\; #2 \; \mbox{\tt else} \; #3}
+\newcommand{\Label}[1]{\mbox{\sc #1}}
+
+% Bound and free names
+\newcommand{\bn}[1]{\mbox{\sc bn}(#1)}
+\newcommand{\fn}[1]{\mbox{\sc fn}(#1)}
+\newcommand{\bp}[1]{\mbox{\sc bp}(#1)}
+\newcommand{\fp}[1]{\mbox{\sc fp}(#1)}
+\newcommand{\bc}[1]{\mbox{\sc bc}(#1)}
+\newcommand{\fc}[1]{\mbox{\sc fc}(#1)}
+\newcommand{\bv}[1]{\mbox{\sc bv}(#1)}
+\newcommand{\fv}[1]{\mbox{\sc fv}(#1)}
+\newcommand{\bpv}[1]{\mbox{\sc bpv}(#1)}
+\newcommand{\fpv}[1]{\mbox{\sc fpv}(#1)}
+
+
+
+
+
+
+% Macros for reduction
+\newcommand{\E}{\mathcal E}
+\newcommand{\SC}{\mathcal S}                                     % Shaded Context
+\newcommand{\B}{\mathcal B}
+\newcommand{\scong}{\equiv}
+\newcommand{\evaluatesTo}{\downarrow}
+\newcommand{\act}{\alpha}
+\newcommand{\ored}[1]{\stackrel{#1}{\longrightarrow}}      % Outside checkpoint reduction
+\newcommand{\Ored}[1]{\stackrel{#1}{\Longrightarrow}} 
+\newcommand{\ired}[1]{\stackrel{#1}{\mbox{\tiny $\ckpt$}\!\!\!\!\,\longrightarrow}} % Inside checkpoint reduction
+\newcommand{\Ired}[1]{\stackrel{#1}{\mbox{\tiny $\ckpt$}\!\!\!\!\,\Longrightarrow}}
+\newcommand{\iredaux}[1]{\stackrel{#1}{\rightarrowtail}}    % auxiliary Inside checkpoint reduction
+\newcommand{\rred}[1]{\hspace{6pt}\stackrel{\hspace{-6pt}#1}{\mbox{\tiny $\ckpt$}\!\!\!\!\!\!\!\longrightarrow}}
+\newcommand{\rlbk}{\sf rbk}
+\newcommand{\rb}{\sf rb}
+\newcommand{\Rred}[1]{\hspace{6pt}\stackrel{\hspace{-6pt}#1}{\mbox{\tiny $\ckpt$}\!\!\!\!\!\!\!\Longrightarrow}}
+\newcommand{\ltred}[1]{\stackrel{#1}{\longrightarrow}}
+\newcommand{\cred}[1]{\stackrel{#1}{\Longrightarrow}}
+%\newcommand{\ltred}[1]{\stackrel{#1}{\rightsquigarrow}}
+\newcommand{\bred}[1]{\hspace{4pt}\stackrel{#1}{\mbox{\tiny $\ckpt$}\hspace{0.5pt}\!\!\!\!\!\looparrowright}}
+\newcommand{\pbredaux}[1]{\stackrel{#1}{\looparrowright\!\!\!\!\mbox{\tiny $/\!\!/$}}}
+\newcommand{\pbred}[1]{\hspace{4pt}\stackrel{#1}{\mbox{\tiny $\ckpt$}\hspace{0.5pt}\!\!\!\!\!\looparrowright\!\!\!\!\mbox{\tiny $/\!\!/$}}}
+\newcommand{\bredaux}[1]{\stackrel{#1}{\looparrowright}}
+\newcommand{\ckptfreered}{\longrightarrow_{\!\!\!\!\mbox{\tiny $\blacktriangle$\!-{\sf free}}}}
+\newcommand{\ckptred}{\longrightarrow_{\!\!\!\!\mbox{\tiny $\blacktriangle$}}}
+
+
+
+\newcommand{\mbred}[1]{\stackrel{#1}{\bredaux{}_{\hspace{-10pt}\,\mbox{\normalsize $\bredaux{}$}}}}
+\newcommand{\mpbred}[1]{\stackrel{#1}{\bredaux{}_{\hspace{-10pt}\,\mbox{\normalsize $\pbredaux{}$}}}}
+%\newcommand{\fred}[1]{\stackrel{#1}{\multimap}}
+\newcommand{\fbred}[1]{\stackrel{#1}{\bm \looparrowright\hspace{-9.7pt}\bm\looparrowright}}
+\newcommand{\red}{\longrightarrow}
+\newcommand{\starred}{\stackrel{*}{\red}}
+
+\newcommand{\RLink}{\mbox{\sc Link}}
+\newcommand{\RCom}{\mbox{\sc Com}}
+\newcommand{\RLabel}{\mbox{\sc Label}}
+\newcommand{\RIntChoice}{\mbox{\sc Int-Cho}}
+\newcommand{\RExtChoice}{\mbox{\sc Ext-Cho}}
+\newcommand{\RPass}{\mbox{\sc Pass}}
+\newcommand{\RStr}{\mbox{\sc Str}}
+\newcommand{\RScop}{\mbox{\sc Scop}}
+\newcommand{\RPar}{\mbox{\sc Par}}
+\newcommand{\RDef}{\mbox{\sc Def}}
+\newcommand{\RIftrue}{\mbox{\sc If-T}}
+\newcommand{\RIffalse}{\mbox{\sc If-F}}
+
+%Skip-compliance Typing Rules
+\newcommand{\Tcompl}{\mbox{\scriptsize{\sc Cpl}}}
+\newcommand{\TcomplUnfoldL}{\mbox{\scriptsize \sc Unf-L}}
+\newcommand{\TcomplUnfoldR}{\mbox{\scriptsize \sc Unf-R}}
+\newcommand{\TcomplUnfoldf}{\mbox{\scriptsize \sc Unf-}f}
+\newcommand{\TcomplHyp}{\mbox{\scriptsize \sc Hyp}}
+\newcommand{\TcomplAx}{\mbox{\scriptsize \sc Ax}}
+\newcommand{\TcomplId}{\mbox{\scriptsize \sc Id}}
+\newcommand{\TcomplSumL}{\Tcompl\mbox{\scriptsize $\sum$-\sc L}}
+\newcommand{\TcomplSumR}{\Tcompl\mbox{\scriptsize $\sum$-\sc R}}
+\newcommand{\TcomplOOA}{\Tcompl\mbox{\scriptsize $\bigoplus$-\sc R}}
+\newcommand{\TcomplOOB}{\Tcompl\mbox{\scriptsize $\bigoplus$-\sc L}}
+\newcommand{\TcomplOSum}{\Tcompl\mbox{\scriptsize $\bigoplus$-$\sum$}}
+\newcommand{\TcomplSumO}{\Tcompl\mbox{\scriptsize $\sum$-$\bigoplus$}}
+
+
+% Macros for Labelled Transition System
+
+\newcommand{\CommRule}{\textsf{comm}}
+\newcommand{\OneRbkRule}{\textsf{1-rbk}}
+\newcommand{\RbkRule}{\textsf{rbk}}
+
+\newcommand{\Lts}[1]{\stackrel{#1}{\Longrightarrow}}
+\newcommand{\ext}[1]{#1_+}
+
+\newcommand{\one}{\! \bullet}
+\newcommand{\any}{\ast}
+\newcommand{\comply}{\dashv}
+\newcommand{\complyR}{~\begin{sideways}\begin{sideways}$\Vdash$\end{sideways}\end{sideways}\mbox{\footnotesize $^{\mathsf{R}}$}~}
+
+\newcommand{\Udash}{\begin{sideways}\begin{sideways}$\Vdash$\end{sideways}\end{sideways}}
+
+\newcommand{\complyRk}[1]{\;\Udash^{\mathsf{R}}_{#1}\;}
+
+\newcommand{\complyS}{~\begin{sideways}\begin{sideways}$\Vdash$\end{sideways}\end{sideways}\mbox{\footnotesize $^{\mathsf{S}}$}~}
+
+\newcommand{\complySk}[1]{\;\Udash^{\mathsf{S}}_{#1}\;}
+
+\newcommand{\notcomplyP}{\not\hspace{-6pt}\complyP}
+\newcommand{\notcomplyR}{\not\hspace{-6pt}\complyR}
+\newcommand{\notcomplyS}{\not\hspace{-6pt}\complyS}
+
+\newcommand{\complyPds}{\complyR}
+\newcommand{\complyPdsF}{\complyR F}
+\newcommand{\derinf}{\der X}
+\newcommand{\fcomp}{comp}
+\newcommand{\tcomp}{tcomp}
+\newcommand{\Proc}{{\text{\bf Paux}}}
+\newcommand{\PProc}{{\text{\bf P}}}
+\newcommand{\derivation}[2]{{\begin{array}{c}#1\\#2\end{array}} }
+%{\rotatebox{-180}{$\Vdash$}}%{\comply\!\!|\;}%{\comply^{\mbox{\tiny $\blacktriangle$}}}
+\newcommand{\ncomplyR}{\not\!\!\!\complyR}
+\newcommand{\ncomplyS}{\not\!\!\!\complyS}
+\newcommand{\ncomplyF}{\not\!\!\complyF}
+
+\newcommand{\altcomplyR}{\comply^{\mbox{\tiny $\blacktriangle$}}_{\mathsf a}}
+\newcommand{\fcomplyR}{\comply^{\mbox{\tiny $\blacktriangle$}}_{\mbox{\scriptsize {\sf fw}}}}
+\newcommand{\altfcomplyR}{\comply^{\mbox{\tiny $\blacktriangle$}}_{\mbox{\scriptsize {\sf fw-a}}}}
+\newcommand{\complyP}{~\begin{sideways}\begin{sideways}$\Vdash$\end{sideways}\end{sideways}~}
+\newcommand{\complyA}{\complyP^{\mbox{\tiny {\sf A}}}}
+\newcommand{\complyO}{\complyG^{\mbox{\tiny {\sf O}}}}
+%\newcommand{\complyG}{\dashv\!\!\stackrel{\shortmid}{_{\shortmid}}}
+\newcommand{\complyG}{\comply^{\mbox{\tiny {\tt skp}}}}
+\newcommand{\complyGco}{{\comply}^{\mbox{\tiny {\tt skp}}}_{co}}
+\newcommand{\complyGcok}[1]{{\comply}^{\mbox{\tiny {\tt skp}}}_{co.#1}}
+\newcommand{\complyRco}{{\comply}^{\mbox{\tiny $\blacktriangle$}}_{co}}
+\newcommand{\complyRcok}[1]{{\comply}^{\mbox{\tiny $\blacktriangle$}}_{co.#1}}
+\newcommand{\complyGcoII}{{\comply}^{\mbox{\tiny {\tt skp}}}_{co2}}
+%\newcommand{\complyG}{\dashv\!\!^{\skipAct}}
+
+\newcommand{\labred}[1]{\stackrel{#1}{\red}}
+
+\newcommand{\EAcc}{\mbox{\sc E-Acc}}
+\newcommand{\EReq}{\mbox{\sc E-Req}}
+\newcommand{\ELink}{\mbox{\sc E-Link}}
+\newcommand{\EInput}{\mbox{\sc E-Input}}
+\newcommand{\EOutput}{\mbox{\sc E-Output}}
+\newcommand{\ECat}{\mbox{\sc E-Cat}}
+\newcommand{\EThr}{\mbox{\sc E-Thr}}
+\newcommand{\EBrn}{\mbox{\sc E-Brn}}
+\newcommand{\ESel}{\mbox{\sc E-Sel}}
+\newcommand{\ECom}{\mbox{\sc E-Com}}
+\newcommand{\ERes}{\mbox{\sc E-Res}}
+\newcommand{\EOpen}{\mbox{\sc E-Open}}
+\newcommand{\EClose}{\mbox{\sc E-Close}}
+\newcommand{\EPar}{\mbox{\sc E-Par}}
+\newcommand{\EDef}{\mbox{\sc E-Def}}
+\newcommand{\EVar}{\mbox{\sc E-Var}}
+\newcommand{\EIfT}{\mbox{\sc E-IfT}}
+\newcommand{\EIfF}{\mbox{\sc E-IfF}}
+\newcommand{\EStruct}{\mbox{\sc E-Struct}}
+
+
+% Macros for Types and Actions
+
+\newcommand{\Bag}{\textsf{bag}}
+\newcommand{\Ht}{\textsf{hat}}
+\newcommand{\DBag}{\Dual{\Bag}}
+\newcommand{\Belt}{\textsf{belt}}
+\newcommand{\DBelt}{\Dual{\Belt}}
+\newcommand{\Price}{\textsf{price}}
+\newcommand{\DPrice}{\Dual{\Price}}
+\newcommand{\Card}{\textsf{card}}
+\newcommand{\DCard}{\Dual{\Card}}
+\newcommand{\Cash}{\textsf{cash}}
+\newcommand{\DCash}{\Dual{\Cash}}
+
+
+  \def\finex{{\unskip\nobreak\hfil\penalty50\hskip1em\null\nobreak\hfil{\Large $\diamond$}\parfillskip=0pt\finalhyphendemerits=0\endgraf}}
+  
+  
+\newcommand{\prt}[1]{\mathsf{prt}(#1)}
+\newcommand{\Kint}{K_{\mathrm{int}}}
+\newcommand{\Kext}{K_{\mathrm{ext}}}
+\newcommand{\cp}{\mathbb{K}}
+\newcommand{\cs}{\mathbb{C}}
+\newcommand{\MC}{\mathcal{O}\!\mathcal{M}\vspace{-1pt}\mathcal{C}\!}
+\newcommand{\edgelabel}[3]{{\tt #1}#2{\sf #3}}
+\newcommand{\connector}{{\bf C}\,}
+\newcommand{\connectortwo}[2]{_{#1}\!\connector_{\!#2}}
+\newcommand{\GG}{{\bf G}}
+\newcommand{\gt}{$\mathcal{G}\!\mathcal{T}$}
+\newcommand{\gtir}{\gt\!-\textsc{ir}}
+\newcommand{\GTIR}[2]{{[#1]}}
+%\newcommand{\GTIR}[2]{{[#1]^{\!\langle#2\rangle}}}
+\newcommand{\II}{{\ptp[i]}}
+\newcommand{\JJ}{{\ptp[j]}}
+\newcommand{\HH}{{\ptp[h]}}
+\newcommand{\hh}{\HH}
+\newcommand{\kk}{\KK}
+\newcommand{\pv}{{\ptp[v]}}
+\newcommand{\pw}{{\ptp[w]}}
+\newcommand{\pu}{{\ptp[u]}}
+\newcommand{\KK}{{\ptp[k]}}
+\newcommand{\LL}{{\ptp[l]}}
+\newcommand{\MM}{{\tt M}}
+\newcommand{\XX}{{\tt X}}
+\renewcommand{\AA}{\texttt{A}}
+\newcommand{\BB}{\texttt{B}}
+\newcommand{\CC}{\texttt{C}}
+\newcommand{\DD}{\texttt{D}}
+\newcommand{\EE}{\texttt{E}}
+\newcommand{\roles}{\mathbf{P}}
+\newcommand{\rolescsint}{\roles_{\cs}^{\mathrm{orch}}}
+\newcommand{\rolesorch}{\roles^{\mathrm{orch}}}
+\newcommand{\localT}{\text{LT}}
+\newcommand{\interfacecomp}{\!\leftrightarrow\!}
+\newcommand{\components}{\mathcal{C}}
+\newcommand{\connpairs}{\mathsf{gwP}}
+\newcommand{\interaction}[1]{\iota({#1})}
+
+
+%\newcommand{\IS}[2]{\mathcal{C}\hspace{-1.5pt}\mathcal{P}\hspace{-1.5pt}\mathcal{S}(#1,#2)}
+\newcommand{\IS}[2]{\mathsf{L}\hspace{-1pt}\mathsf{C}\hspace{-1pt}\mathsf{P}\hspace{-1pt}\mathsf{S}(#1,#2)}
+\newcommand{\CPS}[2]{\IS{#1}{#2}}
+\newcommand{\SP}{\mathcal{P}}
+
+
+%\newcommand{\connect}[2]{_{{#1}\!\leftrightarrow\!{#2}\!}}
+\newcommand{\connect}[2]{\stackrel{\hspace{-3pt}#1\!\leftrightarrow\!#2\!}{}}
+\newcommand{\selfconnect}[2]{\hspace{-3pt}\updownarrow^{\!#1}_{\!#2}}
+
+\newcommand{\nocomm}{\#}
+
+
+\newcommand{\restrict}[2]{{#1}_{\mid_{\mathbf{#2}}}}
+\newcommand{\restrictup}[2]{{#1}^{\mid{\mathbf{#2}}}}
+
+\newcommand{\mess}[1]{\mathsf{#1}}
+
+
+\newcommand{\swap}{\mathsf{swp}}
+
+
+\newcommand{\ttp}{{\ptp[p]}}
+\newcommand{\ttq}{{\ptp[q]}}
+\newcommand{\ttc}{{\ptp[c]}}
+\newcommand{\ttr}{{\ptp[r]}}
+\newcommand{\pr}{{\ttr}}
+\newcommand{\tts}{{\ptp[s]}}
+\newcommand{\ps}{{\tts}}
+\newcommand{\ttu}{{\ptp[u]}}
+\newcommand{\ttx}{{\ptp[x]}}
+\newcommand{\tty}{{\ptp[y]}}
+\newcommand{\ttv}{{\ptp[v]}}
+\newcommand{\ttw}{{\ptp[w]}}
+\newcommand{\ttb}{{\ptp[b]}}
+\newcommand{\tte}{{\ptp[e]}}
+\newcommand{\ttd}{{\ptp[d]}}
+\newcommand{\tto}{{\ptp[o]}}
+
+\newcommand{\mC}{{\not\mathit{C}}}
+
+\newcommand{\lang}[1]{\mathcal{L}(#1)}
+\newcommand{\gateway}[1]{\mathsf{gw}(#1)}
+
+\newcommand{\tstrans}{{\,{\Rightarrow\hspace{-6pt}\text{\textcolor{white}{$\bullet$}}\hspace{-4pt}}\,}}
+
+\newcommand{\revHat}[1]{\text{\v $#1$}}
+
+\newcommand{\head}{\mathit{hd}}
+\newcommand{\elle}{\mathit{l}}
+
+\newcommand{\partners}[1]{\mathit{p}(#1)}
+
+\newcommand{\upto}[2]{{#1}_{/#2}}
+
+\newcommand{\symb}[2]{\mbox{{\sc a}}_{#1}(#2)}
+
+\newcommand{\first}{\mathsf{fst}}
+\newcommand{\tail}{\mathsf{tail}}
+\newcommand{\qm}{\ \bm{?}}
+
+\newcommand{\messages}{\mathbb{A}}
+
+
+
+
+\newcommand{\Types}{{\cal T}}
+\newcommand{\STypes}{{\cal ST}}
+\newcommand{\PSTypes}{{\cal ST}\!_{\downharpoonright\!\peer}}
+\newcommand{\GHTypes}{{\cal GHT}}
+
+\newcommand{\Bool}{\mbox{$\mathbf{Bool}$}}
+\newcommand{\Int}{\mbox{$\mathbf{Int}$}}
+\newcommand{\Real}{\mbox{$\mathbf{Real}$}}
+\newcommand{\sessionT}[1]{\,\uparrow\!\![#1]}
+\newcommand{\EndT}{{\sf end}}
+\newcommand{\InputT}[1]{\,?(#1)}
+\newcommand{\InputTbold}[2]{\,\mbox{\boldmath $?(\;$}\mbox{\small  ($#1$)}^{\mbox{\boldmath $#2$}}\mbox{\boldmath $)$} }
+\newcommand{\OutputT}[1]{\,![#1]}
+\newcommand{\OutputTbold}[2]{\,\mbox{\boldmath $![\;$}\mbox{\small  ($#1$)}^{\mbox{\boldmath $#2$}}\mbox{\boldmath $]$} }
+\newcommand{\HiCommT}[1]{\,[#1]}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+
+\newcommand{\csAct}{\mbox{\bf csAct}}
+\newcommand{\hoAct}{\mbox{\bf HoAct}}
+\newcommand{\InputAct}[1]{? (#1)}
+\newcommand{\OutputAct}[1]{! [#1]}
+\newcommand{\skipAct}{{\tt noMt\hspace{-1pt}ch}}
+\newcommand{\skipA}[1]{\skipAct(\hspace{-1pt}#1\hspace{-1pt})}
+\newcommand{\orchAct}[2]{\langle\mbox{\small $#1$},\mbox{\small $#2$}\rangle}
+\newcommand{\nullorch}{{\shortmid\!\boldmath\asymp}}
+\newcommand{\orchActH}[3]{\langle\mbox{\small $#1$},#2,\mbox{\small $#3$}\rangle}
+
+
+\newcommand{\BranchT}[1]{\&\langle #1 \rangle}
+\newcommand{\SelT}[1]{\oplus\langle #1 \rangle}
+
+\newcommand{\intChoice}[1]{{\boldmath \oplus}(#1)}
+\newcommand{\extChoice}[1]{ {\boldmath +} (#1)}
+
+\newcommand{\plus}{ +\!}
+
+\newcommand{\complyF}{\,\mbox{\scriptsize $\backsim\hspace{-3.5pt}\mathbf{\mid}$}\,}
+
+
+\newcommand{\HasTypeB}{\;\blacktriangleright\;}
+\newcommand{\HasType}{\;\triangleright\;}
+
+\newcommand{\Dual}[1]{\overline{#1}}
+\newcommand{\aDual}[1]{\tilde{#1}}
+
+\newcommand{\dual}[3]{\mathsf{Dual}_{\!#1\!}(#2,#3)}
+\newcommand{\TC}{_{\bm{?}}\!\!\!\bm{\circlearrowleft}\!\!\!^{\!\bm{!}}\!}
+\newcommand{\PC}{_{\bm{?}}\hspace{0pt}{\partial}\,\!^{\!\bm{!}}\!}
+\newcommand{\fusion}{{\mathcal{F}}}
+\newcommand{\compl}{\TC}
+\newcommand{\eps}{\varepsilon}
+
+\newcommand{\subtype}{\leq:}  % subtyping relation
+
+\newcommand{\mSub}{\mathsf{mSub}\!\,}
+\newcommand{\Sub}{\mathsf{Sub}\!\,}
+\newcommand{\Pos}{\mathsf{Pos}\!\,}
+\newcommand{\posp}{\mathsf{p}}
+\newcommand{\posq}{\mathsf{q}}
+
+\newcommand{\Power}{\mathop{\wp}}
+
+\newcommand{\subcontr}{\preccurlyeq}
+\newcommand{\subcontrs}{\subcontrF_{\!\hspace{0.5pt}\text{\tiny +}}}
+\newcommand{\subcontrc}{\subcontrF_{\!\hspace{0.5pt}\text{\tiny $-$}}}
+\newcommand{\subcontrp}{\subcontrF_{\!\hspace{0.5pt}p}}
+\newcommand{\subcontrq}{\subcontrF_{\!\hspace{0.5pt}q}}
+
+\newcommand{\notsubcontr}{\not\!\preccurlyeq}
+\newcommand{\subcontrF}{\ll}
+
+\newcommand{\redRm}{\ored{}^{\mbox{-}}}
+
+\newcommand{\Prefix}{\eqslantless}
+\newcommand{\PrefixS}{\curlyeqprec}
+\newcommand{\PrefixInv}{\eqslantgtr}
+\newcommand{\PrefixB}{\eqslantless}
+\newcommand{\PrefixBinv}{\eqslantgtr}
+
+\newcommand{\Sem}[1]{[\hspace{-0.6mm}[ #1 ]\hspace{-0.6mm}]}
+\newcommand{\SemC}[1]{(\hspace{-2pt}\mid #1 |\hspace{-2.5pt})}
+
+\newcommand{\unfold}[1]{\mbox{{\sf unfold\/}}(#1)}
+
+\newcommand{\subterms}[1]{\mbox{\sf Sub}(#1)} 
+\newcommand{\mo}[1]{\mbox{\sf op}(#1)}
+
+% Macros for derivations
+%\newcommand{\der}{\vdash}
+\newcommand{\der}{\;\vartriangleright\;}
+\newcommand{\derl}{\;\vartriangleright_{\!l}}
+
+\newcommand{\dersc}{\;\blacktriangleright\;}
+
+\newcommand{\Provable}{\textbf{Provable}}
+\newcommand{\A}{\textsf{A}}
+\newcommand{\xs}{\textsf{xs}}
+\newcommand{\Decide}{\textbf{Decide}\mbox{$_{\!\!\complyP}$}}
+
+
+
+\newcommand{\nder}{\;\not\vartriangleright\;}
+\newcommand{\Deriv}{{\cal D}}
+\newcommand{\Jleq}{\triangleleft}
+
+% Macros for typing rules
+
+\newcommand{\TName}{\mbox{\sc T-Name}}
+\newcommand{\TNil}{\mbox{\sc T-Nil}}
+\newcommand{\TPar}{\mbox{\sc T-Par}}
+\newcommand{\TRep}{\mbox{\sc T-Rep}}
+\newcommand{\TNew}{\mbox{\sc T-New}}
+\newcommand{\TNewS}{\mbox{\sc T-NewS}}
+\newcommand{\TReq}{\mbox{\sc T-Req}}
+\newcommand{\TAcc}{\mbox{\sc T-Acc}}
+\newcommand{\TSend}{\mbox{\sc T-Send}}
+\newcommand{\TRcv}{\mbox{\sc T-Rcv}}
+\newcommand{\TThr}{\mbox{\sc T-Thr}}
+\newcommand{\TCat}{\mbox{\sc T-Cat}}
+\newcommand{\TSel}{\mbox{\sc T-Sel}}
+\newcommand{\TBr}{\mbox{\sc T-Br}}
+\newcommand{\TSub}{\mbox{\sc T-Sub}}
+\newcommand{\TSubS}{\mbox{\sc T-SubS}}
+\newcommand{\TSubC}{\mbox{\sc T-SubC}}
+\newcommand{\TAxC}{\mbox{\sc T-Ax-C}}
+\newcommand{\TAxS}{\mbox{\sc T-Ax-S}}
+\newcommand{\TAxP}{\mbox{\sc T-Ax-P}}
+
+\newcommand{\TSubBranch}{\mbox{\sc T-Sub-$\&$}}
+\newcommand{\TSubSel}{\mbox{\sc T-Sub-$\oplus$}}
+\newcommand{\TSubId}{\mbox{\sc T-Sub-Id}}
+\newcommand{\TSubTrans}{\mbox{\sc T-Sub-Trans}}
+\newcommand{\TSubHyp}{\mbox{\sc T-Sub-Hyp}}
+\newcommand{\TSubUnfoldL}{\mbox{\sc T-Sub-Unf-L}}
+\newcommand{\TSubUnfoldR}{\mbox{\sc T-Sub-Unf-R}}
+\newcommand{\TSubUnfold}{\mbox{\sc T-Sub-Unf}}
+\newcommand{\TSubFold}{\mbox{\sc T-Sub-Fld}}
+
+
+
+%Skip-compliance Typing Rules
+
+\newcommand{\ScomplUnfoldL}{\mbox{\scriptsize \sc Unf-L}}
+\newcommand{\ScomplUnfoldR}{\mbox{\scriptsize \sc Unf-R}}
+\newcommand{\ScomplHyp}{\mbox{\scriptsize {\sc Hyp}}}
+\newcommand{\ScomplRbk}{\mbox{\scriptsize \sc Rbk}}
+\newcommand{\ScomplAx}{\mbox{\scriptsize \sc Ax}}
+\newcommand{\ScomplSumOplus}{\mbox{\scriptsize \sc $+$.$\oplus$}}
+\newcommand{\ScomplOplusOplus}{\mbox{\scriptsize \sc $\oplus$.$\oplus$}}
+\newcommand{\ScomplOplusSum}{\mbox{\scriptsize \sc $\oplus$.$+$}}
+
+
+%Checkpoint-compliance Typing Rules
+
+\newcommand{\CkptcomplRbk}{\mbox{\scriptsize \sc Rbk}}
+\newcommand{\CkptcomplUnfoldL}{\mbox{\scriptsize \sc Unf-L}}
+\newcommand{\CkptcomplUnfoldR}{\scriptsize \mbox{\sc Unf-R}}
+\newcommand{\CkptcomplHyp}{\scriptsize \mbox{\sc Hyp}}
+\newcommand{\CkptcomplAx}{\mbox{\scriptsize\sc Ax}}
+\newcommand{\CkptcomplSumOplus}{\mbox{\scriptsize \sc $+$.$\oplus$}}
+\newcommand{\CkptcomplOplusSum}{\mbox{\scriptsize \sc $\oplus$.$+$}}
+
+
+
+
+\newcommand{\TSubSigma}{\mbox{\sc T-Sub-$\Sigma$}}
+\newcommand{\TSubSkip}{\mbox{\sc T-Sub-$\skipAct$}}
+
+\newcommand{\TSubIN}{\mbox{\sc T-Sub-In}}
+\newcommand{\TSubOUT}{\mbox{\sc T-Sub-Out}}
+
+\newcommand{\TSubINskip}{\mbox{\sc T-Sub-In-Skip}}
+\newcommand{\TSubOUTskip}{\mbox{\sc T-Sub-Out-Skip}}
+
+\newcommand{\TPrefS}{\mbox{\sc T-PrefS}}
+\newcommand{\TPrefC}{\mbox{\sc T-PrefC}}
+
+% Macros for bases
+
+\newcommand{\basis}{\ensuremath{\Gamma}}
+\newcommand{\basistype}{\ensuremath{\Theta}}
+\newcommand{\typeenv}{\ensuremath{\Delta}}
+
+
+\newcommand{\compatib}[2]{#1 \asymp #2}
+\newcommand{\Wcompatib}[2]{#1 \!\smile\! #2}
+\newcommand{\comp}{\circ}
+\newcommand{\Wcomp}{\bullet}
+\newcommand{\tinbasis}[2]{\ensuremath{#1: #2 \in \Gamma}}
+\newcommand{\basisext}[2]{\ensuremath{\Gamma, \ #1: #2}}
+\newcommand{\exbasisext}[3]{\ensuremath{#1, \ #2: #3}}
+\newcommand{\basism}[1]{\ensuremath{\Gamma \backslash #1}}
+
+
+
+
+
+% Macros sets, logic and for meta notation
+
+\newcommand{\Nat}{\mathbb{N}} 
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\Set}[1]{\{#1\}}
+\newcommand{\Dom}[1]{\mbox{\em dom}(#1)}
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+\newcommand{\DefEq}{=_{\mbox{\tiny def}}}
+\newcommand{\Iff}{\text { iff }}
+\newcommand{\Impl}{\Rightarrow}
+\newcommand{\prefix}{\sqsubseteq}
+\newcommand{\complies}{\dashv}
+
+\newcommand{\Or}{\;\vee\;}
+
+\renewcommand{\implies}{~\Longrightarrow~ }
+
+
+% Macros for actions, LTS etc.
+\newcommand{\trans}[2][{}]{\,\xrightarrow{#2}_{#1}\,}
+%\newcommand{\lts}[1]{\stackrel{#1}{\longrightarrow}}
+\newcommand{\lts}[1]{\trans{#1}}
+\newcommand{\LTS}[1]{\xrightarrow{\lts{#1}}}
+\newcommand{\ltsone}[1]{\stackrel{\!#1}{\longrightarrow_{\!1}}}
+\newcommand{\ltstwo}[1]{\stackrel{\!#1}{\longrightarrow_{\!2}}}
+
+%\newcommand{\tslts}[1]{\,{\xRightarrow{{#1}}\hspace{-6pt}\text{\textcolor{white}{$\bullet$}}\hspace{-4pt}}\,}
+\newcommand{\tslts}[1]{\stackrel{#1}{\tstrans}}
+\newcommand{\tsltsone}[1]{\stackrel{\!#1}{\tstrans_{\!1}}}
+\newcommand{\tsltstwo}[1]{\stackrel{\!#1}{\tstrans_{\!2}}}
+\newcommand{\tsltsp}[1]{\stackrel{#1}{\tstrans'}}
+\newcommand{\tsltsdp}[1]{\stackrel{#1}{\tstrans''}}
+\newcommand{\llts}[1]{\stackrel{#1}{-\!\!\!-\!\!\!-\!\!\!\longrightarrow}}
+\newcommand{\notlts}[1]{\stackrel{#1}{\;\;\not\!\!\longrightarrow}}
+\newcommand{\olts}[1]{\stackrel{#1}{\longmapsto}}
+\newcommand{\ltsOrch}[1]{\stackrel{#1}{\longmapsto}}
+\newcommand{\ltsRed}[1]{\stackrel{#1}{\rightarrowtail}}
+\newcommand{\LtsM}[1]{\stackrel[max]{#1}{\Longrightarrow}}
+\newcommand{\rec}{{\sf rec} \, }
+
+\newcommand{\substr}{\sqsubseteq}
+
+\newcommand{\sumacts}[1]{{\mathcal A^+}(#1)}
+\newcommand{\oplusacts}[1]{{\mathcal A^\oplus}(#1)}
+
+\newcommand{\peer}{\ast}
+
+\newcommand{\Names}{{\cal N}}
+\newcommand{\CoNames}{\overline{\Names}}
+
+%\newcommand{\stopA}{{\sf e}}
+\newcommand{\stopf}{\mathfrak{1}}
+\newcommand{\stopA}{\mathsf{end}}
+\newcommand{\Act}{\mathit{ Act}}
+\newcommand{\ckptAct}{\mbox{\bf ckptAct}}
+\newcommand{\OrchAct}{\mbox{\bf OrchAct}}
+\newcommand{\BAct}{\mbox{\bf Basic Acts}}
+\newcommand{\Usages}{\mbox{\bf Usg}}
+\newcommand{\ActSel}{\triangleleft}
+\newcommand{\ActBrn}{\triangleright}
+\newcommand{\Trace}[1]{\mbox{\it Tr}\,(#1)}
+\newcommand{\Val}{\mbox{\it Val}}
+\newcommand{\Restr}{\!\!\upharpoonright\!\!}
+\newcommand{\Unfold}{{\sf unfold}}
+
+\newcommand{\procdot}{\mathop{\hbox{.}}}
+
+\newcommand{\bigExternal}{\sum}
+\newcommand{\bigInternal}{\bigoplus}
+\newcommand{\ele}{\in}
+\newcommand{\Actdot}{.}
+\newcommand{\bigOrchChoice}{\bigvee}
+\newcommand{\OrchChoice}{\vee}
+
+\newcommand{\dquad}{\quad\quad}
+% Macros for behavior
+
+%\newcommand{\bound}[1]{\llcorner\!#1\!\lrcorner}
+\newcommand{\bound}[1]{\mbox{\raisebox{-2pt}{$\llcorner$}}\!#1\!\mbox{\raisebox{-2pt}{$\lrcorner$}}}
+\newcommand{\boundR}[1]{\lfloor#1\rfloor}
+\newcommand{\folded}{\mbox{\sf fld}}
+\newcommand{\expandRec}{\mbox{\sf expd}}
+
+%\newcommand{\preceqG}{\preceq^{\mbox{\tiny {\sf G}}}}
+\newcommand{\preceqG}{\preceq^{\mbox{\tiny {\tt skp}}}}
+\newcommand{\preceqP}{\preceq^{\mbox{\tiny {\sf P}}}}
+\newcommand{\preceqO}{\preceq^{\mbox{\tiny {\sf O}}}}
+\newcommand{\preceqBdL}{\preceq^{\mbox{\tiny {\sf BdL}}}}
+\newcommand{\preceqGH}{\preceq^{\mbox{\tiny {\sf GH}}}}
+
+\newcommand{\leqG}{\leq^{\mbox{\tiny {\sf G}}}}
+
+\newcommand{\invpol}[1]{\breve{#1}}
+\newcommand{\Behav}{{\cal B}}
+\newcommand{\Rbehav}{{\sf BE}}
+\newcommand{\Stypes}{\mathsf{S}}
+\newcommand{\Sbehav}{{\sf RSC}}
+\newcommand{\SbehavH}{{\sf RCH}}
+\newcommand{\Stacks}{{\sf Histories}}
+\newcommand{\Abehav}{{\cal AB}}
+\newcommand{\PSbehav}{{\cal SB}_{\downharpoonright\!\peer}}
+\newcommand{\HObehav}{{\cal H\!S}}
+\newcommand{\Red}{\rightarrowtail}
+\newcommand{\Client}[1]{{\sf Client}(#1)}
+\newcommand{\Server}[1]{{\sf Server}(#1)}
+\newcommand{\Peer}[1]{{\sf Peer}(#1)}
+\newcommand{\Clienti}[2]{{\sf Client}_{#1}(#2)}
+\newcommand{\Serveri}[2]{{\sf Server}_{#1}(#2)}
+\newcommand{\Peeri}[2]{{\sf Peer}_{#1}(#2)}
+\newcommand{\Diverges}{\hspace{-1mm}\uparrow}
+\newcommand{\Converges}{\!\downarrow}
+\newcommand{\ConvergeEquiv}{\!\downdownarrows\!}
+\newcommand{\behSubtype}{\preceq{\!\!:}\;}
+
+
+\newcommand{\MustLeq}{\sqsubseteq_{\sf must}}
+\newcommand{\Approx}[1]{{\cal A}(#1)}
+
+\newcommand{\alg}{\mbox{\tiny \sf A}}
+
+%\newcommand{\orth}{\dashv \vdash}
+\newcommand{\orth}{\;\bot\;}
+\newcommand{\Orth}{\mbox{\rm Ort}}
+\newcommand{\NoAction}{\lambda}
+\newcommand{\Diverg}{\!\!\uparrow}
+\newcommand{\Convg}{\!\!\downarrow}
+\newcommand{\Notorth}{\not\!\!\!\!\orth}
+\newcommand{\IntChoice}{\oplus}
+\newcommand{\unfoldAction}{\rec}
+% Weight functions
+
+\newcommand{\weightA}[1]{{\sf w}(#1)}
+\newcommand{\Converge}[2]{#1\!\Downarrow#2}
+\newcommand{\notConverge}[2]{#1\!\not\Downarrow#2}
+
+\newcommand{\emptystack}{[\;]}
+
+
+%\newcommand{\myshrink}{\vspace{-1mm}}
+\newcommand{\myshrink}{}
+\newcommand{\Grel}{{\cal G}}
+
+\newcommand{\cut}[3]{{#1}_{/^{#3}#2 }}
+\newcommand{\norm}[1]{|#1|}
+
+\newcommand{\Rank}[1]{{\sf rank}( #1 )}
+
+\newcommand{\trace}{\mbox{\sf Tr}}
+\newcommand{\cstrace}{\mbox{\sf csTr}}
+\newcommand{\maxtrace}{\mbox{\sf maxTr}}
+
+\newcommand{\sync}[2]{#1\; \mbox{\sf synch}\, #2}
+\newcommand{\nosync}[2]{#1\; \mbox{\sf nosynch}\, #2}
+\newcommand{\Cut}[2]{#1\! \downarrow \!#2}
+
+%Mariangiola
+%\newcommand{\back}{\varangle}
+%\newcommand{\back}{\Yleft}
+\newcommand{\back}{\prec}
+%\newcommand{\back}{\leftslice}
+\newcommand{\md}[1]{\textcolor{red}{#1}}
+\newcommand{\sbcb}{\Sbehav_{\tiny\back}}
+\newcommand{\np}[2]{#1\back#2}
+%\newcommand{\p}[2]{{\mathbf b}(#1,#2)}
+\newcommand{\pp}{~\|~}
+\newcommand{\Rels}{~\Rel~}
+\newcommand{\sbc}{\Sbehav^{\blacktriangle}}
+\newcommand{\s}{\Sbehav}
+\newcommand{\leg}[1]{|#1|}
+
+% Macros for examples
+
+\newcommand{\getsea}{\mbox{\sf sea}}
+\newcommand{\getmount}{\mbox{\sf mount}}
+\newcommand{\gethouse}{\mbox{\sf house}}
+\newcommand{\getbung}{\mbox{\sf bung}}
+\newcommand{\getgarden}{\mbox{\sf garden}}
+
+\newcommand{\sendsea}{\overline{\getsea}}
+\newcommand{\sendmount}{\overline{\getmount}}
+\newcommand{\sendhouse}{\overline{\gethouse}}
+\newcommand{\sendbung}{\overline{\getbung}}
+\newcommand{\sendgarden}{\overline{\getgarden}}
+
+\newcommand{\ctrs}{contracts}
+\newcommand{\ctr}{contracts}
+\newcommand{\Ctrs}{Contracts}
+
+%per PROVE
+
+\newcommand{\Prove}{\textbf{Prove}}
+\newcommand{\Provel}{\textbf{ProveL}}
+\newcommand{\Provelp}{\textbf{ProveLP$_{\!\!\rho,\sigma}$}}
+\newcommand{\ct}[1]{\mathsf{cT}(#1)}
+
+
+
+
+\newcommand{\IF}{\textbf{if}}
+\newcommand{\THEN}{\textbf{then}}
+\newcommand{\WHERE}{\textbf{where}}
+\newcommand{\ELSE}{\textbf{else}}
+\newcommand{\AND}{\textbf{and}}
+\newcommand{\OR}{\textbf{or}}
+\newcommand{\LET}{\textbf{let}}
+\newcommand{\BST}{\textbf{be such that}}
+\newcommand{\FAIL}{\textbf{fail}}
+\newcommand{\IN}{\textbf{in}}
+\newcommand{\FOREACH}{\textbf{foreach}}
+\newcommand{\FS}{\textbf{for some}}
+\newcommand{\FA}{\textbf{for all}}
+\newcommand{\CASE}{\textbf{case}}
+\newcommand{\OF}{\textbf{of}}
+
+
+%%% Speculative
+
+\newcommand{\maybe}[1]{? #1}
+\newcommand{\spec}{\mathbf{S}}
+\newcommand{\sthread}{\mathbf{T}}
+\newcommand{\pari}{\mid}
+\newcommand{\parop}{\parallel}
+\newcommand{\arro}[1]{\xrightarrow[]{#1}}
+
+\newcommand{\bigfract}[2]{\frac{^{\textstyle #1}}{_{\textstyle #2}}}
+\newcommand{\ruleName}[1]{[{\sc #1}]}
+\newcommand{\ruleSpace}{\vspace{0em}}
+\def \mathax #1#2{\ruleSpace\begin{array}{l}{\mbox{\scriptsize \ruleName{#1}} } \\[-.1cm] #2
+\end{array}}
+\def \mathrule #1#2#3{\ruleSpace\begin{array}{l}%
+    {\mbox{\scriptsize \ruleName{#1}}}
+    \\ \bigfract{#2}{#3}
+\end{array}}
+
+%%%% names of sets
+
+\newcommand{\preGTIR}{\textit{pre-GTIR}}
+\newcommand{\GTIRset}{\textit{GTIR}}
+
+%\newcommand{\connect}[2]{\stackrel{\hspace{-3pt}#1\!\leftrightarrow\!#2\!}{}}
+
+\newcommand{\ssem}[1]{{\llbracket #1 \rrbracket}}
+
+\newcommand\dboxed[1]{
+  \dbox{\ensuremath{#1}}
+}
+
+\newcommand{\qqand}[1][and]{\qquad\text{#1}\qquad}
+\newcommand{\qand}[1][and]{\quad\text{#1}\quad}
+
+\newcommandx{\achan}[2][1=A,2=B,usedefault=@]{{\ptp[#1]\,\ptp[#2]}}
+
+\newcommandx{\outop}[2][1=\gname,2={}]{{\colorOp{!}}^{{#1}{#2}}}
+\newcommandx{\inop}[2][1=\gname,2={}]{{\colorOp{?}}^{{#1}{#2}}}
+
+\newcommandx{\aout}[5][1={\p},2={\q},3={},4=m,5={},usedefault=@]{
+  \achan[#1][#2] \outop[{#3}] {\msg[#4]}{#5}
+}
+\newcommandx{\ain}[5][1={\p},2={\q},3={},4=m,5={},usedefault=@]{
+  \achan[#1][#2] \inop[{#3}] {\msg[#4]}{#5}
+}
+
+%%-CFSM-%%%%%%%%%%
+\tikzset{
+  cnode/.style={
+    shape=circle,
+    minimum size = 0mm,
+    inner sep = 1pt,
+    font=\tiny,
+    draw
+  },
+  carrow/.style={
+    ->,
+    shorten >=1pt,
+    >=stealth',
+    auto,
+    draw,
+    sloped
+  }
+}
+%
+%
+
+\tikzset{
+  src/.style={draw,circle,fill=white,
+    minimum size=2mm,
+    inner sep=0pt
+  },
+  sink/.style={draw,circle,double,fill=white,
+    minimum size=1.5mm,
+    inner sep=0pt
+  },
+  node/.style={draw,circle,fill=black,
+    minimum size=2mm,
+    inner sep=0pt
+  },
+  % 
+  source/.style={draw,circle,fill=white,
+    minimum size=3mm,
+    inner sep=0pt
+  },
+  sink/.style={draw,circle,double,fill=white,
+    minimum size=3mm,
+    inner sep=0pt
+  },
+  % ACTION
+  block/.style = {rectangle, draw=gray, align=center, fill=orange!25, rounded corners=0.1cm,
+    minimum size=5mm, inner sep=2pt},
+  prenode/.style = {minimum size=9pt,inner sep=2pt, font=\Large},
+  % 
+  bblock/.style = {rectangle, draw=blue!50, opacity=.7, line width=.5pt, align=center, fill=white, rounded corners=0.1cm,
+    minimum size=4mm, inner sep=1pt},
+  prenode/.style = {minimum size=9pt,inner sep=2pt, font=\Large},
+  % AND GATE
+  agate/.style={draw, rectangle,
+    minimum size=3mm,
+    inner sep=0pt,
+    fill=orange!25,
+    label={[red]center:$\mid$}
+  },
+  % ORGATE
+  ogate/.style = {
+    diamond, draw, fill=orange!25,
+    minimum size=4mm,
+    inner sep=0pt,
+    label={[red]center:$+$}
+  },
+  % LOOP GATE
+  lgate/.style = {
+    diamond, draw, fill=orange!25,
+    minimum size=4mm,
+    inner sep=0pt,
+    label={[red]center:$\circlearrowleft$}
+    },
+  % 
+  altogate/.style = {
+    diamond, draw,
+    minimum size=4mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw
+        ([yshift=\gatedistancein]path picture bounding box.south) -- ([yshift=-\gatedistancein]path picture bounding box.north)
+        ([xshift=-\gatedistancein]path picture bounding box.east) -- ([xshift=\gatedistancein]path picture bounding box.west)
+        ;}}},
+  altgate/.style={draw, rectangle,
+    minimum size=3mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw
+        ([yshift=\gatedistanceinand]path picture bounding box.south) --
+        ([yshift=-\gatedistanceinand]path picture bounding box.north) ;}}},
+  % ogate or agate
+  anygate/.style = {circle, draw, fill=white,
+    minimum size=4mm,
+    inner sep=0pt,
+    postaction={path picture={% 
+        \draw[black]
+        ([xshift=-\gatedistancein,yshift=\gatedistancein]path picture bounding box.south east) --
+        ([xshift=\gatedistancein,yshift=-\gatedistancein]path picture bounding box.north west)
+        ([xshift=-\gatedistancein,yshift=-\gatedistancein]path picture bounding box.north east) --
+        ([xshift=\gatedistancein,yshift=\gatedistancein]path picture bounding box.south west)
+        ;}}
+  },
+  % 
+  smallglobal/.style={
+        node distance=1cm and 0.8cm, semithick, scale=0.8, every node/.style={transform shape}
+  },
+  % DOTS
+  elli/.style = {draw,densely dotted,-},
+  % 
+  % LINES
+  line/.style = {draw,->, rounded corners=0.07cm,>=latex},
+  nline/.style = {draw,semithick, ->},
+  pline/.style = {draw,->,>=latex},
+  node distance=1cm and 0.7cm,
+  baseline=(current  bounding  box.center),
+  local/.style={rectangle, draw, fill=\fillcolor, drop shadow,
+    text centered, rounded corners, minimum height=5em
+  },
+  bigar/.style={
+    draw,very thick, ->
+  },
+  process/.style={rectangle, draw=gray, fill=\fillcolor, drop shadow,
+    text centered, minimum height=5em,text=gray
+  },
+  choreo/.style={rectangle, draw, fill=\fillcolor, drop shadow,
+    text centered, rounded corners, minimum height=5em
+  },
+ % CFSM
+  mycfsm/.style={
+        font=\footnotesize,
+        initial where=above,
+        ->,>=stealth,auto,
+		  node distance=1.9cm,
+        scale=.85,
+		  every node/.style={transform shape},
+        every state/.style={cnode, inner sep=1pt, transform shape},
+		  every edge/.style={carrow},
+        baseline=(current  bounding  box.center),
+        initial text={}
+  },
+  machinecloud/.style={
+    cloud, cloud puffs=10, cloud ignores aspect, minimum height=.1cm, minimum width=2cm, draw
+  },
+  fitting node/.style={
+    inner sep=0pt,
+    fill=none,
+    draw=none,
+    reset transform,
+    fit={(\pgf@pathminx,\pgf@pathminy) (\pgf@pathmaxx,\pgf@pathmaxy)}
+  },
+  mypetri/.style={
+    font=\footnotesize,
+    baseline=(current  bounding  box.center)
+  },
+  silentrans/.style = {rectangle, draw=black, align=center, fill=black,
+    minimum height=1pt,
+    minimum width=15pt,
+    inner sep=1.5pt
+  },
+  reset transform/.code={\pgftransformreset},
+  tmtape/.style={draw,minimum size=1.2cm}
+}
+
+
+
+%%% END MACROS
+

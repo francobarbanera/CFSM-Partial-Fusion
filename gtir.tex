@@ -1,0 +1,457 @@
+%!TEX root = JLAMP-Main.tex
+
+\section{Global Types with Interface Roles}
+\label{sec:gtir}
+
+The previous sections were related to a semantic view of concurrent systems where the
+semantic objects are CFSMs.
+In this section we show how our results
+can be directly applied to syntactic formalisms for the specification of interacting components
+when the formalism allows for a semantic interpretation by CFSMs.
+
+%\subsection{Global types}\label{subsec:globaltypes}
+
+For systems of CFSMs, most of the relevant communications properties are, in general, undecidable
+\cite{CF05} or computationally hard. 
+Partly with the aim of overcoming such shortcomings, 
+a number of formalisms have been recently proposed in the literature 
+enabling
+\begin{enumerate}[(1)]
+\item
+ to describe in a structured way the overall behavior of systems of CFSMs;
+\item
+ to steer the implementation of the system components, guaranteeing their compliance with the overall behaviour together with some relevant communication properties.
+ \end{enumerate}
+
+Among them are
+the {\bf generalised global types} of~\cite{DY12}, the {\bf global graphs} of~\cite{TY15}
+and the {\bf global choreographies} of~\cite{TG18}.
+All of them provide syntactic means to describe the overall behaviour of a system
+of interacting components (also called participants or roles) 
+and they allow for a semantic interpretation in terms of CFSM systems. 
+
+To consider an example for a global type (or graph) let us come back to the system,
+called $S$ in Section~\ref{sec:opensys},
+which tries to transmit texts to a social network. The example is inspired by
+a similar one in~\cite{deAlfaro2005}.
+The overall behaviour of the system is as follows:
+Once a text is received from the outside, the system tries to transmit it at most $n$ times, where also the number $n$ of possible trials is provided from the outside when the system is initialised.
+A successful transmission to the network is acknowledged by an {\sf ack} message; a {\sf nack} message
+represents instead an unsuccessful transmission.
+An {\sf ok} message is sent back in case of a successful transmission; a {\sf fail} message
+in case of $n$ unsuccessful trials.
+Before any transmission trial, a semantically-invariant transformation is applied to the message
+in order to take into account requirements of the social network
+concerning propriety of language.
+If the message is not accepted by the
+network, our system automatically transforms it maintaining its sense, and sending it again and again up to $n$ times, invariantly transforming it each time. 
+A counter is used to keep track of the number of  trials and it is reset to $n$ each time
+a message is successfully transmitted. It is instead automatically reset to $n$ each time $0$ is reached, before 
+issuing a failure message and restarting the protocol with some new message.
+The roles participating in the system are the following ones:\\
+{\tt M}: the manager of the system;\\
+{\tt T}: the process implementing the semantically-invariant message transformation;\\
+{\tt C}: the trials counter;\\
+{\tt I}, {\tt J} and {\tt H}: the roles representing those
+parts of the environment which, respectively: initialises the system, sends the text message
+and receives back the {\sf ok} or {\sf fail} message, receives the messages transmitted 
+by the systems and acknowledges its propriety, if so.
+
+The global type $G$ describing the behaviour of system $S$ is shown in Figure~\ref{fig:examplegg}.
+In the figure a label $\tts\rightarrow \ttr : a$ represents an interaction where $\tts$ sends a message
+$a$ to r. A vertex with label {\small $\bigcirc$} represents the starting point of the interaction
+and {\huge $\diamond$}\hspace{-8.5pt}{$^+$} marks vertexes corresponding
+to branch or merge points, or to entry points of loops.
+%In our formalism, we can look at $G$ as a global type with interface roles by identifying the roles $\II,\JJ$ and $\HH$ as {\em interface roles}.
+%We do that by writing, according to the syntax of Def.~\ref{def:pre-gtir}(i):
+%                                                  $$\GTIR{G}{\Set{\II,\JJ,\HH}}$$
+%Given a global type with interface roles, it is reasonable to expect all its roles to be implemented but the interface ones,
+%since they are actually used to describe the behaviour of the ``environment'' of the system.
+%The projections of global types with interface roles onto their interface roles yield CFSMs which are used instead to check whether
+%two systems can be connected in a safe way. In particular, to check whether interface roles are ``compatible''.
+According to the projection algorithm for generalised global types (see \S 3.1 and Def. 3.4 in~\cite{DY12}), the projection $\projecton{G}{\JJ}$ on role $\JJ$ of the global type $G$ in Fig.~\ref{fig:examplegg}  is the  CFSM $M_\JJ$ shown in Figure~\ref{eq:J}
+which describes the behaviour of that part of the environment of system $S$ which sends a text and waits for a positive or negative answer.
+
+\begin{figure}[ht]
+\hrule
+
+\vspace{4mm}
+\begin{center}
+      \begin{tikzpicture}
+      
+      \mkint{}{x9}[][H][ack][M];
+      
+      \mkint{below=0.5 of x9}{x11}[][M][reset][C];
+       
+      \mkint{below=0.5 of x11}{x13}[][M][ok][J];
+       
+       \mkint{right=of x11}{x15}[][C][zero][M];
+       
+       \mkint{right=of x15}{x16}[][C][notzero][M];
+       
+       \mkbranch{x15,x16}[x15x16][][-0.7][@][15pt];
+       
+        \mkint{above =0.18 of x15x16}{x10}[][H][nack][M];
+        
+        \mkint{below = 0.5 of x15}{x17}[][M][fail][J];
+        
+        \mkseq{x9}{x11};
+        \mkseq{x11}{x13};
+        \mkseq{x10}{x15x16};
+        \mkseq{x15}{x17};
+        
+         \mkbranch{x9,x10}[x9x10][][0.8][@][15pt];
+         
+        \mkint{above = 0.5 of x9x10}{x6}[][M][text][H];
+        
+        \mkint{above = 0.5 of x6}{x7}[][T][text][M];
+        
+        
+        
+        \mkint{above = 0.5 of x7}{x5}[][M][text][T];
+        
+        \mkseq{x5}{x7};
+        
+         \mkseq{x7}{x6};
+        
+        \mkseq{x6}{x9x10};
+        
+        \mklooptwo[0.5][-91]{x5}{x16}{}{};
+        
+        
+        \mkint{above = 1.3 of x5}{x2}[][J][text][M];
+        
+        \path[line] (x2) -- (entryx5);
+        
+        
+        \mkmerge{x13,x17}[x13x17][][0.8][@][15pt];
+        
+        \mklooptwobelow[0.5][-23]{x2}{x13x17}{}{};
+        
+        \mkint{above = 1.3 of x2}{x0}[][I][trialsNum][C];
+        
+        \mkseq{x0}{entryx2};
+        
+        \node[source,above = 0.5 of x0] (src) {};
+        
+        \mkseq{src}{x0};
+        
+      \end{tikzpicture}
+      \end{center}
+\vspace{4mm}
+\hrule
+\caption{The global type $G$ describing system $S$}
+\label{fig:examplegg}
+\end{figure}
+
+\vspace{2mm}
+Systems of CFSMs obtained as end-point projections of (well-formed)  generalised global types
+do enjoy all communication properties of Definitiion~\ref{def:safeness}. They are free from deadlocks, orphan messages and unspecified receptions (Theorem 3.1 in~\cite{DY12}) and they satisfy the progress property
+(Theorem 3.3 in~\cite{DY12}). Moreover, systems of CFSMs obtained
+as end-point projections of global choreographies (satisfying some well-formedness conditions) 
+are strongly deadlock free; see Theorem 1 in~\cite{TG18}.\\
+
+The above mentioned formalisms represent a line of evolution of the general notion of {\em global type} widely investigated in
+the literature  \cite{CHY07,CDP12,CDYP16}.
+The centralised viewpoint offered by the global type approaches makes them naturally suitable for describing
+{\em closed} systems. This prevents a system described/developed by means of global types
+to be looked at as a module that can be connected to other systems.
+In the present section, on the ground of our results, we address  the problem of
+generalising the notion of {\em global type} in order to encompass  the description of {\em open systems}
+and, in particular, open systems of CFSMs; so paving the way towards a fruitful interaction between the investigations on open systems carried out in automata theory and those on global types. \\
+
+In our approach, an ``open global type'' -- that we dub ``global type with interface roles'' (GTIR) -- is a
+syntactic expression denoting
+a number of connected open systems of CFSMs.
+According to one's needs, any role can be looked at
+as representing (part of) the expected communication behaviour of the environment, or equivalently
+as components whose implementation is delegated to an external system\footnote{Differently from what was done in~\cite{BdLH18}, here we do not partition the set of roles into interface and non-interface roles from the beginning. In fact,
+ any role can be looked at as an interface according to the current needs of the developer of a system.
+(We thank Ivan Lanese for such a suggestion.)}\\
+
+
+We have no necessity to stick to any particular global type formalism as a basis for our GTIRs,
+as long as the local end-point behaviours of a global type $G$ can be interpreted as CFSMs.
+So we introduce a {\em parametric} syntax which, given a global type formalism \gt,
+%(equipped with a semantic projection function returning a CFSM for each role of a global type $G$),
+extends its syntax by essentially
+enabling to identify some roles as {\em interface roles} and to 
+define a  composition of open global types, semantically interpreted by systems of CFSMs.
+We call \gtir\ (\gt-with-\textsc{i}nterface-\textsc{r}oles) the so obtained formalism which, 
+by the main results of the present paper in Section~\ref{sect:safetypreservation}, is hence suitable for the composition of open systems which ensures preservation of communication properties.
+%In particular
+Our approach is  usable for any global type formalism
+\gt which satisfies the following assumptions: For each global type $G$ in \gt,
+
+\begin{enumerate}
+\item
+there is associated a finite set of roles $\roles(G) \subset \roles_\mathfrak{U}$ and a finite set of actions
+ $\mathbb{A}(G) \subset \mathbb{A}_\mathfrak{U}$,
+ \item
+ there is a {\em projection} function, denoted by $\projecton{\_}{\_}$,
+ such that for any $\ttp\in\roles(G)$, $\projecton{G}{\ttp}$ is a CFSM
+ over $\roles(G)$ and $\mathbb{A}(G)$.
+\end{enumerate}
+
+%In the following section we formally define
+%Global Types  with Interface Roles (GTIRs)
+%by providing their syntax and semantics.
+%
+%\subsection{GTIRs: syntax and semantics}
+%
+%The syntax of GTIRs is  defined in terms of  pre-GTIRs.
+%A pre-GTIR is either just
+%a global type 
+%or it is a syntactic expression composed from two pre-GTIRs by connecting
+%roles which we consider as interfaces. The non-connected roles can be possibly used for further subsequent connections.
+%A GTIR s hence a pre-GTIR where the connected roles are compatible.
+
+In the following we define formally
+Global Types  with Interface Roles (GTIRs)
+by providing their syntax and semantics.
+
+\begin{definition}[GTIR syntax]
+\label{def:pre-gtir}
+The set \GTIRset\ of {\em GTIR-expressions} $\GTIR{{\GG}}{\mathbf{I}}$ is defined by simultaneous induction together with
+the set of {\em roles} $\roles(\GTIR{\GG}{\mathbf{I}})$
+and projections $\projecton{\GTIR{{\GG}}{\mathbf{I}}}{{\tt p}}$ for each ${\tt p} \in \roles(\GTIR{\GG}{\mathbf{I}})$:
+
+\begin{enumerate}[a)]
+
+\item  if $G$ is a global type of \gt then\\
+	 $\GTIR{G}{\mathbf{I}}\in \GTIRset$ and
+$\roles(\GTIR{\GG}{\mathbf{I}}) = \roles(G)$ and 
+$\projecton{\GTIR{{\GG}}{\mathbf{I}}}{{\tt p}} =
+                  \projecton{G}{{\tt p}}$ 
+                  for each ${\tt p}\in \roles({G})$;
+	 
+\item 	
+	if
+	\begin{enumerate}[1)]
+	\item  $\GTIR{{\GG}_1}{\mathbf{H}}, \GTIR{{\GG}_2}{\mathbf{K}}\in\GTIRset$ such that
+	$\roles(\GTIR{{\GG}_1}{\mathbf{H}}) \cap \roles(\GTIR{{\GG}_2}{\mathbf{K}})
+	=\emptyset,$ and
+	\item
+	$\HH\in\roles(\GTIR{{\GG}_1}{\mathbf{H}}), \; \KK\in\roles(\GTIR{{\GG}_2}{\mathbf{K}})$,
+	such that
+	 $\HH$ and $\KK$ are interface compatible, i.e.\ $\projecton{\GTIR{{\GG_1}}{\mathbf{I}}}{\HH}\interfacecomp \projecton{\GTIR{{\GG_2}}{\mathbf{I}}}{\KK}$,
+	\end{enumerate}
+	then\\
+	$\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}} \in \GTIRset$ 
+	and
+	$\roles(\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}) = 
+	\roles({\GTIR{{\GG}_1}{\mathbf{H}}}) \cup  \roles(\GTIR{{\GG}_2}{\mathbf{K}})$
+and\\
+ $\projecton{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}{{\tt p}} = \projecton{\GTIR{{\GG}_1}{\mathbf{I}}}{{\tt p}}$
+ for all ${\tt p}\in \roles(\GTIR{{\GG}_1}{\mathbf{I}})\setminus\{\HH\}$,\\
+  $\projecton{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}{{\tt p}} = \projecton{\GTIR{{\GG}_2}{\mathbf{I}}}{{\tt p}}$
+ for all ${\tt p}\in \roles(\GTIR{{\GG}_2}{\mathbf{I}})\setminus\{\KK\}$,\\
+   $\projecton{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}{{\tt H}} = \gateway{\projecton{\GTIR{{\GG_1}}{\mathbf{I}}}{\HH},\KK}$,\\
+   $\projecton{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}{{\tt K}} = \gateway{\projecton{\GTIR{{\GG_2}}{\mathbf{I}}}{\KK},\HH}$.
+\end{enumerate}
+
+\end{definition}
+
+\begin{definition}[GTIR semantics]
+   The semantics of a GTIR $\GTIR{{\GG}}{\mathbf{I}}$  is the communicating system
+  $$\Sem{\GTIR{{\GG}}{\mathbf{I}}} =
+ (\projecton{\GTIR{{\GG}}{\mathbf{I}}}{{\tt p}})_{{\tt p}\in \roles(\GTIR{\GG}{\mathbf{I}})}.$$
+\end{definition}
+
+It is immediate to check that the operation of  ``connecting'' GTIRs is semantically commutative and associative if roles are not used twice for connections,
+i.e. the following holds:\\[2mm]
+({\em comm}) \hspace{4pt}
+$ \Sem{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}
+ = \Sem{\GTIR{\GTIR{{\GG}_2}{\mathbf{K}}\connect{\KK}{\HH}\GTIR{{\GG}_1}{\mathbf{H}}}{\mathbf{I}}} $ \\
+({\em ass})\hspace{20pt}
+ $\Sem{
+  \GTIR{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}
+           \connect{\II}{\JJ}
+            \GTIR{{\GG}_3}{\mathbf{J}} }
+           {\mathbf{I'}}
+ }
+ =
+ \Sem{\GTIR{
+                    \GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK} 
+                                     \GTIR{
+                                               \GTIR{{\GG}_2}{\mathbf{K}}  \connect{\II}{\JJ} \GTIR{{\GG}_3}{\mathbf{J}}
+                                               }{\mathbf{J'}}
+                               }{\mathbf{I'}}
+ }  
+ $\\
+ \hspace*{15mm} if $\HH, \KK, \II, \JJ$ are pairwise different.\\
+
+By the definition of the composition of communicating systems via gateway CFSMs we can easily prove, by structural induction on the form of GTIRs, that their semantics is compositional:
+
+\begin{theorem} For any composed GTIR-expression $\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}$:
+$$\Sem{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}
+= \Sem{   \GTIR{{\GG}_1}{\mathbf{H}}  } \connect{\HH}{\KK} \Sem{\GTIR{{\GG}_2}{\mathbf{K}}}.$$
+\end{theorem}
+
+As an immediate consequence we can apply our preservation results of Section~\ref{sect:safetypreservation}
+to justify that the validity of communication properties is propagated from smaller GTIRs to larger ones.
+
+\begin{corollary}
+\label{cor:safetypres}
+Let $P$ be one of the communication properties of Section \ref{sect:cfsm}. Let $\GTIR{\GG}{\mathbf{I}} =\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}$
+be the GTIR composed from GTIRs $\GTIR{\GG_1}{\mathbf{H}}$
+and $\GTIR{\GG_2}{\mathbf{K}}$ via compatible interface roles $\HH$ and $\KK$.
+If both $\Sem{\GTIR{\GG_1}{\mathbf{H}}}$ and $\Sem{\GTIR{\GG_2}{\mathbf{K}}}$ enjoy  the property $P$,
+so does $\Sem{\GTIR{\GG}{\mathbf{I}}}$.
+\end{corollary} 
+
+Hence, if we use the global types formalisms discussed above, which guarantee certain communication properties,
+we can be sure that these
+properties hold for composed types as well. %, i.e.\ GTIRs applied to the respective formalism.
+Notice that, as a generalisation, multiple connections of global types could also be considered
+with a CFSM interpretation along the lines of Section~\ref{sec:mulconn}. 
+
+
+
+%\vspace{5mm}
+%===============Old version below for comparison\\
+%
+%\textbf{Rolf:}
+%Below is the old definition.
+%Problems with this definition are:\\
+%1) GTIRs can only be composed expressions,
+%hence just a global type is not a GTIR.\\
+%%2) By rule (iii) a composed preGTIR can become a GTIR if the roles H and K are compatible.
+%%Then, according to ii), the projection of the composed GTIR to role H is not the gateway process
+%%but the CFSM of role H. This is strange, since in the semantics it would be the gateway CFSM.\\
+%2)
+%With the new idea not to declare interfaces beforehand, the definition of what is a GTIR by rule (iii)
+%is not sound anymore. The problem is that you may use the same role twice as an interface.
+%The following can happen:\\
+%You  compose
+%G1 $\connect{\HH}{\KK}$ G2. Then you compose  (G1 $\connect{\HH}{\KK}$ G2) $\connect{\HH}{\LL}$ G3.
+%So you have used two times H for the composition. In the first composition
+%the compatibility relies on the CFSM $M_H$ of H. In the second composition it relies again on $M_H$.
+%But it should rely on the gateway CFSM gw($M_H$,K).\\
+%3) Also associativity would probaly not hold anymore.\\
+%4) As a solution I have proposed the new part above. 
+%
+%\begin{definition}[GTIR]\hfill
+%\label{def:pre-gtir}
+%\begin{enumerate}[i)]
+%\item
+%The set of {\em pre-GTIR} expressions $\GTIR{{\GG}}{\mathbf{I}}$ is defined by simultaneous induction together with
+%their sets of roles $\roles(\GTIR{\GG}{\mathbf{I}})$ and
+% {\em components}  $\components(\GTIR{\GG}{\mathbf{I}})$:
+%\begin{enumerate}[a)]
+%\item $\GTIR{G}{\mathbf{I}}\in \preGTIR$ and
+%$\roles(\GTIR{\GG}{\mathbf{I}}) = \roles(G)$ and 
+%$\components (\GTIR{G}{\mathbf{I}})  = \Set{G}$ if\\
+%	 $G$ is a global type of \gt;
+%\item $\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}} \in \preGTIR$ 
+%	and
+%	$\roles(\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}) = 
+%	\roles({\GTIR{{\GG}_1}{\mathbf{H}}}) \cup  \roles(\GTIR{{\GG}_2}{\mathbf{K}})$
+%and
+%	$\components(\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}) = 
+%	\components({\GTIR{{\GG}_1}{\mathbf{H}}}) \cup  \components(\GTIR{{\GG}_2}{\mathbf{K}})$ if
+%	\begin{enumerate}[1)]
+%	\item  $\GTIR{{\GG}_1}{\mathbf{H}}, \GTIR{{\GG}_2}{\mathbf{K}}\in\preGTIR$ with
+%		$\HH\in\roles(\GTIR{{\GG}_1}{\mathbf{H}}), \; \KK\in\roles(\GTIR{{\GG}_2}{\mathbf{K}})$,
+%%	\item $\mathbf{I} = (\mathbf{H}\cup\mathbf{K})\setminus\Set{\HH,\KK}$,
+%	\item
+%	$\roles(\GTIR{{\GG}_1}{\mathbf{H}}) \cap \roles(\GTIR{{\GG}_2}{\mathbf{K}})
+%	=\emptyset.$
+%%	\for all $G\in \components(\GTIR{{\GG}_1}{\mathbf{H}}), G'\in\components(\GTIR{{\GG}_2}{\mathbf{K}})$,  
+%%		$\roles(G)\cap\roles(G')=\emptyset$.
+%	\end{enumerate}
+%\end{enumerate}
+%	\item 
+%Let $\GTIR{{\GG}}{\mathbf{I}}$ be a pre-GTIR and let ${\tt p}\in  \roles(\GTIR{{\GG}}{\mathbf{I}}) $. 
+%We define
+%$$\projecton{\GTIR{{\GG}}{\mathbf{I}}}{{\tt p}} =
+%                  \projecton{G}{{\tt p}} \hspace{3mm}\text{ where } G\in\components(\GTIR{{\GG}}{\mathbf{I}}) \text{ such that } {\tt p}\in \roles({G}).$$
+%	
+%\item
+%	A pre-GTIR $\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}$
+%obtained by the composition of two GTIRs $\GTIR{\GG_1}{\mathbf{H}}$
+%and $\GTIR{\GG_2}{\mathbf{K}}$ via the interface roles $\HH$ and $\KK$ is a GTIR if\,  $\HH$ and $\KK$ are interface compatible, i.e.\ $\projecton{\GTIR{{\GG_1}}{\mathbf{I}}}{\HH}\interfacecomp \projecton{\GTIR{{\GG_2}}{\mathbf{I}}}{\KK}$.
+%\end{enumerate}
+%\end{definition}
+%
+%By the above definition, a pre-GTIR is an expression formed by either a global type in \gt\ or a number of global types in \gt\ ``composed''  via syntactic operators of the form $\ \connect{\HH}{\KK}$.
+%These global types are what  we have defined as the {\em components} of the pre-GTIR.
+%
+%\begin{definition}[GTIR semantics]\hfill\\
+%\label{def.semgtir}
+%The communicating system $\Sem{\GTIR{{\GG}}{\mathbf{I}}}$ denoted by a GTIR $\GTIR{{\GG}}{\mathbf{I}}$ 
+%is inductively defined as follows:
+%\begin{itemize}
+%\item[-]
+%$\Sem{\GTIR{{G}}{\mathbf{I}}} =  (\projecton{G}{\ttp})_{\ttp\in\roles(G)}$   where $G$ is a global type in \gt;
+%
+%\item[-]
+%$\Sem{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}
+%= \Sem{   \GTIR{{\GG}_1}{\mathbf{H}}  } \connect{\HH}{\KK} \Sem{\GTIR{{\GG}_2}{\mathbf{K}}}.$
+%%   \cup   \Set{ \gateway{\projecton{\GTIR{{\GG}_1}{\mathbf{H}}}{{\HH}}, \KK} , \gateway{\projecton{\GTIR{{\GG}_2}{\mathbf{K}}}{{\KK}}, \HH}}$
+%\end{itemize}
+%\end{definition}
+%\noindent
+%%CFSMs in $\Sem{\GTIR{{\GG}}{\mathbf{I}}}$ that correspond to interface roles will be called {\em gateway CFSM}.\\
+%
+%It is immediate to check that the operation of  ``connecting'' GTIRs is semantically commutative and associative,
+%i.e. the following holds:\\[2mm]
+%({\em comm}) \hspace{4pt}
+%$ \Sem{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}}
+% = \Sem{\GTIR{\GTIR{{\GG}_2}{\mathbf{K}}\connect{\KK}{\HH}\GTIR{{\GG}_1}{\mathbf{H}}}{\mathbf{I}}} $ \\
+%({\em ass})\hspace{19pt}
+% $\Sem{
+%  \GTIR{\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}
+%           \connect{\II}{\JJ}
+%            \GTIR{{\GG}_3}{\mathbf{J}} }
+%           {\mathbf{I'}}
+% }
+% =
+% \Sem{\GTIR{
+%                    \GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK} 
+%                                     \GTIR{
+%                                               \GTIR{{\GG}_2}{\mathbf{K}}  \connect{\II}{\JJ} \GTIR{{\GG}_3}{\mathbf{J}}
+%                                               }{\mathbf{J'}}
+%                               }{\mathbf{I'}}
+% }  
+% $\\
+%
+% 
+%Let now $P$ be one of the communication properties of Section \ref{sect:cfsm}. By our preservation results we
+%get immediately the following corollaries.
+%
+%
+%
+%\begin{corollary}
+%\label{cor:safetypres}
+%Let $\GTIR{\GG}{\mathbf{I}} =\GTIR{\GTIR{{\GG}_1}{\mathbf{H}}\connect{\HH}{\KK}\GTIR{{\GG}_2}{\mathbf{K}}}{\mathbf{I}}$
+%be the GTIR composed from GTIRs $\GTIR{\GG_1}{\mathbf{H}}$
+%and $\GTIR{\GG_2}{\mathbf{K}}$ via compatible interface roles $\HH$ and $\KK$.
+%If both $\Sem{\GTIR{\GG_1}{\mathbf{H}}}$ and $\Sem{\GTIR{\GG_2}{\mathbf{K}}}$ enjoy  the property $P$,
+%so does $\Sem{\GTIR{\GG}{\mathbf{I}}}$.
+%\end{corollary}
+%
+%
+%As a consequence, by induction on the pairwise composition of GTIRs,
+%we obtain the following result.
+%
+%\begin{corollary}
+%Let $\GTIR{\GG}{\mathbf{I}}$ be a GTIR  such that, for any global graph $G\in \components (\GTIR{G}{\mathbf{I}})$,\\
+%the system $(\projecton{G}{\ttp})_{\ttp\in\roles(G)}$ enjoy the property $P$.
+%Then so does $\Sem{\GTIR{\GG}{\mathbf{I}}}$.
+%\end{corollary}
+%
+%%It is immediate to extend our GTIR sysntax and semantics with multiple connections.
+%
+%===End of old version
+
+
+
+
+
+
+
+ 
+ 
+ 
+

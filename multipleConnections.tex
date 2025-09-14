@@ -1,0 +1,657 @@
+%!TEX root = JLAMP-Main.tex
+
+\section{Multiple Connections}
+\label{sec:mulconn}
+
+The operation of composition can be immediately extended to multiple gateways connections.
+
+\begin{definition}[Systems composition via multiple connections]
+\label{def.multiconn}
+Let $S_1 = (M^1_\ttp)_{\ttp\in\roles_1}$ and $S_2 = (M^2_\ttq)_{\ttq\in\roles_2}$ be two communicating systems
+over $\roles_1$ and $\mathbb{A}_1$ ($\roles_2$ and $\mathbb{A}_2$ resp.)
+such that $\roles_1\cap\roles_2 = \emptyset$.
+ Moreover, let $\vec{\HH}=(\HH_i)_{i\in I}$ and  $\vec{\KK}=(\KK_i)_{i\in I}$,
+ where $I$ is a finite set of indices, such that for all  $i\in I$: $\HH_i\in\roles_1$, $\KK_i\in\roles_2$  and
+ $\HH_i \interfacecomp \KK_i$ (i.e.\ $M^1_{\HH_i} \interfacecomp M^2_{\KK_i}$). \\ 
+The \emph{composition of $S_1$ and $S_2$ w.r.t. $\vec{\HH}$ and $\vec{\KK}$} is the communicating system
+                        $${S_{1}}\connect{\vec{\HH}}{\vec{\KK}} {S_{2}} = (M_\ttp)_{\ttp\in(\roles_1\cup\roles_2)}$$
+over $\roles_1\cup\roles_2$ and $\mathbb{A}_1 \cup \mathbb{A}_2$
+where, for all $i\in I$,
+ $M_{\HH_i} = \gateway{M^1_{\HH_i}, \KK_i}$, $M_{\KK_i} = \gateway{M^2_{\KK_i}, \HH_i}$, and
+$M_\ttp =M^1_\ttp$ for all $\ttp\in(\roles_1\!\setminus \vec{\HH})$ and
+$M_\ttp =M^2_\ttp$ for all $\ttp\in(\roles_2\!\setminus \vec{\KK})$.\footnote{The CFSMs over $\roles_1$ and $\mathbb{A}_1$
+ ($\roles_2$ and $\mathbb{A}_2$ resp.) are considered here as CFSMs over $\roles_1\cup\roles_2$
+ and $\mathbb{A}_1 \cup \mathbb{A}_2$.}
+\end{definition}
+
+It is immediate to check that the binary composition operator for CFSM systems is
+commutative and associative if roles are not used twice for connections.
+Under this condition larger networks of CFSM systems can be constructed in a stepwise way.
+Note that the resulting networks can have cyclic composition structures
+due to the availability of multiple connections. Alternatively, one may also define
+directly an n-ary composition operator
+for a set $S_1, \ldots, S_n$ of CFSM systems and a set $C$ of connections
+if any interface role occurs in at most one connection in $C$.
+
+\subsection{Non preservation of deadlock-freeness and progress}\label{sec:nonpres}
+
+Without imposing further conditions on systems and on the compatibility relations,
+it is easy to prove that multiple gateway connections do neither preserve deadlock-freeness nor progress.
+To see this, let $S_1$ and $S_2$ be the following systems:
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{0mm}}c@{\hspace{0mm}}c}
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt H}};
+  \node[state]            (two) [below of=one] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{rH}?{a}} (two);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt r}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Jr}?{b}} (two)
+                (two)  edge                                   node {\edgelabel{rH}!{a}} (three);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt J}};
+  \node[state]            (two) [below of=one] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Jr}!{b}} (two);
+       \end{tikzpicture}
+
+\end{array}
+\hspace{20mm}
+\begin{array}{c@{\hspace{0mm}}c@{\hspace{0mm}}c}
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt K}};
+  \node[state]            (two) [below of=one] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Ks}!{a}} (two);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt s}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Ks}?{a}} (two)
+                (two)  edge                                   node {\edgelabel{sI}!{b}} (three);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt I}};
+  \node[state]            (two) [below of=one] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{sI}?{b}} (two);
+       \end{tikzpicture}
+
+\end{array}
+$$
+}
+
+It is easy to check that both $S_1$ and $S_2$ enjoy the progress property (and hence are deadlock-free), that $\HH$ and $\KK$ are compatible 
+and that $\JJ$ and $\II$ are compatible.
+
+By definition of multiple connection, $S_1\connect{\langle \HH,\JJ\rangle}{\langle \KK,\II\rangle}S_2$ is the following system:
+
+
+{\footnotesize
+$$
+\begin{array}{c@{\hspace{0mm}}c@{\hspace{0mm}}c}
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[state]   (onew)    [below of=one]       {$\widehat{1}$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\HH$};
+  \node[state]            (two) [below of=onew] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{rH}?{a}} (onew)
+           (onew)  edge                                   node {\edgelabel{HK}!{a}} (two) ;
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt r}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Jr}?{b}} (two)
+                (two)  edge                                   node {\edgelabel{rH}!{a}} (three);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[state]   (onew)     [below of=one]     {$\widehat{1}$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\JJ$};
+  \node[state]            (two) [below of=onew] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{IJ}?{b}} (onew)
+             (onew)  edge                                   node {\edgelabel{Jr}!{b}} (two);
+       \end{tikzpicture}
+
+\end{array}
+\hspace{0mm}
+\begin{array}{c@{\hspace{0mm}}c@{\hspace{0mm}}c}
+   \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+   \node[state]   (onew)     [below of=one]     {$\widehat{1}$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt K}};
+  \node[state]            (two) [below of=onew] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{HK}?{a}} (onew)
+            (onew)  edge                                   node {\edgelabel{Ks}!{a}} (two);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{{\tt s}};
+  \node[state]            (two) [below of=one] {$2$};
+  \node[state]            (three) [below of=two] {$3$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{Ks}?{a}} (two)
+                (two)  edge                                   node {\edgelabel{sI}!{b}} (three);
+       \end{tikzpicture}
+  &
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,semithick]
+  
+  \node[state]   (one)                        {$1$};
+  \node[state]   (onew)     [below of=one]     {$\widehat{1}$};
+  \node[draw=none,fill=none] (start) [above left = 0.3cm  of one]{$\II$};
+  \node[state]            (two) [below of=onew] {$2$};
+
+   \path  (start) edge node {} (one) 
+            (one)  edge                                   node {\edgelabel{sI}?{b}} (onew)
+            (onew)  edge                                   node {\edgelabel{IJ}!{b}} (two);
+       \end{tikzpicture}
+
+\end{array}
+$$
+}
+
+
+
+It is immediate to check that the initial configuration of  $S_1\connect{\langle \HH,\JJ\rangle}{\langle \KK,\II\rangle}S_2$ 
+is a  deadlock configuration. In particular, $S_1\connect{\langle \HH,\JJ\rangle}{\langle \KK,\II\rangle}S_2$
+does not enjoy the progress property.
+\footnote{ Notice that the above counterexample holds also in case of synchronous communications.}\\
+ 
+
+ \subsection{Preservation of no orphan message and no unspecified reception by self-connection}
+
+ It is possible to show, instead, that preservation of no orphan message and no unspecified reception
+ do hold also in presence of multiple connections. 
+ In order to do that, we first  notice that having multiple connections is equivalent to having a connection between compatible roles belonging to the
+ same system. For instance, the double connection of the above example does correspond to connecting the interface pair $(\HH, \KK)$ in the system ${S_{1}}\connect{\JJ}{\II} {S_{2}}$. 
+ 
+ \begin{definition}[Self-connection]
+ \label{def.selfconn}
+ Let $S = (M_\ttp)_{\ttp\in\roles}$  be a communicating system
+over $\roles$ and $\mathbb{A}$ and let $\HH,\KK\in\roles$.
+\begin{enumerate}[i)]
+\item
+We say that {\em $\HH$ does not communicate with $\KK$}, denoted by $\HH\nocomm\KK$,
+whenever $M_\HH$ does not send/receive any message to/from $M_\KK$ and the same holds, conversely, for $M_\KK$.
+\item
+Let $\HH,\KK$ be such that  $\HH\nocomm\KK$ and 
+ $\HH\interfacecomp \KK$.\\ 
+Then the \emph{self-composition of $S$  w.r.t. ${\HH}$ and ${\KK}$} is defined as the communicating system
+                        $$S\selfconnect{\HH}{\KK} = (M'_\ttp)_{\ttp\in(\roles)}$$
+over $\roles$ and $\mathbb{A}$
+where $M'_\HH = \gateway{M_{\HH}, \KK}$, $M'_\KK = \gateway{M_{\KK}, \HH}$, and
+$M'_\ttp =M_\ttp$ for all $\ttp\in\roles \setminus\{\HH,\KK\}$.
+\end{enumerate}
+\end{definition}
+ 
+ 
+ 
+ It is immediate to check that any multiple connection can be obtained as one single connection and a number
+ of self-connections.
+ 
+ \begin{fact}
+ \label{fact:selfmulti}
+ Let $S_1 = (M^1_\ttp)_{\ttp\in\roles_1}$ and $S_2 = (M^2_\ttq)_{\ttq\in\roles_2}$ be two communicating systems
+such that $\roles_1\cap\roles_2 = \emptyset$.
+ Moreover, let $\vec{\HH}=(\HH_i)_{i\in I}$ and  $\vec{\KK}=(\KK_i)_{i\in I}$ where $I=\Set{1,..,n}$,
+such that for all $i\in I$: $\HH_i\in\roles_1$, $\KK_i\in\roles_2$  and
+ $\HH_i \interfacecomp \KK_i$. Then\\
+$${S_1}\connect{\vec{\HH}}{\vec{\KK}} {S_2} 
+     = (\ldots({S_1}\connect{{\HH_1}}{{\KK_1}} {S_2})\selfconnect{\HH_2}{\KK_2}\ldots)\selfconnect{\HH_n}{\KK_n}$$
+ \end{fact}
+ 
+ By the above fact, it follows that the composition via multiple connections does preserve the no orphan message and no unspecified reception if the self-composition does.
+ 
+
+The proofs of preservation of no orphan message and no unspecified reception by self-connection
+can be obtained similarly to those for the case of single connections between different systems.
+Some technical lemmas have however to be rephrased and proven again, while some of them 
+stay the same both in the statement and the proof if we simply consider $S\selfconnect{\HH}{\KK}$
+instead of ${S_1}\connect{{\HH}}{{\KK}} {S_2}$.\\
+
+\noindent\textbf{General assumption:}\\ 
+In the following of this section we generally assume given a
+system  
+$$S= (M_\ttp)_{\ttp\in\roles} ={S'\selfconnect{\HH}{\KK}}$$  
+self-connected
+as described in Def.~\ref{def.selfconn}
+from the system
+$$S'= (M'_\ttp)_{\ttp\in\roles}.$$
+Notice that $S$ and $S'$ have the same set of channels.
+
+\vspace{2mm}
+\noindent\textbf{Notation:} \\
+The transitions of $M_\ttp$ in $S$ will be denoted by $\delta_\ttp$, whereas the 
+transitions of $M'_\ttp$ in $S'$ will be denoted by $\delta'_\ttp$.
+Notice that $\delta_\ttp = \delta'_\ttp$ for all  $\ttp\not\in\Set{\HH,\KK}$.
+When necessary to avoid ambiguity, we shall denote by $\lts{}_{S'}$ the transition relation in $S'$
+(while $\lts{}$ denotes the transition relation in $S$).\\
+ 
+The last  item of Fact \ref{fact:uniquesending} needs to be rephrased as follows.
+
+\begin{fact}
+\label{fact:uniquesendingself}
+Let $s= (\vec{q},\vec{w}) \in RS(S'\selfconnect{\HH}{\KK})$ and let ${q_\HH}\not\in\widehat{Q_\HH}$.
+\begin{enumerate}[a)]
+\item
+If $(q_\HH,\KK\HH?a,\widehat{q'_\HH})\in\delta_\HH$  then there exists $(\widehat{q'_\HH},\HH\tts!a,q''_\HH)\in\delta_\HH$ with $\tts \neq \KK$
+such that $(q_\HH,\HH\tts!a,q''_\HH)\in\delta'_\HH$.
+The same holds for $\delta_\KK$ and by exchanging $\HH$ with $\KK$ and vice versa.
+\item
+If $(q_\HH,\tts\HH?a,\widehat{q'_\HH})\in\delta_\HH$ with $\tts \neq \KK$  then there exists   $(\widehat{q'_\HH},\HH\KK!a,q''_\HH)\in\delta_\HH$  
+such that $(q_\HH,\tts\HH?a,q''_\HH)\in\delta'_\HH$.
+The same holds for $\delta_\KK$ and by exchanging $\HH$ with $\KK$ and vice versa.
+\end{enumerate}
+\end{fact}
+ 
+ Lemma~\ref{lem:indrestrict} is adjusted as follows.
+ 
+% %%%
+% \textbf{begin Rolf:} For the next Lemma I provide another formulation further below.
+%Please look at it and decide which version you prefer.
+%I have made mainly the following changes:\\
+%(1) In ii) I think the transition should be $s\lts{\elle}_{S'} s'$ and not $s\lts{\elle}_S s'$?? \\
+%(2)I have removed the assumptions
+%``$s\in RS(S'\selfconnect{\HH}{\KK})$ such that $s\in RS(S')$'', because I thought they are not necessary?
+%In fact, they are not in the corresponding Lemma~\ref{lem:indrestrict}.\\
+%(3) In ii) I have removed the assumption $\ttr,\tts \not\in \Set{\HH,\KK}$ because this is anyway clear due to $\HH\nocomm\KK$?
+%\textbf{end Rolf}
+%%%% 
+ 
+ \begin{lemma}
+\label{lem:indrestrictself}
+Let $\JJ\in\Set{\HH,\KK}$.
+\begin{enumerate}[i)]
+\item
+If ${s_0}$ is the initial state of $S'\selfconnect{\HH}{\KK}$, then $s_0$ is also the initial state of $S'$. 
+\item
+Let $s\in RS(S'\selfconnect{\HH}{\KK})$ such that $s\in RS(S')$.
+Moreover, let $s\lts{\elle}s'$  where $\elle$ is neither of the form $\_\JJ?\_$ nor of the form $\JJ\_!\_$.
+Then  $s\lts{\elle}_{S'} s'$.
+%\item
+%Let $s\in RS(S\selfconnect{\HH}{\KK})$ such that $s\in RS(S)$.
+%Moreover, let $s\lts{\elle}s'$  where
+%$\elle$ is neither of the form $\_\KK?\_$ nor of the form $\KK\_!\_$.\\
+%Then  $s\lts{\elle}_S s'$.
+\item
+Let $s\in RS(S'\selfconnect{\HH}{\KK})$ such that $s\in RS(S')$.
+Moreover, let  $s\lts{\ttr\JJ?a} s'\lts{\JJ\tts!a} s''$. % where $\ttr,\tts \not\in \Set{\HH,\KK}$.
+Then, $s\lts{}_{S'} s''$.
+%\item
+%Let $s\in RS(S\selfconnect{\HH}{\KK})$ such that $s\in RS(S)$.
+%Moreover, let  $s\lts{\ttr\KK?a} s'\lts{\KK\tts!a} s''$.
+%Then, $s\lts{}_S s''$.
+\end{enumerate}
+\end{lemma}
+
+%\begin{lemma}\hfill  %ROLF's version 
+%\label{lem:indrestrictself}
+%\begin{enumerate}[i)]
+%\item
+%If ${s_0}$ is the initial state of $S'\selfconnect{\HH}{\KK}$, then $s_0$ is also the initial state of $S'$. 
+%\item
+%Let $s\lts{\elle}s'$  where $\elle$ is neither of the form $\_\JJ?\_$ nor of the form $\JJ\_!\_$
+%with $\JJ\in\Set{\HH,\KK}$.\\
+%Then  $s\lts{\elle}_S s'$.
+%%\item
+%%Let $s\in RS(S\selfconnect{\HH}{\KK})$ such that $s\in RS(S)$.
+%%Moreover, let $s\lts{\elle}s'$  where
+%%$\elle$ is neither of the form $\_\KK?\_$ nor of the form $\KK\_!\_$.\\
+%%Then  $s\lts{\elle}_S s'$.
+%\item
+%Let $s\lts{\ttr\JJ?a} s'\lts{\JJ\tts!a} s''$ with $\JJ\in\Set{\HH,\KK}$.
+%Then, $s\lts{}_{S'} s''$.
+%%\item
+%%Let $s\in RS(S\selfconnect{\HH}{\KK})$ such that $s\in RS(S)$.
+%%Moreover, let  $s\lts{\ttr\KK?a} s'\lts{\KK\tts!a} s''$.
+%%Then, $s\lts{}_S s''$.
+%\end{enumerate}
+%\end{lemma}
+
+\begin{proof}
+Easy by definitions of $\lts{}$, $\lts{}_{S'}$  and 
+$\gateway{\cdot}$.
+\end{proof}
+ 
+The next lemma corresponds to Lemma~\ref{lem:nohatrestrict}.
+ 
+ \begin{lemma}
+\label{lem:nohatrestrictself}
+Let $s= (\vec{q},\vec{w}) \in RS(S'\selfconnect{\HH}{\KK})$. Then
+$${q}_\HH\not\in\widehat{Q_\HH}\ \text{ and }\  {q}_\KK\not\in\widehat{Q_\KK} \implies 
+s\in RS(S').$$
+\end{lemma}
+
+
+\begin{proof}
+If $s \in RS(S'\selfconnect{\HH}{\KK})$, then there exists a transition sequence leading to $s$ from the initial state, say
+$$s_0\lts{}s_1\lts{} \ldots\lts{} s_{n-1}\lts{}s_n=s$$
+$s_i = (\vec{q_i},\vec{w_i})$ $(i=0,\ldots,n)$.\\
+Let $j \geq 0$ be the smallest index such that ${q_j}_\HH\not\in \widehat{Q_\HH}$ and  ${q_{j+1}}_\HH\in \widehat{Q_\HH}$
+(if there is not such a $j$, then the statement we intend to show, namely that
+ any transition of the form $\ttr\HH?a$ is immediately followed by a transition $\HH\tts!a$,
+is vacuously satisfied).
+By definition of $\gateway{\cdot}$ we have that $s_j\lts{\ttr\HH?a} s_{j+1}$ for a certain $\ttr$.
+%Notice that $\ttr\neq\KK$, since, by definition of self-connection, $\HH\nocomm\KK$.
+Now let $t$ be the smallest index such that  $t\geq j+1$, ${q_t}_\HH = {q_{j+1}}_\HH$ and ${q_{t+1}}_\HH\not\in \widehat{Q_\HH}$.
+Such an index $t$ does exist because of the hypothesis $q_\HH\not\in\widehat{Q_\HH}$
+(moreover, notice that no self loop transitions are possible out of a state in $\widehat{Q_\HH}$).
+By definition of $\gateway{\cdot}$ we have that $s_{t}\lts{\HH\tts!a} s_{t+1}$ for a certain $\tts$.\\
+We can now proceed by induction on the lenght of the transition sequence
+\centerline{
+$s_j\lts{\ttr\HH?a} \ldots \lts{\HH\tts!a}s_{t+1}$
+}
+using Lemma \ref{lem:swap}, in order to show that 
+it is possible to build a transition sequence like the following one\\
+\centerline{
+$s_0\lts{}s_1\lts{}\ldots s_j\lts{\ttr\HH?a} s_{j+1}\lts{\HH\tts!a} s'_{j+2} \lts{} \ldots \lts{}s'_{n-1}\lts{}s_n=s$
+}
+where ${q_{j+2}}_\HH\not\in \widehat{Q_\HH}$.\\
+The iteration of this procedure trivially converges and allows us to get 
+a sequence
+starting with $s_0$, ending with $s$ and 
+such that
+any transition of the form $\ttr\HH?a$ is immediately followed by a transition $\HH\tts!a$.\\
+We can now repeat the above procedure taking into account $\KK$ instead of $\HH$, getting a sequence
+\begin{equation}
+\label{eq:goodseq}
+s_0\lts{}\ldots  \lts{}s_n=s
+\end{equation}
+such that any transition of the form $\ttr\HH?a$ is immediately followed by a transition $\HH\tts!a$
+and any transition of the form  $\ttr\KK?a$ is immediately followed by a transition $\KK\tts!a$.\\
+
+
+Now, by using Lemma \ref{lem:indrestrictself}, it is possible to proceed by complete induction over the 
+lenght of the transition sequence (\ref{eq:goodseq})
+in order to get a transition sequence ${s_0} \lts{}_{S'}^* {s}$. So $s\in RS(S')$.
+\end{proof}
+
+The following lemma corresponds to Lemma~\ref{lem:wempty}.
+ 
+ 
+  \begin{lemma}
+\label{lem:wemptyself}
+If $s= (\vec{q},\vec{w}) \in RS(S)$
+such that ${q}_\KK$ is final, then ${w}_{\HH\KK} = \varepsilon$.\\
+The same holds by exchanging $\HH$ and $\KK$.
+\end{lemma}
+
+\begin{proof}
+By Fact. \ref{fact:uniquesending}(\ref{fact:uniquesending-i}), 
+%$q_\HH\notin \widehat{Q_\HH}$ and 
+$q_\KK\notin \widehat{Q_\KK}$.
+Let now $\xi$ be a transition sequence leading to $s\in RS(S)$ from the initial state, say\\
+\centerline{
+$s_0\lts{\elle_1}s_1\lts{\elle_2} \ldots \lts{\elle_{n-1}}s_{n-1}\lts{\elle_n}s_n=s$
+}
+Towards a contradiction, let us assume $\vec{w}_{\HH\KK}\neq \varepsilon$.
+%(the case  $\vec{w}_{\KK\HH}\neq \varepsilon$ can be treated similarly). 
+Hence, by Corollary \ref{lem:prefix} (it is not difficult to check that this corollary and its proof stay the same for the case of self-connection) we get
+\begin{enumerate}[a)]
+\item 
+\label{l:aaaa}
+$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}$
+ is a strict prefix of
+$\symb{\HH\KK}{\restrictup{\xi}{\HH}}$;
+\item
+\label{l:bbbb}
+$\symb{\HH\KK}{\restrictup{\xi}{\HH}}\setminus \Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}} = \qm({{w}_{\HH\KK}})$.
+\end{enumerate}
+Now, by ?!-determinism of 
+$M'_\KK$ and by 
+$q_\KK\notin \widehat{Q_\KK}$, we have that $\vec{q}_\KK$ is the unique state of $M'_\KK$ recognising the string 
+$\symb{\KK\HH}{\restrictup{\xi}{\KK}}\in \lang{M^2_\KK}^\mC$.\\
+Now, by (\ref{l:aaaa}) and (\ref{l:bbbb}) above and knowing, by Lemma \ref{lem:inlangs}
+(it is not difficult to check that this lemma and its proof stay the same for the case of self-connection if in the proof one takes into account the fact that, by definition of self-connection, $\HH\nocomm\KK$), that $\symb{\HH\KK}{\restrictup{\xi}{\HH}}\in\lang{M^1_\HH}^\mC $, 
+there exists a message $a$ such that
+$\Dual{\symb{\KK\HH}{\restrictup{\xi}{\KK}}}\cdot ?a \in \lang{M^1_\HH}^\mC$.
+Hence, by compatibility, $\symb{\KK\HH}{\restrictup{\xi}{\KK}}\cdot !a \in \lang{M^2_\KK}^\mC$.
+Contradiction, since $\vec{q}_\KK$ is final.
+\end{proof}
+
+ \begin{lemma}%\hfill\\
+\label{lem:presorphmultiself}
+Let $s\in RS(S'\selfconnect{\HH}{\KK})$ be an orphan-message configuration.
+Then
+ $s$ is an  orphan-message configuration for $S'$.
+\end{lemma}
+
+\begin{proof}
+Let $s= (\vec{q},\vec{w})$. By definition of orphan-message configuration, 
+$\vec{q}$ is final and $\vec{w}\neq \vec{\varepsilon}$.
+Since $\vec{q}$ is final, then a fortiori $q_\HH$ and $q_\KK$ are final, and hence, by Lemma \ref{lem:wemptyself},
+ it follows that $w_{\HH\KK} = w_{\KK\HH} = \varepsilon$.
+This implies that, since  $\vec{w}\neq \vec{\varepsilon}$,
+there exist  $\ttp,\ttq\in \roles$ such that $\ttp\neq\HH$, $\ttq\neq\KK$ and $w_{\ttp\ttq}\neq\varepsilon$.
+Now, since being final, $q_\HH, q_\KK\not\in\widehat{Q}$, and we have,
+by Lemma~\ref{lem:nohatrestrictself}, that $s\in RS(S')$ with $s$  being an orphan-message configuration for $S'$.
+\end{proof}
+
+\begin{corollary}[Preservation of no orphan-message by self-connection]
+\label{prop:nomPreservationself}\hfill\\
+Let $S'$  be such that  $RS(S')$ does not contain any orphan-message configuration.
+Then there is no orphan-message configuration in $RS(S'\selfconnect{\HH}{\KK})$.
+\end{corollary}
+\begin{proof}
+By contradiction, let us assume there is an $s\in RS(S'\selfconnect{\HH}{\KK})$ which is an orphan-message configuration. We get
+immediately a contradiction by Lemma \ref{lem:presorphmultiself}.
+\end{proof}
+
+
+
+
+
+
+
+\begin{proposition}[Preservation of no unspecified reception by self-connection]
+\label{prop:nurPreservationself}
+Let $S'$ be such that  $RS(S')$ does not contain any unspecified reception configuration.
+Then there is no unspecified reception configuration in $RS(S'\selfconnect{\HH}{\KK})$.
+\end{proposition}
+
+\begin{proof}
+By contradiction, let us assume there is an $s= (\vec{q},\vec{w})\in RS(S'\selfconnect{\HH}{\KK})$ which is an unspecified reception configuration.
+So, let $\ttr \in \textbf{P}$ and let ${q}_\ttr$  be the receiving state of $M_\ttr$ prevented from 
+receiving any message from any of its buffers (Definition \ref{def:safeness}(\ref{def:safeness-ur})).
+Now we  consider the following possible cases:
+
+\begin{description}
+\item 
+${q}_\HH\not\in \widehat{Q_\HH}$ and ${q}_\KK\not\in \widehat{Q_\KK}$.\\ 
+By Lemma \ref{lem:nohatrestrictself} we get ${s}\in RS(S')$. 
+We distinguish now the following possible further subcases.
+\begin{description}
+\item 
+$\ttr \neq \HH$ and $\ttr \neq \KK$\\
+We get a contradiction by the hypothesis that $RS(S')$ does not contain any unspecified reception configuration.
+\item 
+$\ttr = \HH$\\
+Since ${q}_\ttr(= {q}_\HH)$ is a receiving state,
+by definition of $\gateway{\cdot}$ it follows that
+ the set
+of all the outgoing transitions from $q_\HH$ in $\delta_\HH$ is of the form 
+$$\Set{({q}_\HH,\tts_j\HH?a_j,\widehat{q_j})}_{j=1..m}$$
+By definition of unspecified reception configuration,  we have hence that for all $j=1..m$, 
+$$\mid w_{\tts_j\HH}\mid > 0 
+\text{ and } w_{\tts_j\HH}\not\in  a_j\cdot\mathbb{A}^*$$
+Now, the following further possibilities have to be taken into account\\
+\underline{$\diamond$} {\it  $\tts_j\neq\KK$ for all  $j=1..m$.}\\
+By Fact \ref{fact:uniquesendingself} and definition of $\gateway{\cdot}$ we have that  
+$$[(q_\HH,\tts_j\HH?a_j,\widehat{q_j})\in\delta_\HH  ~~\wedge ~~
+\tts_j\neq\KK] \iff  
+(q_\HH,\tts\HH?a_j,q_j)\in\delta'_\HH$$
+ This implies $s$ to be an  unspecified reception configuration for $S'$. Contradiction.\\
+\underline{$\diamond$} {\it $\tts_j = \KK$ for some $j=1..m$.} \\
+In this case we do get a contradiction by Lemma \ref{lem:getright} (it is not difficult to check that this lemma stays the
+same also in case of self-connection).
+\item 
+$\ttr = \KK$\\
+This case can be treated in the same way as the previous one.
+\end{description}
+
+
+\item 
+${q}_\HH\in \widehat{Q_\HH}$ and ${q}_\KK\in \widehat{Q_\KK}$.\\ 
+%We consider only the case ${q}_\HH\in \widehat{Q_\HH}$, since the other is similar.\\
+By Fact \ref{fact:uniquesending}(\ref{fact:uniquesending-i}) (it is easy to check that this item of Fact \ref{fact:uniquesending} stays the same when self-connection is taken into account),
+${q}_\HH\in \widehat{Q_\HH}$ is a sending state such that $({q}_\HH,\HH\tts!b,{q'}_\HH)\in{\delta}_\HH$. Hence it is impossible that $\ttr=\HH$. Moreover, ${q}_\KK\in \widehat{Q_\KK}$ is a sending state such that $({q}_\KK,\KK\tts'!a,{q''}_\KK)\in{\delta}_\KK$. Hence it is impossible that $\ttr=\KK$.
+So, let $\ttr\neq\HH$ and $\ttr\neq\KK$.
+It is now immediate to check that  there exist two elements $s',s''\in RS(S\selfconnect{\HH}{\KK})$ such that
+$s\lts{\HH\tts!b}s'\lts{\KK\tts'!a}s''=(\vec{q''},\vec{w''})$ with ${q''}_\HH\not\in \widehat{Q_\HH}$,
+${q''}_\KK\not\in \widehat{Q_\KK}$.
+%and $\tts \in \roles_1 \cup \Set{\KK}$
+It hence follows, by Lemma \ref{lem:nohatrestrictself}, that $s''\in RS(S')$.
+Moreover, we have that 
+\begin{enumerate}[a)]
+\item
+\label{l:aa}
+$\forall \ttp\not\in\Set{\HH,\KK}.\ {q'}_\ttp = {q''}_\ttp ={q}_\ttp$;
+\item
+\label{l:bb}
+$\forall \ttp\ttq \not\in \Set{\HH\tts, \KK\tts'}.\ {w'}_{\ttp\ttq} = {w''}_{\ttp\ttq} = {w}_{\ttp\ttq}$;
+\item
+\label{l:cc}
+${w'}_{\HH\tts} ={w}_{\HH\tts} \cdot b$ and ${w''}_{\KK\tts'} = {w}_{\HH\tts}\cdot a$.
+\end{enumerate}
+We consider now the following possible subcases:
+\begin{description}
+\item
+$\tts\neq\ttr$ and $\tts'\neq\ttr$\\
+By ($\ref{l:aa}$) and ($\ref{l:bb}$) above it follows that  also $s''\in RS(S')$ is an unspecified reception configuration. Contradiction.
+\item
+$\tts=\ttr$\\
+In this case $\HH$ sends the message $b$ to the buffer $w_{\HH\ttr}$. Since $q_\ttr$ is the receiving state of $M_\ttr$ prevented from receiving any message from any of its buffers, which all are not empty in configuration $s$, the sending of $b$ extends $w_{\HH\ttr}$ which still has a wrong element on its first position. Then, by (a) and (b) above $s''$ is an unspecified reception configuration of $S'$.  Contradiction.
+\item
+$\tts'=\ttr$\\
+In this case $\KK$ sends the message $a$ to the buffer $w_{\KK\ttr}$. Since $q_\ttr$ is the receiving state of $M_\ttr$ prevented from receiving any message from any of its buffers, which all are not empty in configuration $s$, the sending of $a$ extends $w_{\KK\ttr}$ which still has a wrong element on its first position. Then, by (a) and (b) above $s''$ is an unspecified reception configuration of $S'$.  Contradiction.
+
+\end{description}
+
+ \end{description}
+ 
+ \noindent
+The cases when ${q}_\HH\not\in \widehat{Q_\HH}$ and ${q}_\KK\in \widehat{Q_\KK}$ and 
+when 
+${q}_\HH\in \widehat{Q_\HH}$ and ${q}_\KK\not\in \widehat{Q_\KK}$ can be treated similarly to the last one.
+
+
+
+\end{proof}
+
+ \begin{corollary}(Communication properties preservation by multiple connections)
+\begin{enumerate}[i)]
+\item
+$S_1\connect{\vec{\HH}}{\vec{\KK}}S_2$ is orphan-message free  if $S_1$ and $S_2$ are so.
+\item
+ $S_1\connect{\vec{\HH}}{\vec{\KK}}S_2$ is reception-error free  if $S_1$ and $S_2$ are so.
+ \end{enumerate}
+ \end{corollary}
+ \begin{proof}
+The properties are preserved by single connections by Corollary \ref{prop:nomPreservation} and Proposition \ref{prop:nurPreservation}. They are also preserved by self-connections by Corollary \ref{prop:nomPreservationself} and Proposition \ref{prop:nurPreservationself}. The thesis hence follows since, by Fact  \ref{fact:selfmulti}, a multiple connection is equivalent to one single connection followed by a number of self-connections.
+ \end{proof}
+ 
+ 
+ 
+ 
+% \subsection{About recovering progress preservation}
+% The equivalence of single and multiple connections  immediately implies that it is not possible to overcome problems like the one exploited by the example of non preservation of progress by using a different compatibility relation containing the one we use. In such a case, restrictions should  instead to be imposed on the systems to be connected.
+% 
+%To provide such restrictions is a complex problem.
+%It was recognised already for the case of synchronous message exchange in several papers.
+%Most papers just assume acyclic (tree-like) architectures to get results on compositional verification
+%of deadlock-freeness (see for instance the discussion and references on page 2, paragraph 3, of \cite{LM13}).
+%\cite{LM13} provides a generalisation of acyclic architectures by considering so-called
+%``disjoint circular wait free component systema''.
+%In future we may want to study whether such architectures can also be useful for asynchronous composition,
+%like the one described in the present paper.\\
+%
+%In case one wished to have self-connectionsn to preserve progress without imposing any
+%condition to the systems, the previous example shows that we need to take into account
+%a compatibility relation preventing the possibility of 
+%reaching any configuration  $s= (\vec{q},\vec{w}) \in RS(S)$ such that, if 
+%$\HH$ and $\KK$ are the connected roles, there exist no two transition either of the form
+%$(\vec{q}_\HH,\tts\HH?\_, q'), (\vec{q}_\KK,\HH\KK?\_, q'')\in\delta$ or of the form
+%$(\vec{q}_\KK,\tts\KK?\_, q'), (\vec{q}_\HH,\KK\HH?\_, q'')\in\delta$ .
+%This is obviously impossible for any compatibility relation containing our one.
+%We could instead provide a different and sound compatibility relation as follows.
+%
+%\begin{definition}[Progress-preserving compatibility] We define $M\connect{}{}M'$ to hold whenever 
+%\begin{enumerate}[a)]
+%\item
+%$\delta_\HH$ and $\delta_\KK$ are such that
+%any  state $q\in Q_\HH\cup Q_\KK$ has at most one outgoing transition ; 
+%\item
+%$\lang{M}^\mC = \Dual{\swap(\lang{M'}^\mC)}$;
+%\end{enumerate}
+%where $\swap$ is defined by
+%$$\swap(\varepsilon) = \varepsilon  \hspace{20mm} \swap(a\cdot b \cdot\varphi) = b\cdot a\cdot \varphi$$
+%\end{definition}
+%
+%The above definition simply states that if $M_\HH \connect{}{}M_\KK$, then  $M_\HH $ and $M_\KK$ have a single maximal trace of the form,
+%respectively
+%$$\tts_1\HH?a_1 \cdot \HH\ttr_1!b_1 \cdot  \tts_2\HH?a_2 \cdot \HH\ttr_2!b_2 \cdot \ldots$$
+%and
+%$$\ttp_1\KK?b_1 \cdot \KK\ttq_1!a_1 \cdot  \tts_2\HH?b_2 \cdot \HH\ttr_2!a_2 \cdot \ldots$$
+%
+%In such a case, $\gateway{M_\HH,\KK}$ and $\gateway{M_\KK,\HH}$ have a behaviour mimicking a series of steps of ``mutual message exchanges'':
+%first $\gateway{M_\HH,\KK}$ and $\gateway{M_\KK,\HH}$ send on $w_{\HH\KK}$ and $w_{\KK\HH}$, respectively,  the messages $a_1$ and $b_1$.
+%Then these messages are read, and so on. 
+%
+
+
+
+
+
+
+

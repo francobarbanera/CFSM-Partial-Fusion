@@ -1,0 +1,235 @@
+
+
+\begin{remark}
+\label{rem:dircomm}
+{\em
+As noted in \cite[Sect.5.3]{BdLH19}, trying to get rid of gateways (essentially by bypassing them
+and by directly connecting the participants which indirectly communicate via the gateways)
+would have several drawbacks: not only the need of renaming the channels of the directly connected participants, but in general also their complete redesign.
+This would hence result in a non-conservative approach to multicomposition.
+Of course this does not also imply investigations on direct communication composition
+not to be worth pursuing, in particular for modular approaches to system development.
+\brc The last sentence sounds strange. \erc.
+\finex}
+\end{remark}
+
+
+We are currently considering a generalisation of the compatibility relation used 
+in some of the above mentioned papers to guarantee safety for binary composition.
+A possible and decidable candidate for that being the following one.\\
+%  \begin{definition}[Multicompatibility]
+{\bf Definition} (Multicompatibility) {\em  Let $\cp=(M_{\kk_i})_{i\in I}$ be a CS.
+\vspace{-1mm}
+  \begin{enumerate}[i)]
+  \item
+    Let   $\vec{p}= (p_{\KK_i})_{i\in I}$
+  and $\vec{q}= (q_{\KK_i})_{i\in I}$  be  two control states of $\cp$,
+   we say that $\vec{p}$ and $\vec{q}$ are {\em multicompatible} in $\cp$, 
+   notation $\vec{p}\mc{\cp}\vec{q}$,
+  whenever, for each  $j\in I$, the following holds\\
+%  \begin{enumerate}[a)]
+%  \item 
+  \centerline{$ (p_{\KK_j},\_\,\KK_j?a,\tilde p)\in\delta_j \implies \exists v\in I\ s.t. \ j\neq v \qand (q_{\KK_v},\KK_v\,\_!,\tilde q)\in \delta_z \qand \vec{p'}\mc{\cp}\vec{q'}$}
+  where $\vec{p'}$ and $\vec{q'}$  are s.t. $p'_{\KK_z} = \left\{\begin{array}{lll}
+                                                                                p_{\KK_z} & \text{if} & z\neq j\\
+                                                                                \tilde p   & \text{if} & z= j
+                                                                                \end{array}
+                                                                       \right.$
+                                                                       and\
+                                                  $q'_{\KK_z} = \left\{\begin{array}{lll}
+                                                                                q_{\KK_z} & \text{if} & z\neq v\\
+                                                                                \tilde q   & \text{if} & z= v
+                                                                                \end{array}
+                                                                       \right.$   
+%   \item
+%   for each $j\in I$
+%  $$ (q_{\KK_j},\_\,\KK_j?a,\tilde q)\in\delta_j \implies \exists v\in I\ s.t. \ j\neq v \qand (p_{\KK_v},\KK_v\,\_!,\tilde p) \qand \vec{p}\mc{\cp}\vec{q'}$$
+%  where$ \vec{q}$ is such that                        
+%  \end{enumerate}
+  \item The CFSMs  of the set $\Set{M_{\kk_i}}_{i\in I}$ are {\em multicompatible}
+  whenever $\vec{p_0}\mc{\cp}\vec{p_0}$, where
+  $\vec{p_0}$ is the control state of $\cp$ containing all initial states.
+  \end{enumerate}
+  }
+  
+  
+  A weak notion of deadlock configuration, and hence a stronger notion of deadlock-freeness, has been suggested in~\cite{TG18}. 
+
+To distinguish it from the notion above, we call it \emph{strong deadlock-freeness}, as done in \cite{BdLH19}.
+
+  \begin{definition}[Strong deadlock-freeness]\label{def:strong-df}%\hfill\\
+\label{def:wdf}
+Let $S$ be a communicating system, and let $s= (\vec{q},\vec{w})$ be a configuration of $S$.
+$s$ is a {\em weak deadlock configuration} of $S$ if $s\, \not\!\!\lts{}$ and either
+\begin{enumerate}[a)]
+\item $\exists \ttr\in\roles$ such that $q_\ttr \lts{\ttr\tts?\msg[a]} q'_\ttr$ , or
+\item
+\label{def:safeness-wnotem}
+$\vec{w}\neq\vec{\varepsilon}$ 
+\end{enumerate}
+i.e.\ $s$ is stuck and at the same time either a machine is still waiting for a message
+or there is a message waiting in a buffer which cannot be consumed (or both).
+We say that $S$ is {\em strongly deadlock-free} whenever, for any $s\in \RS(S)$, $s$ is not a weak deadlock configuration.
+\end{definition}
+
+As it is natural to expect, a stuck configuration made of final states and empty buffers is not a weak deadlock configuration.
+But any orphan-message configuration is a weak deadlock configuration.
+Moreover, a stuck configuration made of final states and non empty buffers is a weak
+deadlock configuration, but not a lock. Hence, whereas lock-freeness implies deadlock freeness, it does   not imply strong deadlock-freeness.
+
+
+It can be shown that the strong deadlock-freeness property is equivalent to the properties of progress and orphan-message freeness. Moreover,
+progress is just the same as  strong deadlock-freeness when alternative (\ref{def:safeness-wnotem}) of Definition
+\ref{def:wdf}
+%\ref{def:safeness}(\ref{def:safeness-i}) 
+is omitted.
+
+
+\begin{proposition}[\cite{BdLH19}]
+\label{prop:freeprogorph}
+Let $S$ be a communicating system.
+\begin{enumerate}[i)]
+\item
+If $S$ is strongly deadlock-free, then $S$ is deadlock-free.
+\item
+There is no progress in a reachable configuration $s= (\vec{q},\vec{w}) \in \RS(S)$ if and only if\\
+\centerline{
+ 1. $s\, \not\!\!\lts{}$ and\quad 2. $\exists \ttr\in\roles$ such that $q_\ttr \lts{\ttr\tts?\msg[a]} q'_\ttr$.
+}
+%\begin{enumerate}[1.]
+%\item
+% $s\, \not\!\!\lts{}$ and
+%\item 
+%\label{label:a}
+%$\exists \ttr\in\roles$ such that $q_\ttr \lts{\ttr\tts?\msg[a]} q'_\ttr$.
+%\end{enumerate}
+\item
+\label{prop:freeprogorph-ii}
+$S$ is strongly deadlock-free if and only if $S$ is orphan-message free and satisfies the progress property.
+\end{enumerate}
+\end{proposition}
+
+\begin{corollary}[Preservation of strong deadlock-freeness]%\hfill\\
+\label{prop:dfPreservation}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cp)$ and let $\cp$ and each $S_i$ (for $i\in I$) be strongly deadlock-free.
+ Moreover, let the interfaces of each $S_i$,
+i.e.\ the CFSMs $M_{h_i}$ in $S_i$, have no mixed state.
+Then also $S$  is strongly deadlock-free. 
+%Let $S_1$ and $S_2$ be strongly deadlock-free.
+%Then $S = {S_{1}} \connect{\HH}{\KK} {S_{2}}$ is strongly deadlock-free.
+\end{corollary}
+\begin{proof}
+By  \cref{prop:freeprogorph}(\ref{prop:freeprogorph-ii}),  Corollary \ref{prop:nomPreservation} and  \cref{lem:restrRS}.
+\end{proof}
+
+  %\begin{proof}
+%i) is obvious.\\
+%ii)
+%$\Rightarrow$: Assume that there is no progress in $s= (\vec{q},\vec{w})$. Then $s\, \not\!\!\lts{}$
+%and there exists $\ttr\in\roles$ such that $q_\ttr$ is not final.
+%Thus no sending action is possible in $q_\ttr$.
+%Therefore there must exist a transition $q_\ttr \lts{\ttr\tts?a} q'_\ttr$ and thus (\ref{label:a}) holds.\\ 
+%$\Leftarrow$: The converse direction is clear, since $s\, \not\!\!\lts{}$ and, by (\ref{label:a}),
+%there exists $\ttr\in\roles$ and $q_\ttr \lts{\ttr\tts?a} q'_\ttr$. Thus $q_\ttr$ is not final.\\
+%iii)
+%$\Rightarrow$:
+%Assume that there exists an orphan-message configuration $s \in \RS(S).$
+%Since for all $\ttp\in\roles, q_\ttp$ is final, we have $s\, \not\!\!\lts{}$.
+%Moreover, $\vec{w}\neq\vec{\varepsilon}$ since $s$ is an orphan-message configuration.
+%Thus $s$ is a weak deadlock configuration.\
+%Now assume that there exists a configuration $s \in \RS(S)$ with no progress.
+%Then, using (ii), $s$ is a weak deadlock configuration.\\  
+%$\Leftarrow$: Assume that there is a weak deadlock configuration $s \in \RS(S).$
+%Then $s\, \not\!\!\lts{}$.
+%If a) of Def. \ref{def:wdf} holds then, according to (ii), there is no progress in $s$.
+%If a) does not hold, then $\forall \ttp\in\roles. ~ q_\ttp \text{ is final}$ and,
+%since $s$ is a weak deadlock configuration, b) in Def.~\ref{def:strong-df} must hold, i.e.\
+%$\vec{w}\neq \vec{\varepsilon}$. In this case $s$ is an orphan-message configuration. 
+%\end{proof}
+
+  
+  
+%  \end{definition}
+
+
+
+\begin{figure*}[ht]\centering
+\vspace{-16mm}
+ \hspace{0mm}$
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=14mm] {\large $\kk$};
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-14mm] {\large $\ttv$};
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-14mm] {\large $\ttw$};
+        \node (square-r)  [draw,minimum width=0.8cm,minimum height=0.8cm, below left of = square-k, yshift=-2mm] {\large $\ttr$};
+        \node (square-q)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-3mm, xshift=-4mm] {\large $\ttq$};
+        \node (square-p)  [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-r,  yshift=-2mm] {\large $\ttp$};
+        \draw[-stealth]  (square-w) to[out=75,in=-105]  node {$\msg[b]$} (square-p);
+        \draw[-stealth]  (square-p) to[out=35,in=45]  node {$\msg[e]$} (square-r);
+        \draw[-stealth]  (square-q) to[out=35,in=45]  node {$\msg[b]$} (square-v);
+        \draw[-stealth]  (square-r) to[out=-35,in=-25]  node {$\msg[b]$} (square-v);
+        \draw[-stealth]  (square-v) to[out=25,in=-85]  node {$\msg[a]$} (square-r);
+        \draw[-stealth]  (square-w) to[out=145,in=-75]  node {$\msg[c]$} (square-h);
+        \draw[-stealth]  (square-p) to[out=-145,in=115]  node {$\msg[a]$} (square-w);
+        \draw[-stealth]  (square-h) to  node {$\msg[a]$} (square-q);
+        \draw[-stealth]  (square-r) to  node {$\msg[f]$} (square-p);
+        \draw[-stealth]  (square-r) to[out=145,in=165]  node {$\msg[a]$} (square-k);
+        \draw[-stealth]  (square-k) to[out=145,in=55]  node {$\msg[b]$} (square-q);
+ \end{tikzpicture}
+ \qquad\qquad
+  \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=14mm] {\large $\kk$};
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-14mm] {\large $\ttv$};
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-14mm] {\large $\ttw$};
+        \node (square-r)  [draw,minimum width=0.8cm,minimum height=0.8cm, below left of = square-k, yshift=-2mm] {\large $\ttr$};
+        \node (square-q)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-3mm, xshift=-4mm] {\large $\ttq$};
+        \node (square-p)  [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-r,  yshift=-2mm] {\large $\ttp$};
+        \draw[-stealth]  (square-w) to[out=75,in=-105]  node {$\msg[b]$} (square-p);
+        \draw[-stealth]  (square-p) to[out=35,in=45]  node {$\msg[e]$} (square-r);
+        \draw[-stealth]  (square-q) to[out=35,in=45]  node {$\msg[b]$} (square-v);
+        \draw[-stealth]  (square-r) to[out=-35,in=-25]  node {$\msg[b]$} (square-v);
+        \draw[-stealth]  (square-v) to[out=25,in=-85]  node {$\msg[a]$} (square-r);
+        \draw[-stealth]  (square-w) to[out=145,in=-75]  node {$\msg[c]$} (square-h);
+        \draw[-stealth]  (square-p) to[out=-145,in=115]  node {$\msg[a]$} (square-w);
+        \draw[-stealth]  (square-h) to  node {$\msg[a]$} (square-q);
+        \draw[-stealth]  (square-r) to  node {$\msg[f]$} (square-p);
+        \draw[-stealth]  (square-r) to[out=145,in=165]  node {$\msg[a]$} (square-k);
+        \draw[-stealth]  (square-k) to[out=145,in=55]  node {$\msg[b]$} (square-q);
+        %
+                \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
+                \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [-stealth] (k-b) --  node {$\msg[b]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+                \node [state] (v-b) [left of = square-v, draw=none] {};
+        \node [state] (v-a) [below of = square-v, draw=none] {};
+        \draw [-stealth] (v-a) --  node {$\msg[a]$} (square-v);
+        \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
+                \node [state] (w-c) [right of = square-w, draw=none] {};
+        \node [state] (w-a) [below of = square-w, draw=none] {};
+        \node [state] (w-b) [above right of = square-w, draw=none] {};
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
+        %
+        \draw (0,0.4)[dotted,thick]  --  (-0.09,-0.4); % carrying a inside h  
+        \draw (-0.4,0)[dotted,thick]  --  (0.1,-0.4); % carrying c inside h
+        %
+        \draw (2.9,0.4)[dotted,thick]  --  (2.5,0.25); % carrying b inside k
+        \draw (2.5,0.1)[dotted,thick]  --  (3.3,0); % carrying a inside k
+        %
+        \draw (0.4,-2.7)[dotted,thick]  --  (0,-3.3); % carrying a inside v
+        \draw (0.4,-2.5)[dotted,thick]  --  (-0.4,-2.9); % carrying q's b inside v
+        \draw (0.4,-3.1)[dotted,thick]  --  (-0.4,-2.9); % carrying b inside v
+        %
+        \draw (2.7,-2.5)[dotted,thick]  --  (2.9,-3.3); % carrying a inside w
+        \draw (2.5,-2.6)[dotted,thick]  --  (3.3,-2.9); % carrying c inside w
+        \draw (3.01,-2.5)[dotted,thick]  to[out=-90,in=-90]  (3.3,-2.5); % carrying b inside w
+ \end{tikzpicture}
+  \vspace{-8mm}
+ $   \caption{\label{fig:intinfra} Composition via ``interfacing infrastructure''.}
+\end{figure*}
