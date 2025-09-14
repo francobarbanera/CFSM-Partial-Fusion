@@ -14,16 +14,18 @@ $S_1$ and $S_2$ such that $S_1$ possesses a CFSM $M^1_\HH$ and $S_2$ a CFSM $M^2
 \textbf{General assumption:}\\ 
 In the following, we generally assume given a
 system  
-$$S= (M_\ttp)_{\ttp\in\roles} ={S_{1}}\connect{\HH}{\KK} {S_{2}}$$  
+$$S= (M_\ttp)_{\ttp\in\roles} = \fusioncomp_{\!\hh_1,\hh_2}(S_1,S_2)$$  
 composed
-as described in Def.~\ref{def.semconn}
+as described in Def.~\ref{def:cpf}
 from systems 
-$$S_1= (M^1_\ttp)_{\ttp\in\roles_1}  \hspace{4mm} \text{ and } \hspace{4mm} S_2= (M^2_\ttp)_{\ttp\in\roles_2}$$ where the CFSMs $M^1_\HH$ and $M^2_\KK$ are compatible . 
+$$S_1= (M^1_\ttp)_{\ttp\in\roles_1}  \hspace{4mm} \text{ and } \hspace{4mm} S_2= (M^2_\ttp)_{\ttp\in\roles_2}$$ where $\emb{\bm{\delta}}{M^2_{\hh_2}}{M^1_{\hh_1}}$.
+
+
 
 \vspace{2mm}
 \noindent
 \textbf{Notation:} \\
-The roles of $S$ are $\roles=\roles_1\cup\roles_2$ with  $\roles_1\cap\roles_2=\emptyset$.\\
+The roles of $S$ are $\roles=(\roles_1\cup\roles_2)\setminus\Set{\hh_2}$ with  $\roles_1\cap\roles_2=\emptyset$.\\
 The channels of $S_i$ are  $C_i=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles_i, \ttp\neq\ttq}$ for $i=1,2$.\\
 The channels of $S$ are 
 $C=C_1\cup C_2\cup\Set{\HH\KK,\KK\HH}$.\\

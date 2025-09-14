@@ -557,58 +557,57 @@ $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\ti
 \section{Partial-fusion Composition}
 
 
-\begin{definition}[CFSM embedding]
-Let $M=(Q,q_0,\mathbb{A},\delta)$ and $M'=(Q',q'_0,\mathbb{A}',\delta')$
-be two CFSMs.
-We say that $M$ is {\em embedded} in $M'$ (${M}{M'}$) whenever there exists an injective $f:\delta\to\delta'$ such that
-\begin{itemize}[-]
-\item
-$q_1\lts{l_1} q_2\lts{l_2} q_3$ in $M$ implies  $q'_2\to^*q''_2$ in $M'$ \\
-where 
-$f(q_1\lts{l_1} q_2)= q'_1\lts{l'_1} q'_2$ and $f(q_2\lts{l_2} q_3)= q''_2\lts{l'_2} q'_3$
-\end{itemize}
-
-\end{definition}
 
 Definition: Structurally identical.
 
 \begin{definition}[$\bm{\delta}$-complementarity]
-Let $M_\ttr = (Q, q_0, \textit{Act}, \delta)$ and $M_\tts = (Q', q'_0, \textit{Act}, \delta')$  be two CFSMs.
+Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$.
 We say that
 \begin{enumerate}[i)]
 \item
-$M_\tts$ is {\em $\bm{\delta}$-complementary} with $M_\ttr$, written $\emb{\bm{\delta}}{M_\tts}{M_\ttr}$, whenever 
+$M^1_\hh$ is {\em $\bm{\delta^2}$-complementary} with $M^2_\hh$, written $\emb{\bm{\delta^2}}{M^1_\hh}{M^2_\hh}$, whenever 
 \begin{itemize}
 \item[-] 
-there exixts $M''_\ttr = (Q'', q''_0, \textit{Act}, \bm{\delta})\in\IDS(M_\ttr)$;
+there exixts $M'_\hh = (Q', q'_0, \textit{Act}, \bm{\delta^2})\in\IDS(M^2_\hh)$;
 \item[-]
-$M_\tts$ is structurally identical to $\I(M''_\ttr)$;
+$M^1_\hh$ is structurally identical to $\I(M'_\hh)$;
 \item[-]
-$q_1 \lts{\ttr\ttp!\msg[m]} q_2 \in \delta$ for some $\ttp$ \quad iff \quad 
-$\eps(q_1)\lts{\ttp'\tts?\msg[m]}\eps(q_2)\in \delta'$ for some $\ttp'$;
+$q_1 \lts{\hh\ttp!\msg[m]} q_2 \in \delta^2$ for some $\ttp$ \quad iff \quad 
+$\eps(q_1)\lts{\ttp'\hh?\msg[m]}\eps(q_2)\in \delta^1$ for some $\ttp'$;
 \item[-]
-$q_1 \lts{\ttp\ttr?\msg[m]} q_2 \in \delta$ for some $\ttp$ \quad iff \quad 
-$\eps(q_1)\lts{\tts\ttp'!\msg[m]}\eps(q_2)\in \delta'$  for some $\ttp'$.
+$q_1 \lts{\ttp\hh?\msg[m]} q_2 \in \delta^2$ for some $\ttp$ \quad iff \quad 
+$\eps(q_1)\lts{\hh\ttp'!\msg[m]}\eps(q_2)\in \delta^1$  for some $\ttp'$.
 \end{itemize}
 \end{enumerate}
 \end{definition}
 
 \begin{definition}[Partial Fusion]
-Let $M_\hh = (Q, q_0, \textit{Act}, \delta)$ and $M_{\hh'} = (Q', q'_0, \textit{Act}, \delta')$
-be two CFSMs such that $\emb{\bm{\delta}}{M_{\hh'}}{M_\hh}$.
-We define the {\em partial fusion of $M_{\hh}$ and $M_{\hh'}$ via $\bm{\delta}$} as
-$$\fusion_{\!\bm{\delta}}(M_{\hh},M_{\hh'}) = (Q\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
+Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that $\emb{\bm{\delta^2}}{M^1_{\hh}}{M^2_\hh}$.
+We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta^2}$} as
+$$\fusion_{\!\bm{\delta^2}}(M^1_{\hh},M^2_{\hh}) = (Q^2\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
 \begin{tabular}{lc@{\hspace{2mm}}l}
-where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta}}$; \\[1mm]
-          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta}}\,\cup$\\ 
-           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH'?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm\delta, (\eps(q),\ttr\KK?\msg[a],\ \eps(q'))\in\delta',\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
-                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm\delta,\ (\eps(q),\hh'\ttr!\msg[a],\eps(q'))\in\delta',\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta^2}}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta^2}}\,\cup$\\ 
+           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm{\delta^2}, (\eps(q),\ttr\hh?\msg[a],\ \eps(q'))\in\delta^1,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm{\delta^2},\ (\eps(q),\hh'\ttr!\msg[a],\eps(q'))\in\delta^1,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
  \end{tabular} 
 \end{definition}
 
 
 
+\begin{definition}[Composition by Partial Fusion]
+\label{def:cpf}
+Let $S_1=(M^1_\ttx)_{\ttx\in\roles_1}$ and $S_2=(M^2_\ttx)_{\ttx\in\roles_2}$ be two communicating systems such that $\roles_1\cap\roles_2=\Set{\hh}$
+and $\emb{\bm{\delta}}{M^1_{\hh}}{M^2_{\hh}}$.
+We define the {\em composition of $S_1$ and $S_2$ via partial fusion of $\hh$} by
+$$\fusioncomp_{\!\hh}(S_1,S_2) = (\widetilde{M}_\ttx)_{\ttx\in\roles_1\cup\roles_2}$$ 
+\begin{tabular}{lc@{\hspace{2mm}}l@{\hspace{4mm}}l}
+where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\roles_1\setminus\Set{\hh} $; \\[1mm]
+          &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2\setminus\Set{\hh} $; \\[1mm]
+                    &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\bm{\delta}}(M^1_{\hh},M^2_{\hh})$.
+ \end{tabular} 
 
+\end{definition}
 
 
 
