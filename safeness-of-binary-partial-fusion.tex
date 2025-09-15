@@ -14,18 +14,19 @@ $S_1$ and $S_2$ such that $S_1$ possesses a CFSM $M^1_\HH$ and $S_2$ a CFSM $M^2
 \textbf{General assumption:}\\ 
 In the following, we generally assume given a
 system  
-$$S= (M_\ttp)_{\ttp\in\roles} = \fusioncomp_{\!\hh_1,\hh_2}(S_1,S_2)$$  
+$$S= (M_\ttp)_{\ttp\in\roles} = \fusioncomp_{\!\hh}(S_1,S_2)$$  
 composed
 as described in Def.~\ref{def:cpf}
 from systems 
-$$S_1= (M^1_\ttp)_{\ttp\in\roles_1}  \hspace{4mm} \text{ and } \hspace{4mm} S_2= (M^2_\ttp)_{\ttp\in\roles_2}$$ where $\emb{\bm{\delta}}{M^2_{\hh_2}}{M^1_{\hh_1}}$.
+$$S_1= (M^1_\ttp)_{\ttp\in\roles_1}  \hspace{4mm} \text{ and } \hspace{4mm} S_2= (M^2_\ttp)_{\ttp\in\roles_2}$$ where $\emb{\bm{\delta^2}}{M^1_{\hh_1}}{M^2_{\hh_2}}$
+and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$.
 
 
 
 \vspace{2mm}
 \noindent
 \textbf{Notation:} \\
-The roles of $S$ are $\roles=(\roles_1\cup\roles_2)\setminus\Set{\hh_2}$ with  $\roles_1\cap\roles_2=\emptyset$.\\
+The roles of $S$ are $\roles=\roles_1\cup\roles_2$ with  $\roles_1\cap\roles_2=\setminus\Set{\hh_2}$.\\
 The channels of $S_i$ are  $C_i=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles_i, \ttp\neq\ttq}$ for $i=1,2$.\\
 The channels of $S$ are 
 $C=C_1\cup C_2\cup\Set{\HH\KK,\KK\HH}$.\\
@@ -33,7 +34,7 @@ The transitions of $M_\ttp$ in $S$ will be denoted by $\delta_\ttp$.
 The transitions of $M^1_\ttp$ in $S_1$ will be denoted by $\delta^1_\ttp$, whereas the 
 transitions of $M^2_\ttp$ in $S_2$ will be denoted by $\delta^2_\ttp$.
 Notice that $\delta_\ttp = \delta^1_\ttp$ for all $\ttp\in\roles_1\setminus\Set{\HH}$
-and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\KK}$.
+and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\hh}$.
 
 
 
@@ -41,14 +42,18 @@ and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\KK}$.
 
 \begin{definition}
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
-and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. We define, for $i = 1,2$,
-$$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$$
-where $\restrict{\vec{q}}{i} = (q_\ttp)_{\ttp\in\roles_i}$ and 
-$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_i}$.
+and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
+We define
+\begin{enumerate}[i)]
+\item
+$\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$ \quad
+where $\restrict{\vec{q}}{1} = (q_\ttp)_{\ttp\in\roles_1}$ and 
+$\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
+\end{enumerate}
 \end{definition}
 
 
-Notice that $\restrict{s}{i}$ is not necessarily a configuration of $S_i$, because of possible additional states of the gateways.\\
+Notice that $\restrict{s}{i}$ is not necessarily a configuration of $S_i$, because of possible additional states of the connecting participant $\hh$.\\
 
 
 The following fact easily descends from the definition of $\gateway{\cdot}$.
@@ -59,7 +64,7 @@ In particular from the fact that the gateway transformation of a machine $M$ doe
 \begin{fact}
 \label{fact:uniquesending}
 Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of
-$S ={S_{1}}\connect{\HH}{\KK} {S_{2}}$.
+$S =\fusioncomp_{\!\hh}(S_1,S_2)$.
 \begin{enumerate}
 \item
 \label{fact:uniquesending-i}
@@ -67,12 +72,11 @@ If ${q_\HH} \in\widehat{Q_\HH}$ then
 ${q_\HH}$ is not final and
  there exists a unique transition $({q_\HH},\_,\_)\in\delta_\HH$.
   Moreover such a transition is of the form
- $(q_\HH,\HH\tts!a,q')$ with $q'\not\in\widehat{Q_\HH}$.\\
-Similarly for $\KK$.
+ $(q_\HH,\HH\tts!a,q')$ with $q'\not\in\widehat{Q_\HH}$.
 
 \item
 \label{fact:uniquesending-ii}
-If ${q_\HH}\not\in\widehat{Q_\HH}$ then either $q_\HH$ is final, or any transition $({q_\HH},\_,\_)\in\delta_\HH$
+(???) If ${q_\HH}\not\in\widehat{Q_\HH}$ then either $q_\HH$ is final, or any transition $({q_\HH},\_,\_)\in\delta_\HH$
 is an input  one, that 
 is of the form $({q_\HH},\tts\HH?a,{q'_\HH})$ with ${q'_\HH}\in\widehat{Q_\HH}$. Similarly for $\KK$.
 \item
@@ -80,7 +84,7 @@ is of the form $({q_\HH},\tts\HH?a,{q'_\HH})$ with ${q'_\HH}\in\widehat{Q_\HH}$.
 If ${q_\HH}\not\in\widehat{Q_\HH}$ then
              \begin{enumerate}[a)]
 \item
-If $(q_\HH,\KK\HH?a,{q'_\HH})\in\delta_\HH$  then there exists $({q'_\HH},\HH\tts!a,q''_\HH)\in\delta_\HH$ with $\tts \in \roles_1$ (and hence $\tts \neq \KK$) 
+(???) If $(q_\HH,\KK\HH?a,{q'_\HH})\in\delta_\HH$  then there exists $({q'_\HH},\HH\tts!a,q''_\HH)\in\delta_\HH$ with $\tts \in \roles_1$ (and hence $\tts \neq \KK$) 
 such that $(q_\HH,\HH\tts!a,q''_\HH)\in\delta^1_\HH$.
 The same holds for $\delta_\KK$ and by exchanging $\HH$ with $\KK$ and vice versa.
 \item
@@ -96,7 +100,7 @@ The same holds for $\delta_\KK$ and by exchanging $\HH$ with $\KK$ and vice vers
 
 \begin{lemma}
 \label{lem:swap}
-Let $\JJ\in\Set{\HH,\KK}$ and 
+(???) Let $\JJ\in\Set{\HH,\KK}$ and 
 let $s,s',s''\in RS(S)$  such that\\
 \centerline{$s\lts{\elle}s'\lts{\JJ\tts!a}s''$ where
 $\elle$ is not of the form $\_\JJ?\_$.}
@@ -116,8 +120,8 @@ ${w'''}_{\HH\tts} = {w}_{\HH\tts}\cdot a$ and  ${w'''}_{\ttp\ttq} = {w}_{\ttp\tt
 
 
 
-\begin{lemma}\hfill
-\label{lem:indrestrict}
+\begin{lemma} (???) \hfill
+\label{lem:indrestrict}  
 \begin{enumerate}[i)]
 \item
 $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
@@ -156,21 +160,62 @@ reachable configuration of $S_1$. Similarly for $S_2$.
 
 \begin{lemma}
 \label{lem:nohatrestrict}\hfill\\
-Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a reachable configuration of $S ={S_{1}}\connect{\HH}{\KK} {S_{2}}$.
-\begin{enumerate}[i)]
-\item
-\label{lem:nohatrestrict-i}
-${q}_\HH\not\in\widehat{Q_\HH} \implies 
-\restrict{s}{1}\in RS(S_1)$;
-\item
-\label{lem:nohatrestrict-ii}
-${q}_\KK\not\in\widehat{Q_\KK} \implies 
-\restrict{s}{2}\in RS(S_2)$.
-\end{enumerate}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be a reachable configuration of 
+$S =\fusioncomp_{\!\hh}(S_1,S_2)$.
+$${q}_\HH\not\in\widehat{Q_\hh} \implies 
+\restrict{s}{i}\in \RS(S_i) \quad i=1,2.$$
 \end{lemma}
 
-
 \begin{proof}
+Let $s = (\vec{q},\vec{w}) \in \RS(S)$ and $i=1,2$ such that ${q}_{\HH}\not\in\widehat{Q_{\HH}}$.
+If $s \in RS(S)$, then there exists a transition sequence leading to $s$ from the initial state, say
+$$s_0\lts{}s_1\lts{} \ldots\lts{} s_{n-1}\lts{}s_n=s$$
+where $s_i = (\vec{q_i},\vec{w_i})$ $(i=0,\ldots,n)$.\\
+We prove $\restrict{s}{i}\in \RS(S_i)$  by (well-founded) induction on the length $n$ of the transition sequence to reach $s$ from the initial state $s_0$.
+
+{\em Case $n=0$}. Then $\restrict{s}{i} = \restrict{s_0}{i} \in \RS(S_i)$
+by~\cref{lem:indrestrict}(\ref{lem:indrestrict1}).
+
+
+{\em Case $n>0$}.
+Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in \RS(S)$ and an action $\elle_x$ over $\roles$
+such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps. We consider the following cases:
+
+\begin{description}
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$.\\
+Then ${q_x}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
+either $\restrict{s_x}{i}\lts{\elle_x}\restrict{s}{i}$ or  $\restrict{s_x}{i}=\restrict{s}{i}$.\\
+Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{i}\in \RS(S_i)$.\\
+Hence $\restrict{s}{i}\in \RS(S_i)$.
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is of the form $\_\,\HH_i?\_$.\\
+This is not possible since otherwise,
+by definition of gateways,
+${q}_{\HH_i}\in\widehat{Q_{\HH_i}}$ which is excluded. 
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is of the form $\HH_i\_!\_$.\\
+More explicitly, let $s_x\lts{\HH_i\tts!\msg[a]}s$.
+%By definition of gateways, ${q_x}_{\HH_i}\in\widehat{Q_{\HH_i}}$.
+%Therefore $s_x \neq s_0$ and thus $s$ is reachable from $s_0$ in $n \geq 2$ steps.
+Then, by~\cref{lem:swap-rolf}(\ref{lem:swap-rolf-item3}), there exist
+transitions
+$s_y \lts{\ttr\HH_i?\msg[a]}s_x\lts{\HH_i\tts!\msg[a]}s$
+such that $s_y = (\vec{q_y},\vec{w_y})\in \RS(S)$ is reachable from $s_0$ in $n-2$ steps. By definition of gateways, ${q_y}_{\HH_i} \not\in\widehat{Q_{\HH_i}}$.
+Hence, we can apply the induction hypothesis for $s_y$ and obtain $\restrict{s_y}{i}\in \RS(S_i)$.
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict3}) we get a transition
+$\restrict{s_y}{i}\lts{\elle}\restrict{s}{i}$. Hence $\restrict{s}{i}\in \RS(S_i)$.
+\end{description}
+
+--------------------------------         
+
 (\ref{lem:nohatrestrict-i})
 If $s \in RS(S)$, then there exists a transition sequence leading to $s$ from the initial state, say
 $$s_0\lts{}s_1\lts{} \ldots\lts{} s_{n-1}\lts{}s_n=s$$
