@@ -509,6 +509,7 @@ The other properties are mutually independent.
 A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
 where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas
 $$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$$
+An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
 \end{definition}
 
 A CFSM can be looked at as a CFSM with interface edges where all the edges are non interface ones.
@@ -525,10 +526,26 @@ We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
       ;
  \end{tikzpicture}
  } 
-\!\! q'$
-for $(q,l,q',\intf)$.
+\!\! q'$ for $(q,l,q',\intf)$.
 
 \begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
+Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
+and let $M'=(Q',q'_0,\textit{Act},\delta')$ be a standard CFSM. We say that
+$M'$ is an {\em interface for $M$ via $(f,g)$}, $\I^M_{\!\!(f,g)}(M')$, whenever
+\begin{itemize}
+\item[-]
+$f:Q\to Q'$  is onto and such that, for all $q\in Q$, $\langin(q)=\langin(f(q))$;
+\item[-]
+$g:\delta'\to\Set{e\in\delta\mid e \text{ is an interface edge}}$ is such that 
+$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
+to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
+Roughly:\\ 
+- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+\end{itemize}
+\end{definition}
+
+\begin{example}[$\I(M)$]\label{def:IM}%\hfill\\
 Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
 \begin{enumerate}[i)]
 \item
@@ -542,9 +559,8 @@ Roughly:\\
 - one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
 - then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
 \end{enumerate}
-\end{definition}
+\end{example}
 
-** Composition must require $\I(M)$ to be deterministic ??.
 
 
 \begin{definition}[Interface decorations]\label{def:IDM}

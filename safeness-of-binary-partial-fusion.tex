@@ -40,15 +40,25 @@ and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\hh}$.
 
 \subsection{Technical notions and results}
 
-\begin{definition}
+\begin{definition}[Projections]
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
 and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
 We define
 \begin{enumerate}[i)]
 \item
 $\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$ \quad
-where $\restrict{\vec{q}}{1} = (q_\ttp)_{\ttp\in\roles_1}$ and 
+where $\restrict{\vec{q}}{1} = (q_\ttp)_{\ttp\in\roles_1}$ and\ 
 $\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
+\item
+\vspace{-8mm}
+\begin{tabular}{@{\hspace{0mm}}llll@{\hspace{4mm}}l}
+\\[5mm]
+$\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$ &
+where & $\bullet$  $\restrict{\vec{q}}{2} = (q'_\ttp)_{\ttp\in\roles_2}$  with & - $q'_\ttp = q_\ttp$ & if $\ttp\in\roles_2\setminus\Set{\hh}$ or $[\ttp=\hh$ and $q_\hh\in \widehat{Q}]$\\
+& & & - $q'_\hh = \eps(q_\hh)$  & if $q_\hh\not\in \widehat{Q}$\\
+ &   & $\bullet$  
+$\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
+\end{tabular}
 \end{enumerate}
 \end{definition}
 
