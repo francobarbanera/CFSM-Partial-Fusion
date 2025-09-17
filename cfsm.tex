@@ -528,24 +528,24 @@ We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
  } 
 \!\! q'$ for $(q,l,q',\intf)$.
 
-\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
-Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
-and let $M'=(Q',q'_0,\textit{Act},\delta')$ be a standard CFSM. We say that
-$M'$ is an {\em interface for $M$ via $(f,g)$}, $\I^M_{\!\!(f,g)}(M')$, whenever
-\begin{itemize}
-\item[-]
-$f:Q\to Q'$  is onto and such that, for all $q\in Q$, $\langin(q)=\langin(f(q))$;
-\item[-]
-$g:\delta'\to\Set{e\in\delta\mid e \text{ is an interface edge}}$ is such that 
-$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
-to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
-Roughly:\\ 
-- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
-- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
-\end{itemize}
-\end{definition}
+%\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
+%Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
+%and let $M'=(Q',q'_0,\textit{Act},\delta')$ be a standard CFSM. We say that
+%$M'$ is an {\em interface for $M$ via $(f,g)$}, $\I^M_{\!\!(f,g)}(M')$, whenever
+%\begin{itemize}
+%\item[-]
+%$f:Q\to Q'$  is onto and such that, for all $q\in Q$, $\langin(q)=\langin(f(q))$;
+%\item[-]
+%$g:\delta'\to\Set{e\in\delta\mid e \text{ is an interface edge}}$ is such that 
+%$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
+%to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
+%Roughly:\\ 
+%- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+%\end{itemize}
+%\end{definition}
 
-\begin{example}[$\I(M)$]\label{def:IM}%\hfill\\
+\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
 Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
 \begin{enumerate}[i)]
 \item
@@ -553,14 +553,16 @@ $\bm{\varepsilon}(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\va
 \centerline{
 $\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid \exists l.(q,l,q',\intf) \in \bm{\delta}}$  }
 \item
-$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
-to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
+$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the procedure
+to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[NfaEpsilonDefined.pdf in PAPERS] (without considering final states). 
 Roughly:\\ 
-- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
-- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+- Add an arc from p to q labeled a iff there is an arc labeled a in N from some state in eps-CLOSE(p) to q.;\\
+- Delete all arcs labeled with epsilon.
+%- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
 \end{enumerate}
-\end{example}
-
+\end{definition}
+Notice that the states of $\I(M)$ and $M$ are the same.
 
 
 \begin{definition}[Interface decorations]\label{def:IDM}
@@ -572,30 +574,49 @@ $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\ti
 
 \section{Partial-fusion Composition}
 
+We make distinct two equal labels when they are used in different transitions. 
+\begin{definition}[$M^+$]
+Let $M = (Q, q_0, \textit{Act}, \delta)$. We define
+$$M^+ = (Q, q_0, \textit{Act}', \delta')$$
+where $\textit{Act}'= \Set{\ttr\tts!\msg[m]^{(q,l,q')},\ttr\tts?\msg[m]^{(q,l,q')} \mid (q,l,q')\in Q\times\textit{Act}\times Q,\ttr,\tts\in\roles, \msg[m] \text{ a message}}$\\
+ and 
+$\delta'= \Set{q\lts{\ttr\tts!\msg[m]^{(q,\ttr\tts!\msg[m],q')}}q' \mid q\lts{\ttr\tts!\msg[m]}q'\in\delta}$.
+\end{definition}
 
-
-Definition: Structurally identical.
 
 \begin{definition}[$\bm{\delta}$-complementarity]
-Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$.
+Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$.
 We say that
 \begin{enumerate}[i)]
 \item
 $M^1_\hh$ is {\em $\bm{\delta^2}$-complementary} with $M^2_\hh$, written $\emb{\bm{\delta^2}}{M^1_\hh}{M^2_\hh}$, whenever 
 \begin{itemize}
 \item[-] 
-there exixts $M'_\hh = (Q', q'_0, \textit{Act}, \bm{\delta^2})\in\IDS(M^2_\hh)$;
+there exists $M'_\hh = (Q, q_0, \textit{Act}, \bm{\delta^2})\in\IDS(M^2_\hh)$;
 \item[-]
-$M^1_\hh$ is structurally identical to $\I(M'_\hh)$;
+$\I(\bm{\varepsilon}(M'_\hh)^+) = (Q, q_0, \textit{Act}, \delta')$;
 \item[-]
-$q_1 \lts{\hh\ttp!\msg[m]} q_2 \in \delta^2$ for some $\ttp$ \quad iff \quad 
-$\eps(q_1)\lts{\ttp'\hh?\msg[m]}\eps(q_2)\in \delta^1$ for some $\ttp'$;
+$q_1 \lts{\hh\ttp!\msg[m]} q_2 \in \delta^1$ for some $\ttp$ \quad iff \quad 
+$q_1\lts{\ttp'\hh?\msg[m]^{(q,l,q')}}q_2\in \delta'$ for some $\ttp'$;
 \item[-]
-$q_1 \lts{\ttp\hh?\msg[m]} q_2 \in \delta^2$ for some $\ttp$ \quad iff \quad 
-$\eps(q_1)\lts{\hh\ttp'!\msg[m]}\eps(q_2)\in \delta^1$  for some $\ttp'$.
+$q_1 \lts{\ttp\hh?\msg[m]} q_2 \in \delta^1$ for some $\ttp$ \quad iff \quad 
+$q_1\lts{\hh\ttp'!\msg[m]^{(q,l,q')}}q_2\in \delta'$  for some $\ttp'$;
+
+
+\item[-]
+$q_1\lts{\ttp\hh?\msg[m]^{(q,l,q')}}q_2,q'_1\lts{\ttp\hh?\msg[m]^{(q,l,q')}}q'_2\in \delta'$
+implies
+$q_1 \lts{\hh\ttp'!\msg[m]} q_2, q'_1 \lts{\hh\ttp'!\msg[m]} q'_2 \in \delta^1$;
+\item[-]
+$q_1\lts{\hh\ttp!\msg[m]^{(q,l,q')}}q_2,q'_1\lts{\hh\ttp!\msg[m]^{(q,l,q')}}q'_2\in \delta'$
+implies
+$q_1 \lts{\ttp'\hh?\msg[m]} q_2, q'_1 \lts{\ttp'\hh?\msg[m]} q'_2 \in \delta^1$.
 \end{itemize}
 \end{enumerate}
 \end{definition}
+The fifth and sixth items guarantees that if two labels in $\I(\bm{\varepsilon}(M'_\hh)^+))$ comes
+from the very same transition in $\bm{\varepsilon}(M'_\hh)$ then in $M^1_\hh$ they must
+send(receive) to(from) the same participant.
 
 \begin{definition}[Partial Fusion]
 Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that $\emb{\bm{\delta^2}}{M^1_{\hh}}{M^2_\hh}$.
