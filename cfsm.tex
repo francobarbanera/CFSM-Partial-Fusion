@@ -588,9 +588,11 @@ We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\role
 %\Set{(Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta'') \mid q\lts{l'}q'\in\delta'' \text{ if } }$$
 %where $\bm{\varepsilon}(M) = (Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta')$.
 %\item
-Let $M=(Q,q_0,\textit{Act}cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA.
-We define $\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the procedure
-to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[NfaEpsilonDefined.pdf in PAPERS] (without considering final states). 
+Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA.
+We define $\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ 
+using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
+out of a $\varepsilon$-FSA \cite{sipser96}, where final states are not taken into account and
+the set of states of $\I(M)$ and $\bm{\varepsilon}(M)$ stay the same . 
 Roughly:\\ 
 - Add an arc from p to q labeled a iff there is an arc labeled a in N from some state in eps-CLOSE(p) to q.;\\
 - Delete all arcs labeled with epsilon.
@@ -598,7 +600,10 @@ Roughly:\\
 %%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
 %\end{enumerate}
 \end{definition}
-Notice that the states of $\I(M)$ and $M$ are the same.
+%Notice that the states of $\I(M)$ and $M$ are the same.
+Mention the fact that we can take any automaton having some specific property w.r.t. $\bm{\varepsilon}(M)$.
+
+We consider $\I(M)$ defined only in case the above construction returns a deterministic automaton.
 
 \begin{definition}[$\roles$-complementarity]
 Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
@@ -664,14 +669,15 @@ $\roles$ and $\delta$ are clear from the context or ininfluent.
 %send(receive) to(from) the same participant.
 
 \begin{definition}[Partial Fusion]
-Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that $\emb{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_\hh}$.
-We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta^2}$} as
-$$\fusion_{\!\bm{\delta^2}}(M^1_{\hh},M^2_{\hh}) = (Q^2\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
-\begin{tabular}{lc@{\hspace{2mm}}l}
-where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta^2}}$; \\[1mm]
-          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta^2}}\,\cup$\\ 
-           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm{\delta^2}, (\eps(q),\ttr\hh?\msg[a],\ \eps(q'))\in\delta^1,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
-                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm{\delta^2},\ (\eps(q),\hh'\ttr!\msg[a],\eps(q'))\in\delta^1,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that 
+$\emb{\bm{\delta}}{\roles\setminus\Set{\hh}}{M^1_{\hh}}{M^2_\hh}$.
+We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta}$ and $\roles$} as
+$$\fusion_{\!\!\bm{\delta}}^{\roles}(M^1_{\hh},M^2_{\hh}) = (Q^2\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
+\begin{tabular}{l@{\hspace{1mm}}c@{\hspace{2mm}}l}
+where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta}}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta}}\,\cup$\\ 
+           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm{\delta}, (q,\ttr\hh?\msg[a],\ q')\in\delta^1,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm{\delta},\ (q,\hh\ttr!\msg[a],q')\in\delta^1,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
  \end{tabular} 
 \end{definition}
 
@@ -686,7 +692,7 @@ $$\fusioncomp_{\!\hh}(S_1,S_2) = (\widetilde{M}_\ttx)_{\ttx\in\roles_1\cup\roles
 \begin{tabular}{lc@{\hspace{2mm}}l@{\hspace{4mm}}l}
 where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\roles_1\setminus\Set{\hh} $; \\[1mm]
           &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2\setminus\Set{\hh} $; \\[1mm]
-                    &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\bm{\delta}}(M^1_{\hh},M^2_{\hh})$.
+                    &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\!\bm{\delta}}^{{\roles_1\setminus\Set{\hh}}}(M^1_{\hh},M^2_{\hh})$.
  \end{tabular} 
 
 \end{definition}
