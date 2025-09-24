@@ -551,7 +551,29 @@ Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We defi
 \item
 $\bm{\varepsilon}(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
 \centerline{
-$\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid \exists l.(q,l,q',\intf) \in \bm{\delta}}$  }
+$\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,l,q',\intf) \in \bm{\delta}}$  }
+\item
+Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles$ be a set of participants.
+We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
+\begin{itemize}
+\item[-]
+$l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$;
+\item[-]
+$l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$.
+\end{itemize}
+\item
+Let $\delta,\delta'\in Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ and  let $\roles$ be a set of participants.
+We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
+\begin{itemize}
+\item[-]
+$l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$;
+\item[-]
+$l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$.
+\end{itemize}
+We define the set of the {\em duals of $\delta'$ with respect to} $\roles$  as the following set of $\epsilon$-FSA
+$$\bm{\delta}\text{-}\duals_{\,\roles}(M) = 
+\Set{(Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta'') \mid q\lts{l'}q'\in\delta'' \text{ if } }$$
+where $\bm{\varepsilon}(M) = (Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta')$.
 \item
 $\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the procedure
 to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[NfaEpsilonDefined.pdf in PAPERS] (without considering final states). 
