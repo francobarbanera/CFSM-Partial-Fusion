@@ -40,6 +40,7 @@ and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\hh}$.
 
 \subsection{Technical notions and results}
 
+Different definition of projections are possible. We preferred the following one since, notwithstanding forces proofs to be slighter more difficult, has the advantage of simplicity. 
 \begin{definition}[Projections]
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
 and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
@@ -55,7 +56,7 @@ $\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
 \\[5mm]
 $\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$ &
 where & $\bullet$  $\restrict{\vec{q}}{2} = (q'_\ttp)_{\ttp\in\roles_2}$  with & - $q'_\ttp = q_\ttp$ & if $\ttp\in\roles_2\setminus\Set{\hh}$ or $[\ttp=\hh$ and $q_\hh\in \widehat{Q}]$\\
-& & & - $q'_\hh = \eps(q_\hh)$  & if $q_\hh\not\in \widehat{Q}$\\
+& & & - $q'_\hh = q_\hh$  & if $q_\hh\not\in \widehat{Q}$\\
  &   & $\bullet$  
 $\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
 \end{tabular}
@@ -134,6 +135,7 @@ ${w'''}_{\HH\tts} = {w}_{\HH\tts}\cdot a$ and  ${w'''}_{\ttp\ttq} = {w}_{\ttp\tt
 \label{lem:indrestrict}  
 \begin{enumerate}[i)]
 \item
+\label{lem:indrestrict-a}
 $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
 \item
 Let $s\lts{\elle}s'$ 
@@ -184,19 +186,21 @@ where $s_i = (\vec{q_i},\vec{w_i})$ $(i=0,\ldots,n)$.\\
 We prove $\restrict{s}{i}\in \RS(S_i)$  by (well-founded) induction on the length $n$ of the transition sequence to reach $s$ from the initial state $s_0$.
 
 {\em Case $n=0$}. Then $\restrict{s}{i} = \restrict{s_0}{i} \in \RS(S_i)$
-by~\cref{lem:indrestrict}(\ref{lem:indrestrict1}).
+by~\cref{lem:indrestrict}(\ref{lem:indrestrict-a}).
 
 
 {\em Case $n>0$}.
 Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in \RS(S)$ and an action $\elle_x$ over $\roles$
-such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps. We consider the following cases:
+such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps.
+%By the induction hypothesis, $\restrict{s_x}{i}\in \RS(S_i)$.
+We now proceed by cases, acording to the possible forms of $\elle_x$:
 
 \begin{description}
 %
 \item
 \underline{$\diamond$}
-$\elle_x$ is neither of the form $\_\,\HH_i?\_$ nor of the form $\HH_i\_!\_$.\\
-Then ${q_x}_{\HH_i}={q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
+$\elle_x$ is neither of the form $\_\,\HH?\_$ nor of the form $\HH\_!\_$.\\
+Then ${q_x}_{\HH}={q}_{\HH_i}\not\in\widehat{Q_{\HH}}$.
 Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
 either $\restrict{s_x}{i}\lts{\elle_x}\restrict{s}{i}$ or  $\restrict{s_x}{i}=\restrict{s}{i}$.\\
 Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{i}\in \RS(S_i)$.\\

@@ -559,13 +559,13 @@ $\bm{\varepsilon}(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\va
 \centerline{
 $\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,l,q',\intf) \in \bm{\delta}}$  }
 \item
-Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles$ be a set of participants.
+Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles\neq\emptyset$ be a set of participants.
 We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
 \begin{itemize}
 \item[-]
-$l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$;
+$l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$, $\tts\neq\ttq$;
 \item[-]
-$l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$.
+$l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$, $\tts\neq\ttq$.
 \end{itemize}
 \item
 Let $\delta,\delta'\in Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ and  let $\roles$ be a set of participants.
@@ -575,7 +575,7 @@ We say that $\delta'$ is {\em a $\roles$-dual of $\delta$} whenever is a minimal
 $q\lts{l}q'\in\delta \implies q\lts{l'}q'\in\delta'$, where $l'$ is a $\roles$-dual of $l$.
 }
 \item
-Let $M=(Q,q_0,\textit{Act}cup\Set{\varepsilon},\delta)$ and $M'=(Q,q_0,\textit{Act}cup\Set{\varepsilon},\delta')$ be two $\varepsilon$-FSA and  let $\roles$ be a set of participants.
+Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ and $M'=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$ be two $\varepsilon$-FSA and  let $\roles$ be a set of participants.
 We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\roles$-dual of $\delta$.
 \end{enumerate}
 \end{definition}
@@ -604,6 +604,7 @@ Roughly:\\
 Mention the fact that we can take any automaton having some specific property w.r.t. $\bm{\varepsilon}(M)$.
 
 We consider $\I(M)$ defined only in case the above construction returns a deterministic automaton.
+ 
 
 \begin{definition}[$\roles$-complementarity]
 Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
@@ -686,12 +687,12 @@ where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\b
 \begin{definition}[Composition by Partial Fusion]
 \label{def:cpf}
 Let $S_1=(M^1_\ttx)_{\ttx\in\roles_1}$ and $S_2=(M^2_\ttx)_{\ttx\in\roles_2}$ be two communicating systems such that $\roles_1\cap\roles_2=\Set{\hh}$
-and $\emb{\bm{\delta}}{\roles_1\setminus\Set{\hh}}{M^1_{\hh}}{M^2_{\hh}}$.
+and $\emb{\bm{\delta}}{\roles_1}{M^1_{\hh}}{M^2_{\hh}}$.
 We define the {\em composition of $S_1$ and $S_2$ via partial fusion of $\hh$} by
 $$\fusioncomp_{\!\hh}(S_1,S_2) = (\widetilde{M}_\ttx)_{\ttx\in\roles_1\cup\roles_2}$$ 
 \begin{tabular}{lc@{\hspace{2mm}}l@{\hspace{4mm}}l}
-where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\roles_1\setminus\Set{\hh} $; \\[1mm]
-          &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2\setminus\Set{\hh} $; \\[1mm]
+where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\roles_1 $; \\[1mm]
+          &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2 $; \\[1mm]
                     &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\!\bm{\delta}}^{{\roles_1\setminus\Set{\hh}}}(M^1_{\hh},M^2_{\hh})$.
  \end{tabular} 
 
