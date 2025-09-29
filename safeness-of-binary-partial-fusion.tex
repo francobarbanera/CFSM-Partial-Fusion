@@ -44,23 +44,27 @@ Different definition of projections are possible. We preferred the following one
 \begin{definition}[Projections]
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
 and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
-We define
-\begin{enumerate}[i)]
-\item
-$\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$ \quad
-where $\restrict{\vec{q}}{1} = (q_\ttp)_{\ttp\in\roles_1}$ and\ 
-$\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
-\item
-\vspace{-8mm}
-\begin{tabular}{@{\hspace{0mm}}llll@{\hspace{4mm}}l}
-\\[5mm]
-$\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$ &
-where & $\bullet$  $\restrict{\vec{q}}{2} = (q'_\ttp)_{\ttp\in\roles_2}$  with & - $q'_\ttp = q_\ttp$ & if $\ttp\in\roles_2\setminus\Set{\hh}$ or $[\ttp=\hh$ and $q_\hh\in \widehat{Q}]$\\
-& & & - $q'_\hh = q_\hh$  & if $q_\hh\not\in \widehat{Q}$\\
- &   & $\bullet$  
-$\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
-\end{tabular}
-\end{enumerate}
+We define, for $i=1,2$,\\
+\centerline{$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$ \quad
+where $\restrict{\vec{q}}{i} = (q_\ttp)_{\ttp\in\roles_i}$ and\ 
+$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_i}$.
+}
+%\begin{enumerate}[i)]
+%\item
+%$\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$ \quad
+%where $\restrict{\vec{q}}{1} = (q_\ttp)_{\ttp\in\roles_1}$ and\ 
+%$\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
+%\item
+%\vspace{-8mm}
+%\begin{tabular}{@{\hspace{0mm}}llll@{\hspace{4mm}}l}
+%\\[5mm]
+%$\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$ &
+%where & $\bullet$  $\restrict{\vec{q}}{2} = (q'_\ttp)_{\ttp\in\roles_2}$  with & - $q'_\ttp = q_\ttp$ & if $\ttp\in\roles_2\setminus\Set{\hh}$ or $[\ttp=\hh$ and $q_\hh\in \widehat{Q}]$\\
+%& & & - $q'_\hh = q_\hh$  & if $q_\hh\not\in \widehat{Q}$\\
+% &   & $\bullet$  
+%$\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
+%\end{tabular}
+%\end{enumerate}
 \end{definition}
 
 
@@ -133,15 +137,29 @@ ${w'''}_{\HH\tts} = {w}_{\HH\tts}\cdot a$ and  ${w'''}_{\ttp\ttq} = {w}_{\ttp\tt
 
 \begin{lemma} (???) \hfill
 \label{lem:indrestrict}  
-\begin{enumerate}[i)]
+\begin{enumerate}[1)]
 \item
 \label{lem:indrestrict-a}
 $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
 \item
+\label{lem:indrestrict-b}
 Let $s\lts{\elle}s'$ 
 %where $\restrict{s}{1}\in RS(S_1)$ 
 and $\elle$ is neither of the form $\_\HH?\_$ nor of the form $\HH\_!\_$.\\
-Then either $\restrict{s}{1}\lts{\elle}\restrict{s'}{1}$ or  $\restrict{s}{1}=\restrict{s'}{1}$.
+Then, for $i=1,2$,  either $\restrict{s}{i}\lts{\elle}\restrict{s'}{i}$ or  $\restrict{s}{i}=\restrict{s'}{i}$.
+\item
+\label{lem:indrestrict-c}
+Let $s\lts{\elle}s'$ where $s= (\vec{q},\vec{w})$, $s'= (\vec{q'},\vec{w'})$
+and  $\elle$ is either of the form $\_\HH?\_$ or of the form $\HH\_!\_$ and such that
+$q_\hh\lts{\elle}q'_\hh$ with $q_\hh,q'_\hh\not\in\widehat{Q}$. Then
+\begin{enumerate}[a)]
+\item
+\label{lem:indrestrict-c1}
+$\restrict{s}{2}\lts{\elle}\restrict{s'}{2}$;
+\item
+\label{lem:indrestrict-c2}
+$s\in \RS(S) \implies s'\in \RS(S)$.
+\end{enumerate}
 \item
 Let $s\lts{\elle}s'$ 
 %where $\restrict{s}{2}\in RS(S_2)$ 
@@ -157,8 +175,10 @@ Then, $\restrict{s}{2}\lts{}\restrict{s''}{2}$.
 \end{lemma}
 
 \begin{proof}
-Easy by definitions of $\restrict{s}{1}$ and $\restrict{s}{2}$, by definition of $\lts{}$ and by definition of 
-$\gateway{\cdot}$.
+All statements but \ref{lem:indrestrict-c2}) easily
+descends from definitions of $\restrict{s}{1}$ and $\restrict{s}{2}$, by definition of $\lts{}$ and by definition of  connector.\\
+\ref{lem:indrestrict-c2})
+
 \end{proof}
 
 
@@ -193,7 +213,7 @@ by~\cref{lem:indrestrict}(\ref{lem:indrestrict-a}).
 Then there exists $s_x = (\vec{q_x},\vec{w_x}) \in \RS(S)$ and an action $\elle_x$ over $\roles$
 such that $s_x\lts{\elle_x}s$ and $s_x$ is reachable from $s_0$ in $n-1$ steps.
 %By the induction hypothesis, $\restrict{s_x}{i}\in \RS(S_i)$.
-We now proceed by cases, acording to the possible forms of $\elle_x$:
+We now proceed by cases, according to the possible forms of $\elle_x$:
 
 \begin{description}
 %
@@ -201,10 +221,16 @@ We now proceed by cases, acording to the possible forms of $\elle_x$:
 \underline{$\diamond$}
 $\elle_x$ is neither of the form $\_\,\HH?\_$ nor of the form $\HH\_!\_$.\\
 Then ${q_x}_{\HH}={q}_{\HH_i}\not\in\widehat{Q_{\HH}}$.
-Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict2}),
+Moreover, by~\cref{lem:indrestrict}(\ref{lem:indrestrict-b}),
 either $\restrict{s_x}{i}\lts{\elle_x}\restrict{s}{i}$ or  $\restrict{s_x}{i}=\restrict{s}{i}$.\\
 Since ${q_x}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ we can apply the induction hypothesis for $s_x$ and obtain $\restrict{s_x}{i}\in \RS(S_i)$.\\
 Hence $\restrict{s}{i}\in \RS(S_i)$.
+%
+\item
+\underline{$\diamond$}
+$\elle_x$ is either of the form $\_\,\HH?\_$ or of the form $\HH\_!\_$
+and ${q_x}_\hh\not\in\widehat{Q_{\HH}}$.
+
 %
 \item
 \underline{$\diamond$}
