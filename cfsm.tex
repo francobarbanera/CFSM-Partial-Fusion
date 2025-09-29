@@ -555,9 +555,9 @@ $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\ti
 \begin{enumerate}[i)]
 \item
 Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
-$\bm{\varepsilon}(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
+$\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
 \centerline{
-$\delta' = \Set{(q,l,q') \mid (q,l,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,l,q',\intf) \in \bm{\delta}}$  }
+$\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
 \item
 Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles\neq\emptyset$ be a set of participants.
 We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
@@ -589,10 +589,10 @@ We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\role
 %where $\bm{\varepsilon}(M) = (Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta')$.
 %\item
 Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA.
-We define $\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ 
+We define $\noeps(M)$ as the CFSM obtained out of $M$ 
 using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
 out of a $\varepsilon$-FSA \cite{sipser96}, where final states are not taken into account and
-the set of states of $\I(M)$ and $\bm{\varepsilon}(M)$ stay the same . 
+the set of states of $\I(M)$ and $\noeps(M)$ stay the same . 
 Roughly:\\ 
 - Add an arc from p to q labeled a iff there is an arc labeled a in N from some state in eps-CLOSE(p) to q.;\\
 - Delete all arcs labeled with epsilon.
@@ -601,20 +601,22 @@ Roughly:\\
 %\end{enumerate}
 \end{definition}
 %Notice that the states of $\I(M)$ and $M$ are the same.
-Mention the fact that we can take any automaton having some specific property w.r.t. $\bm{\varepsilon}(M)$.
+Mention the fact that we can take any automaton having some specific property w.r.t. $\noeps(M)$.
 
 We consider $\I(M)$ defined only in case the above construction returns a deterministic automaton.
  
 
 \begin{definition}[$\roles$-complementarity]
+\label{def:Pcomplementarity}
 Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
 $M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  
 be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
 Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
 We say that
 $M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$, written $\emb{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
-$$M^1_\hh = \bm{\varepsilon}(M''_\hh)$$
-for some $M''_\hh$ which is a $\roles$-dual of $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.
+$$M^1_\hh = \noeps(M''_\hh)$$
+for some $M''_\hh$ which is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
+We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$.counterpart of $M^1_\hh$}
 \end{definition}
 
 We write simply $\emb{}{\bm{}}{M^1_\hh}{M^2_\hh}$ whenever

@@ -176,8 +176,26 @@ Then, $\restrict{s}{2}\lts{}\restrict{s''}{2}$.
 
 \begin{proof}
 All statements but \ref{lem:indrestrict-c2}) easily
-descends from definitions of $\restrict{s}{1}$ and $\restrict{s}{2}$, by definition of $\lts{}$ and by definition of  connector.\\
-\ref{lem:indrestrict-c2})
+descends from definitions of $\restrict{s}{1}$ and $\restrict{s}{2}$, by definition of configuration transition and by definition of  connector.\\
+\ref{lem:indrestrict-c2})[{\em Sketch}]
+Let $\sigma=\parproj{s}{(\roles_{1}\setminus\Set{\hh})}$ (*definition to do*). 
+Since $\emb{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_{\hh}}$ and both $M^1_{\hh}$ and $M^2_{\hh}$ are deterministic,
+by definition of fusion and configuration transition [*make a lemma?*]we have that $\overline{\delta'}({q_0}_\hh,\sigma) =q_\hh$,
+where  $(Q_\hh,{q_0}_\hh,\Act\cup\Set{\varepsilon},\delta')$ is the $\varepsilon$-counterpart of 
+$M^1_{\hh}=(Q_\hh,{q_0}_\hh,\Act,\delta^1))$. 
+Let now $\tilde q = \overline{\delta^1}({q_0}_\hh,\sigma)$. 
+By definition of $\noeps(\cdot)$ [*expand?*],
+
+--
+
+We have that $s\in \RS(S)$, and that $M^1_{\hh}$ and $M^2_{\hh}$ are both deterministic.
+Let $\sigma\in\Act^*$ such that $\overline{\delta^2}({q_0}_\hh,\sigma) =q_\hh$
+there exixts $\sigma\in\Act^*$ such that $\overline{\delta^1}({q_0}_\hh,\sigma) =q_\hh$. 
+Moreover, from $q_\hh,q'_\hh\not\in\widehat{Q}$ it follows that $(q_\hh,\elle,q'_\hh,\nintf)\in\bm{\delta^2}$
+and hence $(q_\hh,\varepsilon,q'_\hh)\in \varepsilon(N_{\hh})$ where
+$N_{\hh}=(Q_\hh,{q_0}_\hh,\Act,\bm{\delta^2})$, since we have that
+$\emb{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_{\hh}}$.
+By XXX we have get that  $\overline{\delta^1}({q_0}_\hh,\sigma) =q_\hh$
 
 \end{proof}
 
