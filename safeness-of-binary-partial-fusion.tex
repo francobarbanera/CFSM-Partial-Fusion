@@ -158,7 +158,7 @@ $q_\hh\lts{\elle}q'_\hh$ with $q_\hh,q'_\hh\not\in\widehat{Q}$. Then
 $\restrict{s}{2}\lts{\elle}\restrict{s'}{2}$;
 \item
 \label{lem:indrestrict-c2}
-$s\in \RS(S) \implies s'\in \RS(S)$.
+$\restrict{s}{1}\in \RS(S) \implies \restrict{s'}{1}\in \RS(S)$.
 \end{enumerate}
 \item
 Let $s\lts{\elle}s'$ 
@@ -176,15 +176,15 @@ Then, $\restrict{s}{2}\lts{}\restrict{s''}{2}$.
 
 \begin{proof}
 All statements but \ref{lem:indrestrict-c2}) easily
-descends from definitions of $\restrict{s}{1}$ and $\restrict{s}{2}$, by definition of configuration transition and by definition of  connector.\\
+descends from definitions of projections, configuration transition and connector.\\
 \ref{lem:indrestrict-c2})[{\em Sketch}]
-Let $\sigma=\parproj{s}{(\roles_{1}\setminus\Set{\hh})}$ (*definition to do*). 
+Let $\sigma=\parproj{s}{C_1\cap C'}$ (*definition to do*), where $C'=\Set{\ttr\tts\mid \ttr\in\Set{\hh} \text{ or }\tts\in\Set{\hh}}$.
 Since $\emb{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_{\hh}}$ and both $M^1_{\hh}$ and $M^2_{\hh}$ are deterministic,
-by definition of fusion and configuration transition [*make a lemma?*]we have that $\overline{\delta'}({q_0}_\hh,\sigma) =q_\hh$,
+by definition of fusion and configuration transition [*make a lemma?*]we have that $\overline{\delta'}({q_0}_\hh,\sigma) =\Set{q_\hh}$,
 where  $(Q_\hh,{q_0}_\hh,\Act\cup\Set{\varepsilon},\delta')$ is the $\varepsilon$-counterpart of 
 $M^1_{\hh}=(Q_\hh,{q_0}_\hh,\Act,\delta^1))$. 
-Let now $\tilde q = \overline{\delta^1}({q_0}_\hh,\sigma)$. 
-By definition of $\noeps(\cdot)$ [*expand?*],
+By definition of $\noeps(\cdot)$ we have also that 
+$\sigma=\parproj{\restrict{s}{1}}{C_1}$. Moreover, there exists $\tilde q = \overline{\delta^1}({q_0}_\hh,\sigma)$ [*make a lemma?*]
 
 --
 
