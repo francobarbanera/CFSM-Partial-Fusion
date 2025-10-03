@@ -598,6 +598,8 @@ $M'$ is deterministic;
 \item 
 $f:Q\to Q'$ is onto and such that $f(p_0) = f(p'_0)$;
 \item
+$p_1\lts{\epsilon}p_2 \quad\text{implies}\quad f(p_1)=f(p_2)$; 
+\item
 $p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$; 
 \item
 $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
@@ -615,10 +617,8 @@ $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
 %\end{enumerate}
 \end{definition}
 %Notice that the states of $\I(M)$ and $M$ are the same.
-Mention the fact that we can take any automaton having some specific property w.r.t. $\noeps(M)$.
 
-We consider $\I(M)$ defined only in case the above construction returns a deterministic automaton.
- 
+
 
 \begin{definition}[$\roles$-complementarity]
 \label{def:Pcomplementarity}
@@ -627,14 +627,14 @@ $M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$
 be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
 Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
 We say that
-$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$, written $\emb{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
-$$M^1_\hh = \noeps(M''_\hh)$$
-for some $M''_\hh$ which is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
+$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
+$$M^1_\hh \text{ is a $\noeps_{\!f}$-version of } M''_\hh$$
+where $M''_\hh$ is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
 We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$.counterpart of $M^1_\hh$}
 \end{definition}
 
 We write simply $\emb{}{\bm{}}{M^1_\hh}{M^2_\hh}$ whenever
-$\roles$ and $\delta$ are clear from the context or ininfluent.
+$\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
 
 
 
@@ -687,7 +687,7 @@ $\roles$ and $\delta$ are clear from the context or ininfluent.
 
 \begin{definition}[Partial Fusion]
 Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that 
-$\emb{\bm{\delta}}{\roles\setminus\Set{\hh}}{M^1_{\hh}}{M^2_\hh}$.
+$\emb{f}{\bm{\delta}}{\roles\setminus\Set{\hh}}{M^1_{\hh}}{M^2_\hh}$.
 We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta}$ and $\roles$} as
 $$\fusion_{\!\!\bm{\delta}}^{\roles}(M^1_{\hh},M^2_{\hh}) = (Q^2\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
 \begin{tabular}{l@{\hspace{1mm}}c@{\hspace{2mm}}l}
@@ -703,7 +703,7 @@ where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\b
 \begin{definition}[Composition by Partial Fusion]
 \label{def:cpf}
 Let $S_1=(M^1_\ttx)_{\ttx\in\roles_1}$ and $S_2=(M^2_\ttx)_{\ttx\in\roles_2}$ be two communicating systems such that $\roles_1\cap\roles_2=\Set{\hh}$
-and $\emb{\bm{\delta}}{\roles_1}{M^1_{\hh}}{M^2_{\hh}}$.
+and $\emb{f}{\bm{\delta}}{\roles_1}{M^1_{\hh}}{M^2_{\hh}}$.
 We define the {\em composition of $S_1$ and $S_2$ via partial fusion of $\hh$} by
 $$\fusioncomp_{\!\hh}(S_1,S_2) = (\widetilde{M}_\ttx)_{\ttx\in\roles_1\cup\roles_2}$$ 
 \begin{tabular}{lc@{\hspace{2mm}}l@{\hspace{4mm}}l}
