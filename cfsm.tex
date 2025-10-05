@@ -507,10 +507,16 @@ The other properties are mutually independent.
 
 \begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
 A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
-where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas
-$$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$$
+where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas\\
+\centerline{
+$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$}
+\begin{tabular}{lc@{\hspace{4pt}}l}
+and such that & - & $(q_1,\elle,q_2,x),(q_1,\elle,q_2,y)\in\bm{\delta} \implies x=y$.\\
+                     & - & $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,\nintf)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$.
+\end{tabular}\\
 An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
 \end{definition}
+The conditions on CFSMs with interface edges prevent the problems shown in \cref{ex:singleeps}.
 
 A CFSM can be looked at as a CFSM with interface edges where all the edges are non interface ones.
 
@@ -605,6 +611,7 @@ $p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$;
 $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
 \end{enumerate}
 (((i.e. $f$ is a weak bisimulation?)))
+
 %We define $\noeps(M)$ as the CFSM obtained out of $M$ 
 %using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
 %out of a $\varepsilon$-FSA \cite{sipser96}, where final states are not taken into account and
@@ -630,8 +637,11 @@ We say that
 $M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
 $$M^1_\hh \text{ is a $\noeps_{\!f}$-version of } M''_\hh$$
 where $M''_\hh$ is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
-We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$.counterpart of $M^1_\hh$}
+We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
 \end{definition}
+
+By definition of CFSM with interface edges it follows that $\varepsilon(M'_\hh)$ in the above definition
+does not contain any $\varepsilon$-clique. [*make a lemma*].
 
 We write simply $\emb{}{\bm{}}{M^1_\hh}{M^2_\hh}$ whenever
 $\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
