@@ -248,14 +248,14 @@ $s_0\lts{}\,\,\ldots \lts{}s_j  \lts{\elle_1}s'_{j+1} \ldots\,  \lts{\elle_k} s'
 $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
 \item
 \label{lem:indrestrict-b}
-Let $s\lts{\elle}s'$ 
-%where $\restrict{s}{1}\in RS(S_1)$ 
-and $\elle$ is neither of the form $\_\HH?\_$ nor of the form $\HH\_!\_$.\\
+Let $s\lts{\elle}s'$ and $\subj{\elle}\neq\hh$.
+% is neither of the form $\_\HH?\_$ nor of the form $\HH\_!\_$.\\
 Then, for $i=1,2$,  either $\restrict{s}{i}\lts{\elle}\restrict{s'}{i}$ or  $\restrict{s}{i}=\restrict{s'}{i}$.
 \item
 \label{lem:indrestrict-c}
 Let $s\lts{\elle}s'$ where $s= (\vec{q},\vec{w})$, $s'= (\vec{q'},\vec{w'})$
-and  $\elle$ is either of the form $\_\HH?\_$ or of the form $\HH\_!\_$ and such that
+and $\subj{\elle}=\hh$ % $\elle$ is either of the form $\_\HH?\_$ or of the form $\HH\_!\_$ 
+where %and such that
 $q_\hh\lts{\elle}q'_\hh$ with $q_\hh,q'_\hh\not\in\widehat{Q}$. Then
 \begin{enumerate}[a)]
 \item
@@ -273,9 +273,18 @@ Then, $\restrict{s}{1}\lts{}\restrict{s''}{1}$.
 \end{lemma}
 
 \begin{proof}
-All statements easily
+All (???) statements easily
 descends from definitions of projections, configuration transition and connector.
 [*Expand?*]\\
+\ref{lem:indrestrict-c})
+By definition of connector, we immediately get that $(q_\hh,\elle,q'_\hh,\nintf)\in\bm{\delta}$.
+So, by definition of complementarity, we have that $f(q_\hh)=f(q'_\hh)$ and hence,
+by definition of projection $\restrict{\_}{1}$, we get (\ref{lem:indrestrict-c1}).
+Item (\ref{lem:indrestrict-c2}) descends immediately from the definition of projection $\restrict{\_}{2}$.
+%By the assumption,  $q_\hh\lts{\elle}q'_\hh\in\delta_\hh$. We distinguish between the two following cases:\\
+%\begin{description}
+%\item[]
+%\end{description}
 %\ref{lem:indrestrict-c2})[{\em Sketch}]
 %Let $\sigma=\parproj{s}{C_1\cap C'}$ (*definition to do*), where $C'=\Set{\ttr\tts\mid \ttr\in\Set{\hh} \text{ or }\tts\in\Set{\hh}}$.
 %Since $\emb{f}{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_{\hh}}$ and both $M^1_{\hh}$ and $M^2_{\hh}$ are deterministic,
@@ -285,6 +294,13 @@ descends from definitions of projections, configuration transition and connector
 %By definition of $\noeps(\cdot)$ we have also that 
 %$\sigma=\parproj{\restrict{s}{1}}{C_1}$. Moreover, there exists $\tilde q = \overline{\delta^1}({q_0}_\hh,\sigma)$ [*make a lemma?*]
 \end{proof}
+
+\begin{remark}{\em
+Notice that for \cref{lem:indrestrict}(\ref{lem:indrestrict-c}) to hold,  
+the conditions involving $f$ in \cref{def:noepsver} (and hence the conditions in \cref{def:cfsmie},
+see \cref{rem:neccond}) are necessary.\finex
+}
+\end{remark}
 
 
 

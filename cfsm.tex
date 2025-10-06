@@ -29,8 +29,9 @@ $C_\roles=\Set{\ttp\ttq \mid \ttp,\ttq\in \roles, \ttp\neq\ttq}$
 The set $\mathit{Act}_{\roles,\mathbb{A}}$ of {\em actions}  over $\roles$ and $\mathbb{A}$ is defined by\ 
 $\textit{Act}_{\roles,\mathbb{A}} = C_\roles\times\Set{!,?}\times\mathbb{A}$
 
-The {\em subject} of an output action $\ttp\ttq!\msg[m]$ and of an input action $\ttq\ttp?\msg[m]$ is 
-$\ttp$.
+Given an action $\elle$ we define $\subj{\elle}$ ({\em the subject of $\elle$}) by  \\
+\centerline{
+$\subj{\elle}=\ttp\quad \text{ if } \quad \elle=\ttp\ttq!\msg[m] \text{ or }\elle=\ttq\ttp?\msg[m]$.}
 \item
 \label{def:cfsm-iii}
 A {\em communicating finite state machine over} $\roles$ \emph{and} $\mathbb{A}$
@@ -512,7 +513,8 @@ where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas\\
 $\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$}
 \begin{tabular}{lc@{\hspace{4pt}}l}
 and such that & - & $(q_1,\elle,q_2,x),(q_1,\elle,q_2,y)\in\bm{\delta} \implies x=y$.\\
-                     & - & $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,\nintf)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$.
+                     & - & $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$\\
+                     &    & \hspace{51mm}  (and hence $z=\nintf$ by the previous item).
 \end{tabular}\\
 An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
 \end{definition}
@@ -587,6 +589,7 @@ We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\role
 \end{definition}
 
 \begin{definition}
+\label{def:noepsver}
 %\begin{enumerate}
 %\item
 %We define the set of the {\em duals of $\delta'$ with respect to} $\roles$  as the following set of $\epsilon$-FSA
@@ -611,6 +614,16 @@ $p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$;
 $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
 \end{enumerate}
 (((i.e. $f$ is a weak bisimulation?)))
+
+\begin{remark}
+\label{rem:neccond}
+{\em
+Notice that without the condition\\
+\centerline{
+$(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$}
+in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
+}
+\end{remark}
 
 %We define $\noeps(M)$ as the CFSM obtained out of $M$ 
 %using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
@@ -696,6 +709,7 @@ $\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
 %send(receive) to(from) the same participant.
 
 \begin{definition}[Partial Fusion]
+\label{def:parfus}
 Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that 
 $\emb{f}{\bm{\delta}}{\roles\setminus\Set{\hh}}{M^1_{\hh}}{M^2_\hh}$.
 We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta}$ and $\roles$} as
@@ -721,7 +735,7 @@ where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\
           &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2 $; \\[1mm]
                     &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\!\bm{\delta}}^{{\roles_1\setminus\Set{\hh}}}(M^1_{\hh},M^2_{\hh})$.
  \end{tabular} 
-
+ We call $\widetilde M_{\hh}$ the {\em connector} of $S_1$ and $S_2$ in the composition.
 \end{definition}
 
 

@@ -325,38 +325,28 @@ $$
 
 \begin{lemma}[Projections of deadlocks are deadlocks]
 \label{lem:weakdfpreservation}
-%Let $s= (\vec{q},\vec{w}) \in RS(S)$ be a deadlock configuration of $S$ \bfr and let
-%the interfaces of the composed CSs be without any mixed state.\efr 
-%\brc The reader could perhaps misunderstand ``the interfaces of the composed CSs'' because the composed CSs yield $S$.
-%Perhaps we should be a bit more precise and say: \erc
-%\\
-Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that the interfaces of each $S_i$,
-i.e.\ the CFSMs $M_{h_i}$ in $S_i$, have no mixed state.
-Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be a deadlock configuration of $S$.
-Then either 
-\begin{itemize}
-\item
-there exists $i\in I$ such that $\restrict{s}{i}\in \RS(S_i)$ and $\restrict{s}{i}$
-is a deadlock configuration of $S_i$; or
-\item
-$\restrict{s}{\cs}\in \RS(\cs)$ and $\restrict{s}{\cs}$
-is a deadlock configuration of $\cs$.
-\end{itemize}
+Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that
+both $M^1_\hh$ and $M^2_\hh$ have no mixed state, and
+let $s= (\vec{q},\vec{w}) \in \RS(S)$ be a deadlock configuration of $S$.\\
+Then there exists $i\in \Set{1,2}$ such that $\restrict{s}{i}\in \RS(S_i)$ and $\restrict{s}{i}$
+is a deadlock configuration of $S_i$.
 \end{lemma}
 
 \begin{proof}
-By definition of deadlock configuration we have that, for each $i\in I$,
-$q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
-Otherwise there would exist a $j \in I$ such that $q_{\HH_i}\in\widehat{Q_{\HH_i}}$.
-But then, by  \cref{fact:uniquesending}(\ref{fact:uniquesending-i}), 
-there would be an output transition from $q_{\HH_j}$, contradicting $s$ to be a deadlock configuration of $S$.
-So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in I$, as well as $\restrict{s}{\cs}\in \RS(\cs)$.
+By definition of deadlock configuration we have that
+$q_{\HH}\not\in\widehat{Q_{\HH}}$.
+Otherwise, by  \cref{fact:uniquesending}(\ref{fact:uniquesending-i}), 
+there would be an output transition from $q_{\HH}$, contradicting $s$ to be a deadlock configuration of $S$.
+So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in \Set{1,2}$.
 
 Now, since $s= (\vec{q},\vec{w})$ is a deadlock configuration of $S$, we have $\vec{w}=\vec{\varepsilon}$ and, for each $\ttp\in\roles$, $q_\ttp$  is a receiving state.
-Hence, by definitions of  gateway and multicomposition 
-(Definitions \ref{def:gatewaymc} and \ref{def:multicomposition}),
+Hence, by definitions of  partial fusion and fusion-composition 
+(Definitions \ref{def:parfus} and \ref{def:cpf}),
 we need  to 
-take into account the following cases concerning the shapes of the transitions from  the various $q_{\HH_i}$  in their respective $\delta_{\HH_i}$, i.e.\ the gateway transitions of $\HH_i$. 
+take into account the following cases concerning the shapes of the transitions from $q_{\HH}$  in 
+$\delta_{\HH}$, i.e.\ the transitions in the connector $\HH$. 
+
+==========
 
 \begin{description}  
   \item
