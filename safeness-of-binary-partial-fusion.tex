@@ -135,8 +135,8 @@ $\ttr\in\roles_2$ implies that
 there exists $({q'_\HH},\HH\tts!\msg[a],q''_\HH)\in\delta_\HH$ where $\tts \in \roles_1$ and  
 $q''_\HH\not\in\widehat{Q_\HH}$ and 
 such that 
-$(q_\HH,\ttr\HH?\msg[a],q''_\HH)\in\delta^1_\HH$ and 
-$(f(q_\HH),\HH\tts!\msg[a],f(q''_\HH))\in\delta^2_\HH$.
+$(q_\HH,\ttr\HH?\msg[a],q''_\HH)\in\delta^2_\HH$ and 
+$(f(q_\HH),\HH\tts!\msg[a],f(q''_\HH))\in\delta^1_\HH$.
 \end{enumerate}
 \end{enumerate}
 \end{fact}
@@ -264,6 +264,7 @@ $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
 Let $s\lts{\elle}s'$ and $\subj{\elle}\neq\hh$.
 % is neither of the form $\_\HH?\_$ nor of the form $\HH\_!\_$.\\
 Then, for $i=1,2$,  either $\restrict{s}{i}\lts{\elle}\restrict{s'}{i}$ or  $\restrict{s}{i}=\restrict{s'}{i}$.
+[[needed?]]
 \item
 \label{lem:indrestrict-c}
 Let $s\lts{\elle}s'$ where $s= (\vec{q},\vec{w})$, $s'= (\vec{q'},\vec{w'})$
@@ -279,9 +280,15 @@ $\restrict{s}{1} = \restrict{s'}{1}$;
 $\restrict{s}{2}\lts{\elle}\restrict{s'}{2}$.
 \end{enumerate}
 \item
-\label{lem:indrestrict-d}
+\label{lem:indrestrict-d} [[needed??]]
 Let $s\lts{\ttr\HH?\msg[a]} s'\lts{\HH\tts!\msg[a]} s''$ where $s'= (\vec{q'},\vec{w'})$ with $q'_\hh\in \widehat{Q_\hh}$.
-Then, $\restrict{s}{1}\lts{}\restrict{s''}{1}$.
+Then, 
+\begin{enumerate}[a)]
+\item
+$\ttr\in\roles_1 \implies \restrict{s}{1}\lts{}\restrict{s''}{1}$.
+\item
+$\ttr\in\roles_2 \implies \restrict{s}{2}\lts{}\restrict{s''}{2}$
+\end{enumerate}
 \end{enumerate}
 \end{lemma}
 
@@ -290,10 +297,20 @@ All (???) statements easily
 descends from definitions of projections, configuration transition and connector.
 [*Expand?*]\\
 \ref{lem:indrestrict-c})
-By definition of connector, we immediately get that $(q_\hh,\elle,q'_\hh,\nintf)\in\bm{\delta}$.
+By construction of connector, we immediately get that $(q_\hh,\elle,q'_\hh,\nintf)\in\bm{\delta}$.
 So, by definition of complementarity, we have that $f(q_\hh)=f(q'_\hh)$ and hence,
 by definition of projection $\restrict{\_}{1}$, we get (\ref{lem:indrestrict-c1}).
-Item (\ref{lem:indrestrict-c2}) descends immediately from the definition of projection $\restrict{\_}{2}$.
+Item (\ref{lem:indrestrict-c2}) descends immediately from the definition of projection 
+$\restrict{\_}{2}$.\\
+\ref{lem:indrestrict-d}) [TO DO]
+Let $\ttr\in\roles_1$ and let $s''= (\vec{q''},\vec{w''})$.
+%By construction of connector, we get that $q_\tt\not\in\widehat{Q_\hh}$
+and hence, by \cref{fact:uniquesending}(\ref{fact:uniquesending-iii}),
+$(f(q_\HH),\ttr\HH?\msg[a],f(q''_\HH))\in\delta^1_\HH$
+ and assume
+$\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$.
+by definition of projection $\restrict{\_}{1}$ (\cref{def:projs}) $q'_\hh = f(q_\hh)$ 
+$\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
 %By the assumption,  $q_\hh\lts{\elle}q'_\hh\in\delta_\hh$. We distinguish between the two following cases:\\
 %\begin{description}
 %\item[]

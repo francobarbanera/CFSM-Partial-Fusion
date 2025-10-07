@@ -344,14 +344,13 @@ Hence, by definitions of  partial fusion and fusion-composition
 (Definitions \ref{def:parfus} and \ref{def:cpf}) and \cref{fact:uniquesending}(\ref{fact:uniquesending-ii}),
 we need  to 
 take into account the following cases for the outgoing transitions from $q_{\HH}$  in 
-$\delta_{\HH}$, i.e.\ the transitions in the connector $\HH$.
+$\delta_{\HH}$.
 
 \begin{description}  
   \item
 \underline{$\diamond$} 
-{\em  $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ 
-where $\tts\in\roles_2$ and $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ it is the unique  
-outgoing transition from $q_\hh$.}\\
+{\em  There is a single outgoing transition from $q_\hh$ and it is of the form
+$(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ and $\tts\in\roles_2$.}\\
  By \cref{fact:uniquesending}(\ref{fact:uniquesending-iib})
  $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)\in\delta^2_\hh$ and hence, by definition of projection
  on $S_2$ (\cref{def:projs}(\ref{def:projs-2})) and since $\vec{w}=\vec{\varepsilon}$,
@@ -368,64 +367,51 @@ outgoing transition from $q_\hh$.}\\
 
 \item
 \underline{$\diamond$}
-{\em  $(q_{\HH},\ttu\HH?\msg[a],q'_\hh)$ where $q'_\hh\in\widehat{Q_\hh}$
-and where $\ttu$ can be either in $\roles_1$ or in $\roles_2$.
-Without loss of generality, we consider a 
-generic index $v$ and a generic single transition $(q_{\HH},\ttu{\HH_v}?\msg[a],\widehat{q})$.
-Now, by definition of gateway, we have that
-$$(q_{\HH_v},\ttu{\HH_v}?\msg[a],\widehat{q}),(\widehat{q},\HH_v{\tts}!\msg[a],q'_{\HH_v})\in \delta_{\HH_v} \text{ for some } \tts\in\roles_v.$$
-This implies that
-$$(q_{\HH_v},\HH_v{\tts}!\msg[a],q'_{\HH_v})\in \delta^v_{\HH_v}.$$
-So, by definition of orchestrated connection policy, we can infer that 
-
-$$({\dot {q_{\HH_v}}},\tilde{\ttu}{\KK_v}?\msg[a],\dot {q'_{\HH_v}})\in \delta^{\cs}_{\KK_v},$$
-where we recall that $\tilde{\ttu} = \left\{\begin{array}{l@{\quad\text{if }}l}
-                                                                \kk & \ttu=\hh\in\Set{\HH_i}_{i \in I}\\
-                                                                \ttu & \ttu\in\rolescsint
-                                          \end{array}\right.$
-       
-Since, for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$, we get that
-$\restrict{s}{\cs}$ is defined.                              
-Then, by definition of projection, $\restrict{s}{\cs} = (\vec{p},\vec{w'})$
-%where $\restrict{\vec{q}}{\cp} = \bfr(p_{\ttu})_{i\in  \roles_{\cp} }\efr$ is the configuration of $\cp$ such that, for each $i \in   I$,
-where, for each $i \in   I$, $p_{\kk_i} = \dot{q_{\HH_i}}$  and, for each $\ttw \in   \rolescsint$, $p_{\pw} = q_{\pw}$.
-Moreover, 
-%$\restrict{\vec{w}}{\cp} =  (w'_{\ttp\ttq})_{\ttp,\ttq\in \roles_{\cp},\ttp\neq\ttq}$
-%is such that, 
-for each pair $\ttp,\ttq\in \roles_{\cs}$ with $\ttp\neq\ttq$, 
-$w'_{\ttp\ttq} = w_{\tilde{\tilde{\ttp}}\tilde{\tilde{\ttq}}}$,
-where we recall that
-$$\tilde{\tilde{\ttp}} = \left\{\begin{array}{l@{\quad\text{if }}l}
-                                                                \hh & \ttp=\kk\in\Set{\kk_i}_{i \in I}\\
-                                                                \ttp & \ttp\in\rolescsint
-                                          \end{array}\right.$$ 
- 
-%$\restrict{s}{\cp} = (\vec{p},\vec{w'})$
-%such that  $p_{\KK_v}={\dot {q_{\HH}}}$ and $w'_{\KK_j\KK_i} = w_{\HH_j\HH_i}$ for each ${j,i\in I}$ with $j\neq i$.
-
-Since $\vec{w} = \vec{\varepsilon}$, we obtain
- $\vec{w'}=\vec{\varepsilon}$. Moreover, $p_{\KK_v}$ is a receiving state since $p_{\KK_v}={\dot {q_{\HH}}}$ (recall that we considered a generic index $v$, so this holds for each $v\in I$).
- Hence,  $\restrict{s}{\cs}\in \RS(\cs)$ is a deadlock configuration of $\cs$
- since we have also that, for each $\ttu\in\rolescsint$, $q_{\ttu}$ is a receiving state.
+{\em  There are $n>0$ outgoing transitions from $q_\hh$, all of the form
+$(q_{\HH},\ttu_j\HH?\msg[a]_j,\hat q_{\hh j})$ with $\hat q_{\hh j} \in\widehat{Q_\hh}$
+for $1\leq j\leq n$.
+.}\\
+Now, by \cref{fact:uniquesending}(\ref{fact:uniquesending-iii}) and the no mixed state condition,
+we can have necessarily only the following possible subcases.
+\begin{description} 
+%
+\item 
+{\em $\ttu_j \in \roles_1$ for all $1\leq j\leq n$}.\\
+By \cref{fact:uniquesending}(\ref{fact:uniquesending-iii}) we have that, for each such $1\leq j\leq n$,  
+$$(q_{\HH},\ttu_j{\HH}?\msg[a]_j,\hat{q}_{\hh j}),(\hat{q}_\hh,\HH{\tts_j}!\msg[a]_j,q'_{\HH j})\in \delta_{\HH}.$$
+where $q'_{\HH j}\not\in\widehat{Q_\hh}$ and $\tts_j\in\roles_2$. 
+Moreover, $(f(q_\HH),\ttu_j\HH?\msg[a]_j,f(q'_{\HH j}))\in\delta^1_\HH$.\\
+% and $(q_\HH,\HH\tts_j!\msg[a],q'_{\HH j})\in\delta^2_\HH$.\\
+Let now $\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$
+where $\restrict{\vec{q}}{1} = (q''_\ttp)_{\ttp\in\roles_1}$
+and $\restrict{\vec{w}}{1} = (w''_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
+By definition of $\restrict{\_}{1}$ (\cref{def:projs}(\ref{def:projs-1}))
+we have that $q''_\hh = f(q_\hh)$ and $q''_\ttp = q_\ttp$ for each $\ttp\in\roles_1\setminus\Set{\hh}$.
+Moreover, $(w''_{\ttp\ttq})_{\ttp\ttq\in C_1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$,
+Since $s$ is a deadlock configuration, it hence follows that  $(w''_{\ttp\ttq})_{\ttp\ttq\in C_1} =  (\varepsilon_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
+We have then that all the states of $(q''_\ttp)_{\ttp\in\roles_1}$ are receiving states
+and all the channel in $C_1$ are empty, that is $\restrict{s}{1}$ is a deadlock.
+%
+\item 
+{\em $\ttu_j \in \roles_2$ for all $1\leq j\leq n$}.\\
+By \cref{fact:uniquesending}(\ref{fact:uniquesending-iii}) we have that, for each such $1\leq j\leq n$,  
+$$(q_{\HH},\ttu_j{\HH}?\msg[a]_j,\hat{q}_{\hh j}),(\hat{q}_\hh,\HH{\tts_j}!\msg[a]_j,q'_{\HH j})\in \delta_{\HH}.$$
+where $q'_{\HH j}\not\in\widehat{Q_\hh}$ and $\tts_j\in\roles_1$. 
+Moreover, $(q_\HH,\ttu_j\HH?\msg[a]_j,q'_{\HH j})\in\delta^2_\HH$.\\
+% and $(q_\HH,\HH\tts_j!\msg[a],q'_{\HH j})\in\delta^2_\HH$.\\
+Let now $\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$
+where $\restrict{\vec{q}}{2} = (q''_\ttp)_{\ttp\in\roles_2}$
+and $\restrict{\vec{w}}{2} = (w''_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
+By definition of $\restrict{\_}{2}$ (\cref{def:projs}(\ref{def:projs-2}))
+we have that $q''_\ttp = q_\ttp$ for each $\ttp\in\roles_1$.
+Moreover, $(w''_{\ttp\ttq})_{\ttp\ttq\in C_2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$,
+Since $s$ is a deadlock configuration, it hence follows that  $(w''_{\ttp\ttq})_{\ttp\ttq\in C_2} =  (\varepsilon_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
+We have then that all the states of $(q''_\ttp)_{\ttp\in\roles_2}$ are receiving states
+and all the channel in $C_1$ are empty, that is $\restrict{s}{2}$ is a deadlock.
+\end{description}
  \end{description}
  \end{proof}
-%{\em  For each $v\in I$  all transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$
-%are of the form $(q_{\HH_v},\HH'\HH_v?\_,\_)$
-%with some $\HH' \in \{\HH_i\}_{i \in I\setminus{\{v\}}}$.}\\
-%W.l.o.g.\ we consider a 
-%generic single transition $(q_{\HH},\HH'{\HH_v}?a,\widehat{q})$.
-%Now, by definition of gateway, we have that
-%$$(q_{\HH_v},\HH'{\HH_v}?a,\widehat{q}),(\widehat{q},\HH_v{\tts}!a,q'_{\HH_v})\in \delta_{\HH_v} \text{ for some } \tts\in\roles_v.$$
-%This implies that
-%$$(q_{\HH_v},\HH_v{\tts}!a,q'_{\HH_v})\in \delta^v_{\HH_v}.$$
-%So, by definition of connection policy, we can infer that 
-%$$({\dot {q_{\HH_v}}},\KK'{\KK_v}?a,\dot {q'_{\HH_v}})\in \delta^{\cp}_{\KK_v}.$$
-%By definition of projection, $\restrict{s}{\cp} = (\vec{p},\vec{w'})$
-%such that  $p_{\KK_v}={\dot {q_{\HH}}}$ and $w'_{\KK_j\KK_i} = w_{\HH_j\HH_i}$ for each ${j,i\in I}$ with $j\neq i$.
-%Since $\vec{w} = \vec{\varepsilon}$ we obtain
-% $\vec{w'}=\vec{\varepsilon}$ and $p_{\KK_v}$ is a receiving state since $p_{\KK_v}={\dot {q_{\HH}}}$.
-% Hence,  $\restrict{s}{\cp}\in \RS(\cp)$ is a deadlock configuration of $\cp$.
-%\end{description}
+
 %
 %
 % OLD version of the proof
@@ -488,10 +474,9 @@ Since $\vec{w} = \vec{\varepsilon}$, we obtain
 
 \begin{corollary}[Preservation of deadlock-freedom]%\hfill\\
 \label{prop:weakdfPreservation}
-Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that, for each $i\in I$, $S_i$  is deadlock-free and $\cs$ is deadlock-free.
-Moreover, let the interfaces of each $S_i$,
-i.e.\ the CFSMs $M_{h_i}$ in $S_i$, have no mixed state.
-Then $S$ is deadlock-free.
+Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that
+both $M^1_\hh$ and $M^2_\hh$ have no mixed state.
+If both $S_1$ and $S_2$ are deadlock free then also $S$ is deadlock free.
 \end{corollary}
 \begin{proof}
 By contradiction, let us assume there is an $s\in \RS(S)$ which is a deadlock configuration of $S$. Then we get a contradiction by Lemma \ref{lem:weakdfpreservation}.
