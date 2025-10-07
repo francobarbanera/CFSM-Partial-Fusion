@@ -341,33 +341,35 @@ So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $
 
 Now, since $s= (\vec{q},\vec{w})$ is a deadlock configuration of $S$, we have $\vec{w}=\vec{\varepsilon}$ and, for each $\ttp\in\roles$, $q_\ttp$  is a receiving state.
 Hence, by definitions of  partial fusion and fusion-composition 
-(Definitions \ref{def:parfus} and \ref{def:cpf}),
+(Definitions \ref{def:parfus} and \ref{def:cpf}) and \cref{fact:uniquesending}(\ref{fact:uniquesending-ii}),
 we need  to 
-take into account the following cases concerning the shapes of the transitions from $q_{\HH}$  in 
-$\delta_{\HH}$, i.e.\ the transitions in the connector $\HH$. 
-
-==========
+take into account the following cases for the outgoing transitions from $q_{\HH}$  in 
+$\delta_{\HH}$, i.e.\ the transitions in the connector $\HH$.
 
 \begin{description}  
   \item
 \underline{$\diamond$} 
-{\em  There exists $v\in I$ and a transition $(q_{\HH_v},\tts{\HH_v}?\_,\_)$ with  some $\tts \in \roles_v$.}\\
- By the no-mixed-state assumption,
-the CFSM $M_{\hh_v}$ in $S_v$ has no mixed state.
-Therefore, by definition of gateway, all the transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$ 
-are of the form  $(q_{\HH_v},\tts{\HH_v}?\_,\_)$ with $\tts \in \roles_v$.\\ %  (and hence $\tts\neq{\HH_v}$).}\\
-Then we can infer, again from the definition of gateway, that all transitions from $q_{\HH_v}$
- in $\delta^v_{\HH_v}$, i.e.\ transitions in  $M_{h_v}$, are of the form $(q_{\HH_v},\tts{\HH_v}?\_,\_)$.
-  Hence we obtain that $\restrict{s}{v}$ is a deadlock configuration of $S_v$,
- since, for each $\ttu\in\rolescsint$, we have that $q_{\ttu}$ is a receiving state. 
+{\em  $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ 
+where $\tts\in\roles_2$ and $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ it is the unique  
+outgoing transition from $q_\hh$.}\\
+ By \cref{fact:uniquesending}(\ref{fact:uniquesending-iib})
+ $(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)\in\delta^2_\hh$ and hence, by definition of projection
+ on $S_2$ (\cref{def:projs}(\ref{def:projs-2})) and since $\vec{w}=\vec{\varepsilon}$,
+ it follows that $\restrict{s}{2}$ is a deadlock configuration.
+% definition of connector it follows that the no-mixed-state assumption,
+%the CFSM $M_{\hh_v}$ in $S_v$ has no mixed state.
+%Therefore, by definition of gateway, all the transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$ 
+%are of the form  $(q_{\HH_v},\tts{\HH_v}?\_,\_)$ with $\tts \in \roles_v$.\\ %  (and hence $\tts\neq{\HH_v}$).}\\
+%Then we can infer, again from the definition of gateway, that all transitions from $q_{\HH_v}$
+% in $\delta^v_{\HH_v}$, i.e.\ transitions in  $M_{h_v}$, are of the form $(q_{\HH_v},\tts{\HH_v}?\_,\_)$.
+%  Hence we obtain that $\restrict{s}{v}$ is a deadlock configuration of $S_v$,
+% since, for each $\ttu\in\rolescsint$, we have that $q_{\ttu}$ is a receiving state. 
   
 
 \item
 \underline{$\diamond$}
-{\em  For each $v\in I$  all transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$
-are of the form  $(q_{\HH_v},\ttu_v\HH_v?\_,\_)$
-where the $\ttu$'s depend on the particular transition and are such that
- $\ttu_v \in \{\HH_i\}_{i \in I\setminus{\{v\}}}\cup\rolescsint$.}\\
+{\em  $(q_{\HH},\ttu\HH?\msg[a],q'_\hh)$ where $q'_\hh\in\widehat{Q_\hh}$
+and where $\ttu$ can be either in $\roles_1$ or in $\roles_2$.
 Without loss of generality, we consider a 
 generic index $v$ and a generic single transition $(q_{\HH},\ttu{\HH_v}?\msg[a],\widehat{q})$.
 Now, by definition of gateway, we have that

@@ -42,6 +42,7 @@ and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\hh}$.
 
 Different definition of projections are possible. We preferred the following one since, notwithstanding forces proofs to be slighter more difficult, has the advantage of simplicity. 
 \begin{definition}[Projections]
+\label{def:projs}
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
 and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
 We define:
@@ -52,6 +53,7 @@ We define:
 %}
 \begin{enumerate}[i)]
 \item
+\label{def:projs-1}
 \vspace{-8mm}
 \begin{tabular}{@{\hspace{0mm}}llll@{\hspace{4mm}}l}
 \\[5mm]
@@ -71,6 +73,7 @@ $\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
 %$\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
 \end{tabular}
 \item
+\label{def:projs-2}
 $\restrict{s}{2}=(\restrict{\vec{q}}{2},\restrict{\vec{w}}{2})$ \quad
 where $\restrict{\vec{q}}{2} = (q_\ttp)_{\ttp\in\roles_2}$ and\ 
 $\restrict{\vec{w}}{2} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_2}$.
@@ -103,9 +106,18 @@ ${q_\HH}$ is not final and
 \label{fact:uniquesending-ii}
  If ${q_\HH}\not\in\widehat{Q_\HH}$ then either $q_\HH$ is final, 
 or any transition $({q_\HH},\elle,q'_\hh)\in\delta_\HH$ is such that 
+\begin{enumerate}[a)]
+\item
 ${q'_\HH}\in\widehat{Q_\HH}$ implies that $({q_\HH},\elle,q'_\hh)$
-is input transition, that 
-is of the form $({q_\HH},\tts\HH?\msg[a],{q'_\HH})$.
+is an input transition, that 
+is of the form $({q_\HH},\tts\HH?\msg[a],{q'_\HH})$;
+\item
+\label{fact:uniquesending-iib}
+${q'_\HH}\not\in\widehat{Q_\HH}$ implies that
+$({q_\HH},\elle,q'_\hh)$ is the only outcoming transition from $q_\hh$ and such that
+$\tts\in\roles_2$ where $\elle$ is either $\tts\hh?\msg[a]$ or $\hh\tts!\msg[a]$.
+Moreover, $({q_\HH},\elle,q'_\hh)\in\delta^2_\hh$.
+\end{enumerate}
 \item
 \label{fact:uniquesending-iii}
 If $(q_\HH,\ttr\HH?\msg[a],{q'_\HH})\in\delta_\HH$ with $q_\HH\not\in\widehat{Q_\HH}$ and
@@ -129,6 +141,7 @@ $(f(q_\HH),\HH\tts!\msg[a],f(q''_\HH))\in\delta^2_\HH$.
 \end{enumerate}
 \end{fact}
 
+\medskip
 The third item of the following lemma (whose proof depends on the first two items)
 states that any sequence of transitions ending with an output action by a gateway
 can be ``rearranged'' so that the output action is immediately preceded
