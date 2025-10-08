@@ -41,16 +41,11 @@ and $\delta_\ttp = \delta^2_\ttp$ for all $\ttp\in\roles_2\setminus\Set{\hh}$.
 \subsection{Technical notions and results}
 
 Different definition of projections are possible. We preferred the following one since, notwithstanding forces proofs to be slighter more difficult, has the advantage of simplicity. 
-\begin{definition}[Projections]
+\begin{definition}[Projections] ((Can be defined on any configuration, also non reachable??))
 \label{def:projs}
 Let $s= (\vec{q},\vec{w})\in RS(S)$, where $\vec{q}=(q_\ttp)_{\ttp\in\roles}$
 and $\vec{w} = (w_{\ttp\ttq})_{\ttp\ttq\in C}$. 
 We define:
-% for $i=1,2$,\\
-%\centerline{$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$ \quad
-%where $\restrict{\vec{q}}{i} = (q_\ttp)_{\ttp\in\roles_i}$ and\ 
-%$\restrict{\vec{w}}{i} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_i}$.
-%}
 \begin{enumerate}[i)]
 \item
 \label{def:projs-1}
@@ -260,6 +255,11 @@ $s_0\lts{}\,\,\ldots \lts{}s_j  \lts{\elle_1}s'_{j+1} \ldots\,  \lts{\elle_k} s'
 \label{lem:indrestrict-a}
 $\restrict{s_0}{1}\in RS(S_1)$ and  $\restrict{s_0}{2}\in RS(S_2)$
 \item
+\label{lem:indrestrict-abis}
+Let $s= (\vec{q},\vec{w})\in RS(S)$ such that $\vec{q}$ are final states in $S$.
+Then, for each $i\in\Set{1,2}$, the states $\restrict{\vec{q}}{i}$ are final in $S_i$, where 
+$\restrict{s}{i}=(\restrict{\vec{q}}{i},\restrict{\vec{w}}{i})$. 
+\item
 \label{lem:indrestrict-b}
 Let $s\lts{\elle}s'$ and $\subj{\elle}\neq\hh$.
 % is neither of the form $\_\HH?\_$ nor of the form $\HH\_!\_$.\\
@@ -296,6 +296,20 @@ $\ttr\in\roles_2 \implies \restrict{s}{2}\lts{}\restrict{s''}{2}$
 All (???) statements easily
 descends from definitions of projections, configuration transition and connector.
 [*Expand?*]\\
+\ref{lem:indrestrict-abis})
+By \cref{fact:uniquesending}(\ref{fact:uniquesending-i}) $\vec{q_\hh}\not\in\widehat{Q_\hh}$.
+By  definition of $\restrict{\_}{2}$ (\cref{def:projs}(\ref{def:projs-2})), 
+we have that $\restrict{\vec{q}}{2} = (q_\ttp)_{\ttp\in\roles_2}$. 
+Hence, by construction of connector via partial fusion (\cref{def:parfus}) we get that 
+all the states $\restrict{\vec{q}}{2}$ are final in $S_2$.
+For what concerns $\restrict{\vec{q}}{1}$, 
+Let now $\restrict{\vec{q}}{1} = (q'_\ttp)_{\ttp\in\roles_1}$.
+By definition of $\restrict{\_}{1}$ (\cref{def:projs}(\ref{def:projs-1})) we have  that
+$q'_\hh = f(q_\hh)$. If $f(q_\hh)$ were not final in $S_1$, we would get  
+$q_\hh$ non final in $S_2$ by condition (\ref{def:noepsver-e}) in \cref{def:noepsver}, and hence $q_\hh$ would be non final in $S$
+by definition of partial fusion, contradicting our assumption. Then $q'_\hh$ is final in $S_2$
+and so are all the states in $\restrict{\vec{q}}{1}$.\\
+%
 \ref{lem:indrestrict-c})
 By construction of connector, we immediately get that $(q_\hh,\elle,q'_\hh,\nintf)\in\bm{\delta}$.
 So, by definition of complementarity, we have that $f(q_\hh)=f(q'_\hh)$ and hence,
@@ -311,24 +325,16 @@ $(f(q_\HH),\ttr\HH?\msg[a],f(q''_\HH))\in\delta^1_\HH$
 $\restrict{s}{1}=(\restrict{\vec{q}}{1},\restrict{\vec{w}}{1})$.
 by definition of projection $\restrict{\_}{1}$ (\cref{def:projs}) $q'_\hh = f(q_\hh)$ 
 $\restrict{\vec{w}}{1} =  (w_{\ttp\ttq})_{\ttp\ttq\in C_1}$.
-%By the assumption,  $q_\hh\lts{\elle}q'_\hh\in\delta_\hh$. We distinguish between the two following cases:\\
-%\begin{description}
-%\item[]
-%\end{description}
-%\ref{lem:indrestrict-c2})[{\em Sketch}]
-%Let $\sigma=\parproj{s}{C_1\cap C'}$ (*definition to do*), where $C'=\Set{\ttr\tts\mid \ttr\in\Set{\hh} \text{ or }\tts\in\Set{\hh}}$.
-%Since $\emb{f}{\bm{\delta^2}}{}{M^1_{\hh}}{M^2_{\hh}}$ and both $M^1_{\hh}$ and $M^2_{\hh}$ are deterministic,
-%by definition of fusion and configuration transition [*make a lemma?*]we have that $\overline{\delta'}({q_0}_\hh,\sigma) =\Set{q_\hh}$,
-%where  $(Q_\hh,{q_0}_\hh,\Act\cup\Set{\varepsilon},\delta')$ is the $\varepsilon$-counterpart of 
-%$M^1_{\hh}=(Q_\hh,{q_0}_\hh,\Act,\delta^1))$. 
-%By definition of $\noeps(\cdot)$ we have also that 
-%$\sigma=\parproj{\restrict{s}{1}}{C_1}$. Moreover, there exists $\tilde q = \overline{\delta^1}({q_0}_\hh,\sigma)$ [*make a lemma?*]
 \end{proof}
 
 \begin{remark}{\em
 Notice that for \cref{lem:indrestrict}(\ref{lem:indrestrict-c}) to hold,  
 the conditions involving $f$ in \cref{def:noepsver} (and hence the conditions in \cref{def:cfsmie},
-see \cref{rem:neccond}) are necessary.\finex
+see \cref{rem:neccond}) are necessary.\\
+Also notice that the inverse of \cref{lem:indrestrict}(\ref{lem:indrestrict-abis})
+does not hold, since all the states in an infinite sequence of transitions in $\delta^2_\hh$
+could be mapped by $f$ in a single state of $Q^1_\hh$.
+\finex
 }
 \end{remark}
 

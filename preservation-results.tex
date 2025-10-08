@@ -343,7 +343,7 @@ Now, since $s= (\vec{q},\vec{w})$ is a deadlock configuration of $S$, we have $\
 Hence, by definitions of  partial fusion and fusion-composition 
 (Definitions \ref{def:parfus} and \ref{def:cpf}) and \cref{fact:uniquesending}(\ref{fact:uniquesending-ii}),
 we need  to 
-take into account the following cases for the outgoing transitions from $q_{\HH}$  in 
+take into account the following cases [*make a lemma?]] for the outgoing transitions from $q_{\HH}$  in 
 $\delta_{\HH}$.
 
 \begin{description}  
@@ -412,66 +412,6 @@ and all the channel in $C_1$ are empty, that is $\restrict{s}{2}$ is a deadlock.
  \end{description}
  \end{proof}
 
-%
-%
-% OLD version of the proof
-%
-%By definition of deadlock configuration and by Fact \ref{fact:uniquesending}(\ref{fact:uniquesending-i}), we have that, for each $i\in I$,
-%$q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$.
-%Otherwise there would be an output transition from $q_{\HH_i}$, contradicting $s$ to be a deadlock configuration.
-%So, by Lemma \ref{lem:nohatrestrict} we get $\restrict{s}{i}\in RS(S_i)$ for each $i\in I$,
-%as well as $\restrict{s}{\cp}\in RS(\cp)$.
-%
-%Now, since $s$ is a deadlock configuration, we have \\
-%\centerline{$\vec{w}=\vec{\varepsilon}$ and 
-%$\forall \ttp\in\roles.~q_\ttp$  is a receiving state,}
-%where $s=(\vec{q},\vec{w})$.\\
-%By definitions of  gateway and multicomposition 
-%(Defs \ref{def:gatewaymc} and \ref{def:multicomposition}) and 
-%\bfr since all states of the configuration $s$ are receiving states, \efr
-%\bfc I erased ``by the no mixed state condition on each $M_{\HH_i}$
-%imposed by composability''\efc
-% we need  to 
-%take into account only the following cases concerning the shapes of the transitions from  the various $q_{\HH_i}$  in their respective $\delta_{\HH_i}$. 
-%
-%\begin{description}
-%%\item
-%%\underline{$\diamond$} 
-%%{\em  All the transitions from $q_\HH$ in $\delta_\HH$ are of the form $(q_\HH,\KK\HH?\_,\_)$ and
-%%all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts \in \roles_2$ (and hence $\tts\neq\HH$).}\\
-%%Since all the transitions from $q_\KK$ in $\delta_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$ with $\tts \in \roles_2$ (and hence $\tts\neq\HH$),
-%%  we can infer, from the definition of  $\gateway{\cdot}$, that also  all the transitions from $q_\KK$ in $\delta^2_\KK$ are of the form $(q_\KK,\tts\KK?\_,\_)$. Hence we obtain that $\restrict{s}{2}$ is a deadlock configuration of $S_2$.
-%  
-%  \item
-%\underline{$\diamond$} 
-%{\em  There exists a $v\in I$ such that all the transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$ 
-%are of the form  $(q_{\HH_v},\tts{\HH_v}?\_,\_)$ with  $\tts \in \roles_v$  (and hence $\tts\neq{\HH_v}$).}\\
-%In this case
-%  we can infer, from the definition of gateway, that also  all the transitions from $q_{\HH_v}$
-% in $\delta^v_{\HH_v}$ are of the form $(q_{\HH_v},\tts{\HH_v}?\_,\_)$. Hence we obtain that $\restrict{s}{v}$ is a deadlock configuration of $S_v$.
-%
-%\item
-%\underline{$\diamond$}
-%{\em  For each $v\in I$  the transitions from $q_{\HH_v}$ in $\delta_{\HH_v}$ 
-%are of the form $(q_{\HH_v},\HH_{\bmr z_{v\hspace{0.3pt}a}\emr}{\HH_v}?\_,\_)$}\\
-%In order not to cope with too many indexes and indexed indexes, we consider a 
-%generic single transition $(q_{\HH},\HH'{\HH}?a,\widehat{q})$
-%where we have set $\HH =\HH_v$, $\HH'=\HH_{z_{v\hspace{0.3pt}a}}$ (i.e $\HH'$ depends on $v$ and $a$),
-%$a=a_v$ and $\widehat{q}=\widehat{q}_{j_{v\hspace{0.3pt}a}}$.
-%Now, by definition of gateway, we have that
-%$$(q_{\HH},\HH'{\HH}?a,\widehat{q}),(\widehat{q},\HH{\tts}!a,q'_{\HH})\in \delta_{\HH}$$
-%for some $\tts\in\roles_v$ (where $\tts$ depends on $v$ and $a$).\\
-%This implies that
-%$$(q_{\HH},\HH{\tts}!a,q'_{\HH})\in \delta^v_{\HH}.$$
-%So, by definition of connection policy, we can infer that 
-%$$({\dot {q_{\HH}}},\KK'{\KK_v}?a,\dot {q'_{\HH}})\in \delta^{\cp}_{\KK_v}.$$
-%We note that by definition of projection, if $\restrict{s}{\cp} = (\vec{p},\vec{w'})$,
-% we have that $w'_{\KK_j\KK_i} = w_{\HH_j\HH_i}$, for each ${j,i\in I}$ such that $j\neq i$, namely
-% $\vec{w'}=\vec{\varepsilon}$. The thesis hence follows because we have shown above that
-% $\restrict{s}{\cp}\in RS(\cp)$ and, by definition of projection, $p_{\KK_v}={\dot {q_{\HH}}}$.
-%\end{description}
-%\end{proof}
-
 \begin{corollary}[Preservation of deadlock-freedom]%\hfill\\
 \label{prop:weakdfPreservation}
 Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that
@@ -483,6 +423,339 @@ By contradiction, let us assume there is an $s\in \RS(S)$ which is a deadlock co
 \end{proof}
 
 
+
+\subsection{No-orphan-message preservation}
+
+
+\begin{lemma}%\hfill\\
+\label{lem:restrRSom}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be an orphan-message configuration of $S=\fusioncomp_{\!\hh}(S_1,S_2)$.
+Then there exists $i\in \Set{1,2}$ such that $\restrict{s}{i}\in \RS(S)$ and $\restrict{s}{i}$ is an  orphan-message configuration of $S_i$.
+\end{lemma}
+
+\begin{proof}
+Let $s= (\vec{q},\vec{w}) \in \RS(S)$ be an orphan-message configuration of $S$, 
+that is $\vec{q}$ is final and $\vec{w}\neq \vec{\varepsilon}$.
+Since $\vec{q}$ is final we get, by  \cref{fact:uniquesending}(\ref{fact:uniquesending-i},  
+that $q_{\HH}\not\in \widehat{Q_{\HH}}$.
+So, by~\cref{lem:nohatrestrict}, $\restrict{s}{i}\in \RS(S_i)$ for each $i\in \Set{1,2}$. 
+By definition of composition by partial fusion we have that from $\vec{w}\neq \vec{\varepsilon}$
+it follows that $\exists i\in \Set{1,2}.\exists \ttp,\ttq\in \roles_i.\ w_{\ttp\ttq}\neq\varepsilon$.
+Hence, by definition of projections and \cref{lem:indrestrict}(\ref{lem:indrestrict-abis}),
+there exists  $i\in \Set{1,2}$ such that
+$\restrict{s}{i}$ is an  orphan-message configuration of $S_i$.
+\end{proof}
+
+
+\begin{corollary}[Preservation of orphan-message-freedom]%\hfill\\
+\label{prop:nomPreservation}
+Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that, for each $i\in \Set{1,2}$, 
+$S_i$ is orphan-message free.
+Then also $S$ is orphan-message free.
+\end{corollary}
+\begin{proof}
+By contradiction, let us assume there is an $s\in \RS(S)$ which is an orphan-message configuration. Then we get
+a contradiction by Lemma \ref{lem:restrRSom}.
+\end{proof}
+
+
+
+\subsection{Preservation of no unspecified reception}
+
+
+\begin{proposition}[Preservation of reception-error freedom]%\hfill\\
+\label{prop:nurPreservation}
+Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ such that, for each $i\in \Set{1,2}$, 
+no element in $\RS(S_{i})$ is an unspecified reception configuration 
+and the CFSMs $M_{\hh_i}$ in $S_i$, has no mixed state.
+Then there is no unspecified reception configuration in $\RS(S)$.
+\end{proposition}
+
+
+
+\begin{proof}
+By contradiction, let us assume there is an $s= (\vec{q},\vec{w})\in \RS(S)$ which is an unspecified reception configuration.
+So, let $\ttr \in \roles$ and let ${q}_\ttr$  be the receiving state of $M_\ttr$ prevented from 
+receiving any message from any of its buffers, which are all not empty (Definition \ref{def:safeness}(\ref{def:safeness-ur})).
+We consider two main cases.
+\begin{description}
+%
+\item 
+${q}_\HH\not\in \widehat{Q_\HH}$.\\ 
+By~\cref{lem:nohatrestrict} we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in\Set{1,2}$.
+We distinguish now two further subcases.
+\begin{description}
+\item 
+$\ttr \neq \HH$\\
+Then necessarily either $\ttr\in\roles_1$ or $\ttr\in\roles_2$.
+Let $z\in\Set{1,2}$ such that $\ttr\in\roles_z$. We have hence that $\restrict{s}{z}\in \RS(S_z)$ is an unspecified reception configuration of $S_z$. Contradiction.
+
+==============
+
+\item 
+$\ttr = \HH$\\
+Since ${q}_\ttr(= {q}_\HH)$ is a receiving state,
+by definition of gateway it follows that
+ the set
+of all outgoing transitions from $q_\HH$ in $\delta_\HH$ is of the form 
+$$\Set{({q}_\HH,\tts_j\HH?\msg[a]_j,\widehat{q_j})}_{j=1..m}$$
+where $\widehat{q_j}\in  \widehat{Q_\HH}$ and 
+ $\tts_j \in \roles_z \cup \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint.$
+%$\tts_j \in \roles_z \cup \{\HH_i\}_{i \in I}, \tts_j \neq \HH.$ 
+
+By definition of unspecified reception configuration,  we have hence that for all $j=1..m$, 
+\begin{equation} \label{eq:wur}
+\mid w_{\tts_j\HH}\mid > 0 
+\text{ and } w_{\tts_j\HH}\not\in  \msg[a]_j \cdot \mathbb{A}^*  %\mathbb{A}^*\cdot a_j
+\end{equation}
+Now, due to the no-mixed-state assumption, it suffices to
+consider the following two possibilities:\\
+
+\begin{description}
+\item
+\underline{$\diamond$}
+{\it For each  $j=1..m$, $\tts_j \not\in \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint$}\\ %\{\HH_i\}_{i \in I}.$}\\
+In this case we can infer from~\cref{fact:uniquesending}\ref{fact:uniquesending-iiib}) that, for each $j=1..m$, there exists $q'_j \in Q_{\HH}$
+such that $(q_\HH,\tts_j\HH?\msg[a]_j,q'_j)\in\delta^z_\HH.$
+ By definition of projection (\cref{def:projectedconf}) it follows that, for all $j=1..m$,
+$w'_{\tts_j\hh}=w_{\tts_j\hh}$, where 
+$\restrict{s}{z}=(\vec{q'},\vec{w'})$. 
+ This implies that $\restrict{s}{z}\in \RS(S_z)$ is an  unspecified reception configuration of $S_z$. Contradiction!\\
+%
+\item
+\underline{$\diamond$} {\it  For each  $j=1..m$,
+ $\tts_j\in \{\HH_i\}_{i \in I\setminus\Set{z}}\cup\rolescsint$.  
+%$v_j\in I$ such that $\tts_j = \HH_{v_j}$
+} \\
+In this case, by~\cref{fact:uniquesending}\ref{fact:uniquesending-iiia}), we have that, for each $j=1..m$, 
+$$(q_\HH,\tts_j\HH?\msg[a]_j,\widehat{q_j}), (\widehat{q_j},\HH\ttw_j!\msg[a]_j,q'_j)\in\delta_\HH $$
+where $\ttw_j \in \roles_z, q'_j \in Q_\HH$ and 
+$(q_{\HH},\HH\ttw_j!\msg[a]_j,q'_j)\in\delta^z_\HH.$
+
+Moreover, again by~\cref{fact:uniquesending}\ref{fact:uniquesending-iiia}), %by definition of multi-composition w.r.t.\ connection policy $\cs$, 
+we have that, for each $j=1..m$,
+$$(\dot{q}_\HH,\widetilde{\tts_j}\KK_z?\msg[a]_j,\dot{q'_j})\in\delta^\cs_{\KK_z} $$
+We consider now the possible two subcases.\\
+$-$ ${q}_{\HH_i}\not\in\widehat{Q_{\HH_i}}$ for each $i\in I$.\\
+Then, by~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-b}) we get $\restrict{s}{\cs}\in \RS(\cs)$. 
+If $\restrict{s}{\cs} = (\vec{p},\vec{w'})$, by definition of projection we have that,
+ for each $i \in   I$, $p_{\kk_i} = \dot{q_{\HH_i}}$  and,
+ for each $\ttu \in   \rolescsint$, $p_{\pu} = q_{\pu}$. Moreover,
+  for each pair $\ttp,\ttq\in \roles_{\cs}$ with $\ttp\neq\ttq$, 
+ $w'_{\ttp\ttq} = w_{\tilde{\tilde{\ttp}}\tilde{\tilde{\ttq}}}$.
+
+%$p_{\KK_z}=\dot{q}_\HH$ and $w'_{\KK_x\KK_y} = w_{\HH_x\HH_y}$ for each $x,y\in I$ such that $x\neq y$.
+The last equalities and  (\ref{eq:wur}) imply that, for each $j = 1..m$,
+$$
+\mid w_{\widetilde{\tts_j}\KK_z}\mid > 0 
+\text{ and } w_{\widetilde{\tts_j}\KK_z}\not\in  \msg[a]_j \cdot\mathbb{A}^*.
+$$
+ Thus $\restrict{s}{\cs} \in \RS(\cs)$ is an unspecified reception configuration of $\cs$. Contradiction!\\
+ $-$ There exists $k\in I$ such that ${q}_{\HH_k}\in\widehat{Q_{\HH_k}}$.\\
+ By Lemma \ref{lem:addendum}, there exists $s'= (\vec{q''},\vec{w''})\in \RS(S)$ 
+ such that $s \to^* s'$,
+ $|w_{\ttp\ttq}| \leq |w''_{\ttp\ttq}|$ for all $\ttp\ttq \in C$ and
+$q''_{\HH_j}\not\in\widehat{Q_{\HH_j}}$ for each $j\in I$. 
+Moreover, $q''_{\HH}=q_{\HH}$ since we have assumed ${q}_\HH\not\in \widehat{Q_\HH}$.
+By~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-b}) we get $\restrict{s'}{\cs}\in \RS(\cs)$. By reasoning as in the previous case, we get that 
+$\restrict{s'}{\cs}$ is an unspecified reception configuration of $\cs$. Contradiction!
+\end{description}
+\end{description}
+\item 
+${q}_\HH\in \widehat{Q_\HH}$.\\ 
+Then, by \cref{fact:uniquesending}(\ref{fact:uniquesending-i}),
+${q}_\HH\in \widehat{Q_\HH}$ is a sending state such that $({q}_\HH,\HH\tts!\msg[a],q'_\HH)\in{\delta}_\HH$ with $q'_\HH \in Q_{\HH}$ and 
+$\tts \in \roles_z \cup \Set{\HH_i}_{i\in I\setminus\Set{z}}\cup\rolescsint$. 
+Since $q_\ttr$ is a receiving state, it is impossible that $\ttr=\HH$.
+So, let $\ttr\neq\HH$. We recall that we are dealing with the case when also $\ttr\not\in\rolescsint$.
+It is now immediate to check that  there exists $s'\in \RS(S)$ such that
+$s\lts{\HH\tts!\msg[a]}s'=(\vec{q'},\vec{w'})$ with $q'_\HH$ and $\tts$ as above.
+Since $q'_\HH\not\in \widehat{Q_\HH}$ it
+follows, by~\cref{lem:nohatrestrict}(\ref{lem:nohatrestrict-a}), that $\restrict{s'}{z} \in \RS(S_z)$.
+Moreover, we have that 
+\begin{enumerate}[a)]
+\item
+\label{l:aa}
+$\forall \ttp\neq\HH.\ q'_\ttp = {q}_\ttp$ and,
+in particular, $q'_\ttr = {q}_\ttr$;
+\item
+\label{l:bb}
+$\forall \ttp\ttq \neq \HH\tts.\ w'_{\ttp\ttq} = {w}_{\ttp\ttq}$;
+\item
+\label{l:cc}
+$w'_{\HH\tts} = {w}_{\HH\tts}\cdot \msg[a]$.
+\end{enumerate}
+We consider now the following two possible subcases:
+\begin{description}
+\item
+ $\tts \in\Set{\HH_v}_{v\in I\setminus\Set{z}}\cup\rolescsint$.  \\
+%$\tts = \HH_v$ for some $v\in I$ with $v \neq z$.\\
+Then $\tts \neq \ttr$, since $\ttr \in \roles_z$.
+From ($\ref{l:aa}$) and ($\ref{l:bb}$) above it follows that  $q'_\ttr = {q}_\ttr$
+and, since  $\tts \neq \ttr$, $w'_{\ttp\ttr} = {w}_{\ttp\ttr}$ for all $\ttp \in \roles_z.$ Consequently, $\restrict{s'}{z} \in \RS(S_z)$ is an unspecified reception configuration of $S_z$. Contradiction!
+\item
+%$\tts=\ttr$ (and hence $\tts \in \roles_1$)\\
+$\tts \in \roles_z$\\
+If $\tts \neq \ttr$ we get a contradiction as in the previous case.\\
+If $\tts = \ttr$, then $\HH$ sends the message $\msg[a]$ to the buffer $w_{\HH\ttr}$. Since $q_\ttr$ is the receiving state of $M_\ttr$ prevented from receiving any message from any of its buffers, which all are not empty in configuration $s$, the sending of $\msg[a]$ extends $w_{\HH\ttr}$ which still has a wrong element on its first position. Then, by ($\ref{l:aa}$) and ($\ref{l:bb}$) above $\restrict{s'}{z}$ is an unspecified reception configuration of $S_z$.  Contradiction!
+\end{description}
+\end{description}
+We can now proceed with the second of the two main cases, namely\\[2mm]
+$\bullet$ $\ttr \neq\hh$\\
+Now we  take into account the following possible cases:
+
+\begin{description}
+%
+\item 
+${q}_\HH\not\in \widehat{Q_\HH}$.\\ 
+By~\cref{lem:nohatrestrict} we get $\restrict{s}{z}\in \RS(S_z)$.
+% and $\restrict{s}{\cs}\in RS(\cs)$.
+We distinguish now two further subcases.
+\begin{description}
+\item 
+$\ttr \neq \HH$\\
+Then $\restrict{s}{z}\in \RS(S_z)$ is an unspecified reception configuration of
+$S_z$. Contradiction!
+\end{description}
+\end{description}
+
+$\bullet$ $\ttr \in\rolescsint$\\
+We consider the two following possible subcases:
+\begin{description}
+\item
+$q_{\hh_i}\not\in\widehat{Q_{\hh_i}}$ for each $i\in I$.\\
+Then $\restrict{s}{\cs}$ is defined and $\restrict{s}{\cs} \in \RS(\cs)$. 
+Let $\restrict{s}{\cs} = (\vec{p},\vec{w'})$.
+By definition of projection (\cref{def:projectedconf}) it follows that, for each $\ttu\in\rolescsint$,
+$p_{\ttu} = q_{\ttu}$ and, for each $\ttu\in\roles_{\cs}$ with $\ttu\neq\ttr$,   $w'_{\ttu\ttr} = w_{\tilde{\tilde{\ttu}}\tilde{\tilde{\ttr}}}= w_{\tilde{\tilde{\ttu}}\ttr}$ (the last equality holds by definition of $\widetilde{\widetilde{\cdot}}$). Consequently, $\restrict{s'}{\cs} \in \RS(\cs)$ is an unspecified reception configuration of $\cs$ for the participant $\ttr$. Contradiction!
+\item
+
+$q_{\hh_i}\in\widehat{Q_{\hh_i}}$ for some $i\in I$.\\
+ By Lemma \ref{lem:addendum}, there exists $s'= (\vec{q''},\vec{w''})\in \RS(S)$ 
+ such that $s \to^* s'$,
+ $|w_{\ttp\ttq}| \leq |w''_{\ttp\ttq}|$ for all $\ttp\ttq \in C$ and
+$q''_{\HH_j}\not\in\widehat{Q_{\HH_j}}$ for each $j\in I$. 
+Now, since $\ttr\in\rolescsint$ and also $s'$ is necessarily a unspecified reception configuration of $S$ for the participant $\ttr$, we can proceed as in the previous case.
+\end{description}
+\end{proof}
+
+
+
+
+\subsection{Progress preservation}
+
+%For ensuring the progress property for $S = \MC(\Set{S_i}_{i\in I}, \cs)$ it is not enough that
+%$\cs$ and each $S_i$ (for $i\in I$) do enjoy the progress property.
+%In fact we can simply get 
+%[[Insert counterexample: $\cs$ with 4 participants; two continuously exchanging messages and the
+%other two stuck]]
+
+\begin{proposition}[Progress preservation]%\hfill\\
+\label{lem:restrRS}
+Let $S = \MC(\Set{S_i}_{i\in I}, \cs)$ such that $\cs$ and each $S_i$ (for all $i\in I$) satisfy 
+%do enjoy 
+the progress property. 
+ Moreover, let the interfaces of each $S_i$,
+i.e.\ the CFSMs $M_{\hh_i}$ in $S_i$, have no mixed state.
+Then also $S$ satisfies the progress property. 
+\end{proposition}
+
+\begin{proof}
+The proof is by contradiction.
+Let us assume $S$ does not enjoy the progress property, namely that there exists 
+ $s= (\vec{q},\vec{w}) \in \RS(S)$ such that
+ \begin{equation}
+ \label{eq:snotprogr}
+ \text{$s\notlts{}\hspace{2mm}$ and $\hspace{2mm}\vec{q}$ is not final, i.e.\
+ $\exists \ttr\in\roles. ~ q_\ttr \text{ is not final in } M_\ttr$.}
+\end{equation}
+We distinguish between the two following cases $\ttr\not\in\rolesorch_{\cs}$ and $\ttr\in\rolesorch_{\cs}$:\\[2mm]
+$\bullet$ $\ttr\not\in\rolesorch_{\cs}$.\\
+In particular, there exists $z \in I$ and $\ttr \in \roles_z$ such that $q_\ttr$ is not final in $M_\ttr$.
+
+
+By $s\notlts{}$  and by \cref{fact:uniquesending}(\ref{fact:uniquesending-i}), we have that
+for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$. Otherwise
+there would be an output transition from some $q_{\HH_i}$, contradicting $s\notlts{}$.
+So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in I$, as well as $\restrict{s}{\cs}\in \RS(\cs)$. 
+In particular, $\restrict{s}{z}\in \RS(S_z).$
+
+Now we distinguish two cases:
+\begin{description}
+\item \emph{Case 1: $q_{\HH_z}$ is final in $M_{\HH_z}$.}\\
+Then $q_{\HH_z}$ is final in $M^z_{\HH_z}$.
+Consequently, $s\notlts{}$ and $\restrict{s}{z}\in \RS(S_z)$ implies $\restrict{s}{z}\notlts{}$. Moreover, we know that $q_\ttr$ is not final in $M_\ttr$ which is
+an element of the system $S_z$. Hence, $S_z$ does not enjoy the progress property. Contradiction!
+
+\item \emph{Case 2: $q_{\HH_z}$ is not final in $M_{\HH_z}$.}\\
+From above we know  $q_{\HH_z}\not\in\widehat{Q_{\HH_z}}$ and hence,
+by construction of gateways,
+there must be an input transition in $M_{\HH_z}$ starting in $q_{\HH_z}$.
+We distinguish two subcases:
+
+\begin{description}
+\item \emph{Case 2.1:
+There exists a transition from $q_{\HH_z}$ in $\delta_{\HH_{z}}$ of the form
+$(q_{\HH_z},\tts\HH_z?\_,\_)$ with $\tts\in\roles_z$.}\\
+By the no-mixed-state assumption and by construction of gateways
+it follows that all transitions in $\delta_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form.
+%\brr ALSO here I must be more careful in the following part.
+%I inserted the modified part after that.\\
+%Since $s\notlts{}$ and $\restrict{s}{z}\in RS(S_z)$, we have $\restrict{s}{z}\notlts{}$. Moreover, $q_{\HH_z}$ is not final in $M_{\HH_z}$ and $q_{\HH_z}\not\in\widehat{Q_{\HH_z}}$.
+%Therefore $q_{\HH_z}$ is also not final in $M^z_{\HH_z}$. 
+%Thus $S_z$ does not enjoy the progress property. Contradiction!
+%\err
+Then (i) also all transitions in $\delta^z_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form and (ii) there exists at least one such transition.
+Since $s\notlts{}$ and $\restrict{s}{z}\in \RS(S_z)$ we obtain, as a consequence of (i), that $\restrict{s}{z}\notlts{}$. As a consequence of (ii) $q_{\HH_z}$ is also not final in $M^z_{\HH_z}$. 
+Thus $S_z$ does not enjoy the progress property. Contradiction!
+%
+\item \emph{Case 2.2:
+There exists a transition from $q_{\HH_z}$ in $\delta_{\HH_{z}}$ of the form
+$(q_{\HH_z},\ttu\HH_z?\_,\_)$ with $\ttu\in\Set{\hh_i}_{ \in I\setminus\Set{z}}\cup\rolesorch_{\cs}$.}\\
+By the no-mixed-state assumption and by construction of gateways
+it follows that all transitions in $\delta_{\HH_{z}}$ with source state
+$q_{\HH_z}$ have this form. 
+Then, by definition of gateway and orchestrated connection policy, all transitions
+in $\delta^{\cs}_{\KK_{z}}$ have the form
+$(\dot{q}_{\KK_z},\widetilde{\ttu}\KK_z?\_,\_)$ and there exists at least one such
+transition.
+Let now $\restrict{\vec{s}}{\cs}= (\vec{q'},\vec{w'})$.
+By definition of projection,
+$w'_{\ttv\KK_{z}}=w_{\widetilde{\widetilde{\ttv}}\HH_{z}}$  for each $\ttv\in\roles_{\cs}$.
+So, since  $s \notlts{}$ and $\restrict{s}{\cs}\in \RS(\cs)$, we can infer that $\restrict{s}{\cs}\notlts{}$.
+Moreover, $\dot{q}_{\KK_z}$ is not final in $M_{\KK_z}$.
+Thus $S_{\cs}$ does not enjoy the progress property. Contradiction!
+\end{description}
+\end{description}
+ 
+$\bullet$ $\ttr\in\rolesorch_{\cs}$.\\
+As in the previous case, $s\notlts{}$  and \cref{fact:uniquesending}(\ref{fact:uniquesending-i})
+implies that, for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$. Otherwise
+there would be an output transition from some $q_{\HH_i}$, contradicting $s\notlts{}$.
+So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{\cs}\in \RS(\cs)$.
+We now proceed by considering the following two possible cases.
+\begin{description}
+\item
+{\em There exists a $j\in I$ such that $q_{\hh_j}$ is not final in $M_{\hh_j}$}\\
+Trivially $\hh_j\in\roles_j$. We can hence simply proceed as in the first main case, where it is shown that we can get to a contradiction by assuming $s\notlts{}$ and the 
+presence of a participant belonging to $\roles_j$, for some $j$, in a non final state.  
+ \item
+{\em For all $j\in I$, $q_{\hh_j}$ is final in $M_{\hh_j}$}\\
+By definition of projection, it immediately follows that $q_{\ttr}$ is not final in $\cs$.
+We can hence get a contradiction with the progress property of $\cs$ since we can show that
+$\restrict{s}{\cs}\notlts{}$. Toward a contradiction, let
+$\restrict{s}{\cs}\lts{\elle}$ for some $\elle$. 
+By definition of gateways and from the hypothesis of the present case 
+we have that for all $j\in I$, $\dot{q_{\kk_j}}$ is final in $M^{\cs}_{\kk_j}$.
+Hence, necessarily, $\elle=\ttu\ttr?\_$ where $\ttu\in\rolesorch_{\cs}$, i.e. 
+$\ttu\not\in\Set{\kk}_{i\in I}$. 
+This would then imply,  by definitions of projection, composition and transition,  that
+$s\lts{\elle}$, so contradicting $s\notlts{}$.
+\end{description}
+
+\end{proof}
 
 
 
