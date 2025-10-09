@@ -571,12 +571,19 @@ $\ttr\in\roles_i$ implies that $\restrict{s'}{i}$ is an unspecified reception co
 
 \subsection{Progress preservation}
 
-\begin{lemma}
-Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ and $s= (\vec{q},\vec{w}) \in \RS(S)$.
-Moreover, let assume the CFSMs $M^2_{\hh}$ to have no mixed state.
-Then $s\notlts{}\hspace{2mm}$ implies either $\restrict{s}{1}\notlts{}\hspace{2mm}$
-or $\restrict{s}{2}\notlts{}$
-\end{lemma}
+%\begin{lemma}
+%Let $S = \fusioncomp_{\!\hh}(S_1,S_2)$ and $s= (\vec{q},\vec{w}) \in \RS(S)$.
+%Moreover, let assume the CFSMs $M^2_{\hh}$ to have no mixed state.
+%Then $s\notlts{}\hspace{2mm}$ implies either $\restrict{s}{1}\notlts{}\hspace{2mm}$
+%or $\restrict{s}{2}\notlts{}$
+%\end{lemma}
+%\begin{lemma}
+%By contraposition, let us assume $\restrict{s}{1}\lts{\elle_1}\hspace{2mm}$
+%and $\restrict{s}{2}\lts{\elle_2}$.
+%By definition of projections  (\cref{def:projs}) we get that, for each $i\in\Set{1,2}$,
+%$\hh\neq\subj{\elle_i} \implies s\lts{\elle_i}$.
+%So we need to consider now just the case  when $\hh=\subj{\elle_1}=\subj{\elle_2}$
+
 
 \begin{proposition}[Progress preservation]%\hfill\\
 \label{lem:restrRS}
@@ -599,75 +606,53 @@ By $s\notlts{}$  and by \cref{fact:uniquesending}(\ref{fact:uniquesending-i}),
 we have that $q_{\HH}\not\in\widehat{Q_{\HH}}$. 
 Otherwise there would be an output transition from some $q_{\HH}$, contradicting $s\notlts{}$.
 So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{i}\in \RS(S_i)$ for each $i\in \Set{1,2}$.
-Now we distinguish two cases:\\
-$\ttr\neq\hh$\\
-Then necessarily either $\ttr\in\roles_1$ or $\ttr\in\roles_2$.
-Let $z\in\Set{1,2}$ such that $\ttr\in\roles_z$. We have hence that $\restrict{s}{z}\in \RS(S_z)$ is an unspecified reception configuration of $S_z$. Contradiction.
+Now we distinguish two cases:
 \begin{description}
 %
-\item[\underline{$\diamond$}] \emph{$q_{\HH}$ is final in $M_{\HH}$.}\\
+\item \emph{$q_{\HH}$ is final in $M_{\HH}$.}\\
 Consequently, $\ttr\neq\hh$ and by definition of projections (\cref{def:projs}) we have that,
 for each $i\in\Set{1,2}$, $s\notlts{}$ and $\restrict{s}{i}\in \RS(S_i)$ implies $\restrict{s}{i}\notlts{}$. Moreover, we know that $q_\ttr$ is not final in $M_\ttr$ which is
 an element of either $S_1$ or $S_2$. Hence, $S_1$ or $S_2$ does not enjoy the progress property. Contradiction.
 %
-\item[\underline{$\diamond$}] \emph{$q_{\HH}$ is not final in $M_{\HH}$.}\\
+\item \emph{$q_{\HH}$ is not final in $M_{\HH}$.}\\
 From above we know  $q_{\HH}\not\in\widehat{Q_{\HH}}$ and hence, 
 by \cref{fact:uniquesending}(\ref{fact:uniquesending-iv}) 
 we proceed by distinguishing the following two cases:
 \begin{description}
 %
-\item \emph{There is a single transition from $q_\hh$ and it is of the form
-$(q_{\HH},\ttu{\HH}?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ and $\ttu\in\roles_2$.}\\
-
-$\ttr\neq\hh$\\
-
-Since $s\notlts{}$ and $\restrict{s}{z}\in \RS(S_z)$ we obtain, as a consequence of (i), that $\restrict{s}{z}\notlts{}$. As a consequence of (ii) $q_{\HH_z}$ is also not final in $M^z_{\HH_z}$. 
-Thus $S_z$ does not enjoy the progress property. Contradiction!
+\item[\underline{$\diamond$}] \emph{There is a single transition from $q_\hh$ and it is of the form
+$(q_{\HH},\ttu{\HH}?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ and $\ttu\in\roles_2$.}\\[1mm]
+By definition of partial fusion (\cref{def:parfus})
+we have that $(q_{\HH},\ttu{\HH}?\msg[a],q'_\hh)\in\delta^2_\hh$.
+Moreover, by definition of $\restrict{\_}{2}$ (\cref{def:projs}(\ref{def:projs-2}), 
+$q_\hh=q''_\hh$ where $\restrict{s}{2}=(\vec{q''},\vec{w''})$.
+Hence $\restrict{s}{2}\notlts{}$ can be inferred from $s\notlts{}$ and then 
+$S_2$ does not satisfy the progress property, regardless that $\ttr\neq\hh$ or $\ttr=\hh$. Contradiction.
 %
-\item \emph{Case 2.2:
-There exists a transition from $q_{\HH_z}$ in $\delta_{\HH_{z}}$ of the form
-$(q_{\HH_z},\ttu\HH_z?\_,\_)$ with $\ttu\in\Set{\hh_i}_{ \in I\setminus\Set{z}}\cup\rolesorch_{\cs}$.}\\
-By the no-mixed-state assumption and by construction of gateways
-it follows that all transitions in $\delta_{\HH_{z}}$ with source state
-$q_{\HH_z}$ have this form. 
-Then, by definition of gateway and orchestrated connection policy, all transitions
-in $\delta^{\cs}_{\KK_{z}}$ have the form
-$(\dot{q}_{\KK_z},\widetilde{\ttu}\KK_z?\_,\_)$ and there exists at least one such
-transition.
-Let now $\restrict{\vec{s}}{\cs}= (\vec{q'},\vec{w'})$.
-By definition of projection,
-$w'_{\ttv\KK_{z}}=w_{\widetilde{\widetilde{\ttv}}\HH_{z}}$  for each $\ttv\in\roles_{\cs}$.
-So, since  $s \notlts{}$ and $\restrict{s}{\cs}\in \RS(\cs)$, we can infer that $\restrict{s}{\cs}\notlts{}$.
-Moreover, $\dot{q}_{\KK_z}$ is not final in $M_{\KK_z}$.
-Thus $S_{\cs}$ does not enjoy the progress property. Contradiction!
+\item[\underline{$\diamond$}] \emph{There are $n>0$ transitions from $q_\hh$, all of the form
+$(q_{\HH},\ttu_j\HH?\msg[a]_j,\hat q_{\hh j})$ with $\hat q_{\hh j} \in\widehat{Q_\hh}$
+for $1\leq j\leq n$. Moreover, either
+$\ttu_j\in\roles_1$ for all $1\leq j\leq n$ or $\ttu_j\in\roles_2$ for all $1\leq j\leq n$.}\\[1mm]
+We proceed according to the two above possibilities.\\[1mm]
+$\ttu_j\in\roles_1$ for all $1\leq j\leq n$\\
+By definition of partial fusion (\cref{def:parfus}) we get that, for all $1\leq j\leq n$,
+$(f(q_{\HH}),\ttu_j{\HH}?\msg[a]_j,f(q'_{\hh j}))\in\delta^1_\hh$ and these are the only
+outgoing transition from $f(q_{\HH})$ in $\delta^1_\hh$. 
+Moreover, by definition of $\restrict{\_}{1}$ (\cref{def:projs}(\ref{def:projs-1}), 
+$f(q_\hh)=q''_\hh$ where $\restrict{s}{1}=(\vec{q''},\vec{w''})$.
+Hence $\restrict{s}{1}\notlts{}$ can be inferred from $s\notlts{}$ and then 
+that $S_1$ does not satisfy the progress property, regardless of $\ttr\neq\hh$ or $\ttr=\hh$. Contradiction.\\[1mm]
+%
+$\ttu_j\in\roles_2$ for all $1\leq j\leq n$\\
+By definition of partial fusion (\cref{def:parfus}) we get that, for all $1\leq j\leq n$,
+$(q_{\HH},\ttu_j{\HH}?\msg[a]_j,q'_{\hh j})\in\delta^2_\hh$ and these are the only
+outgoing transition from $q_{\HH}$ in $\delta^2_\hh$. 
+Moreover, by definition of $\restrict{\_}{2}$ (\cref{def:projs}(\ref{def:projs-2}), 
+$q_\hh=q''_\hh$ where $\restrict{s}{1}=(\vec{q''},\vec{w''})$.
+Hence $\restrict{s}{2}\notlts{}$ can be inferred from $s\notlts{}$ and then 
+that $S_2$ does not satisfy the progress property, regardless of $\ttr\neq\hh$ or $\ttr=\hh$. Contradiction.
 \end{description}
 \end{description}
- 
-$\bullet$ $\ttr\in\rolesorch_{\cs}$.\\
-As in the previous case, $s\notlts{}$  and \cref{fact:uniquesending}(\ref{fact:uniquesending-i})
-implies that, for each $i\in I$, $q_{\HH_i}\not\in\widehat{Q_{\HH_i}}$. Otherwise
-there would be an output transition from some $q_{\HH_i}$, contradicting $s\notlts{}$.
-So, by~\cref{lem:nohatrestrict}, we get $\restrict{s}{\cs}\in \RS(\cs)$.
-We now proceed by considering the following two possible cases.
-\begin{description}
-\item
-{\em There exists a $j\in I$ such that $q_{\hh_j}$ is not final in $M_{\hh_j}$}\\
-Trivially $\hh_j\in\roles_j$. We can hence simply proceed as in the first main case, where it is shown that we can get to a contradiction by assuming $s\notlts{}$ and the 
-presence of a participant belonging to $\roles_j$, for some $j$, in a non final state.  
- \item
-{\em For all $j\in I$, $q_{\hh_j}$ is final in $M_{\hh_j}$}\\
-By definition of projection, it immediately follows that $q_{\ttr}$ is not final in $\cs$.
-We can hence get a contradiction with the progress property of $\cs$ since we can show that
-$\restrict{s}{\cs}\notlts{}$. Toward a contradiction, let
-$\restrict{s}{\cs}\lts{\elle}$ for some $\elle$. 
-By definition of gateways and from the hypothesis of the present case 
-we have that for all $j\in I$, $\dot{q_{\kk_j}}$ is final in $M^{\cs}_{\kk_j}$.
-Hence, necessarily, $\elle=\ttu\ttr?\_$ where $\ttu\in\rolesorch_{\cs}$, i.e. 
-$\ttu\not\in\Set{\kk}_{i\in I}$. 
-This would then imply,  by definitions of projection, composition and transition,  that
-$s\lts{\elle}$, so contradicting $s\notlts{}$.
-\end{description}
-
 \end{proof}
 
 
