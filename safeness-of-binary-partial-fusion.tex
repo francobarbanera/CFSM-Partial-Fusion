@@ -118,6 +118,7 @@ Moreover, $({q_\HH},\elle,q'_\hh)\in\delta^2_\hh$.
 If $(q_\HH,\ttr\HH?\msg[a],{q'_\HH})\in\delta_\HH$ with $q_\HH\not\in\widehat{Q_\HH}$ and
 $q'_\HH\in\widehat{Q_\HH}$, then
 \begin{enumerate}[a)]
+%
 \item
 $\ttr\in\roles_1$ implies that
 there exists $({q'_\HH},\HH\tts!\msg[a],q''_\HH)\in\delta_\HH$ where $\tts \in \roles_2$ and  
@@ -125,6 +126,7 @@ $q''_\HH\not\in\widehat{Q_\HH}$ and
 such that 
 $(f(q_\HH),\ttr\HH?\msg[a],f(q''_\HH))\in\delta^1_\HH$ and 
 $(q_\HH,\HH\tts!\msg[a],q''_\HH)\in\delta^2_\HH$;
+%
 \item
 $\ttr\in\roles_2$ implies that
 there exists $({q'_\HH},\HH\tts!\msg[a],q''_\HH)\in\delta_\HH$ where $\tts \in \roles_1$ and  
@@ -133,8 +135,26 @@ such that
 $(q_\HH,\ttr\HH?\msg[a],q''_\HH)\in\delta^2_\HH$ and 
 $(f(q_\HH),\HH\tts!\msg[a],f(q''_\HH))\in\delta^1_\HH$.
 \end{enumerate}
+%
+\item
+If $M^2_\hh$ has no mixed states, then also $M^1_\hh$ has no mixed states. [[*Check*]]
+%
+\item
+\label{fact:uniquesending-iv}
+Let $q_{\HH}\not\in\widehat{Q_\hh}$ be a non final state of $M_\hh$. Then one and only one of the possible cases is possible.
+\begin{enumerate}[a)]  
+\item
+There is a single outgoing transition from $q_\hh$ in $\delta_\hh$ and it is of the form
+$(q_{\HH},\tts{\HH}?\msg[a],q'_\hh)$ or $(q_{\HH},{\HH}\tts?\msg[a],q'_\hh)$ with $q'_\hh\not\in\widehat{Q_\hh}$ and $\tts\in\roles_2$.
+\item
+There are $n>0$ outgoing transitions from $q_\hh$ in $\delta_\hh$, all of the form
+$(q_{\HH},\ttu_j\HH?\msg[a]_j,\hat q_{\hh j})$ with $\hat q_{\hh j} \in\widehat{Q_\hh}$
+with $1\leq j\leq n$. Moreover, if $M^2_\hh$ has no mixed states, either
+$\ttu_j\in\roles_1$ for all $1\leq j\leq n$ or $\ttu_j\in\roles_2$ for all $1\leq j\leq n$.
+\end{enumerate}
 \end{enumerate}
 \end{fact}
+
 
 \medskip
 The third item of the following lemma (whose proof depends on the first two items)
@@ -297,7 +317,7 @@ All (???) statements easily
 descends from definitions of projections, configuration transition and connector.
 [*Expand?*]\\
 \ref{lem:indrestrict-abis})
-By \cref{fact:uniquesending}(\ref{fact:uniquesending-i}) $\vec{q_\hh}\not\in\widehat{Q_\hh}$.
+By \cref{fact:uniquesending}(\ref{fact:uniquesending-i}) ${q_\hh}\not\in\widehat{Q_\hh}$.
 By  definition of $\restrict{\_}{2}$ (\cref{def:projs}(\ref{def:projs-2})), 
 we have that $\restrict{\vec{q}}{2} = (q_\ttp)_{\ttp\in\roles_2}$. 
 Hence, by construction of connector via partial fusion (\cref{def:parfus}) we get that 
