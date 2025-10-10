@@ -1,0 +1,475 @@
+
+
+\section{Composition via partial gateways}
+
+Running example
+
+Let us consider the two following systems $S_1$ and $S_2$ with interfaces, respectively,
+$\hh_1$ and $\hh_2$.
+$$
+\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+$$
+
+$S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
+
+Transforming $\hh_1$ and $\hh_2$ into gateways make the resulting composition non
+deadlock free.
+In fact, the (unique) connection policy is as below, and it is non deadlock free.
+
+$$
+\dbox{
+     \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\hh_1\hh_2!\msg[start]$} (1) 
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+       \qquad
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\hh_1!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+}
+$$
+
+ $$
+\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge     [line width=0.5mm]                     node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right, line width=0.5mm]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+$$
+
+$$
+\dbox{
+     \begin{tikzpicture}[mycfsm]
+   \node[state]            (1) [above of=0] {$1$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (1)
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+       \qquad
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
+                   ;
+       \end{tikzpicture}
+}
+$$
+ 
+
+\begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
+A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
+where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas\\
+\centerline{
+$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$}
+\begin{tabular}{lc@{\hspace{4pt}}l}
+and such that & - & $(q_1,\elle,q_2,x),(q_1,\elle,q_2,y)\in\bm{\delta} \implies x=y$.\\
+                     & - & $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$\\
+                     &    & \hspace{51mm}  (and hence $z=\nintf$ by the previous item).
+\end{tabular}\\
+An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
+\end{definition}
+The conditions on CFSMs with interface edges prevent the problems shown in \cref{ex:singleeps}.
+
+A CFSM can be looked at as a CFSM with interface edges where all the edges are non interface ones.
+
+We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
+ $q
+ \raisebox{2.7mm}
+{\begin{tikzpicture}[mycfsm]
+      % 
+      \node[state, draw=none] (zero) [yshift=-4mm, xshift=5mm] {$~$};
+      \node[state, draw=none] (one) [right of=zero, xshift=-10mm]   {$~$};
+      % 
+      \draw (zero) edge[-to,line width=0.5mm] node[above]{$l$} (one)
+      ;
+ \end{tikzpicture}
+ } 
+\!\! q'$ for $(q,l,q',\intf)$.
+
+\begin{definition}[Interface decorations]\label{def:IDM}
+Let $M=(Q,q_0,\textit{Act},\delta)$ be a CFSM. We define the {\em interface decorations set} of $M$
+as the following set of CFSMs with interface edges:
+$$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
+\end{definition}
+
+%\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
+%Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
+%and let $M'=(Q',q'_0,\textit{Act},\delta')$ be a standard CFSM. We say that
+%$M'$ is an {\em interface for $M$ via $(f,g)$}, $\I^M_{\!\!(f,g)}(M')$, whenever
+%\begin{itemize}
+%\item[-]
+%$f:Q\to Q'$  is onto and such that, for all $q\in Q$, $\langin(q)=\langin(f(q))$;
+%\item[-]
+%$g:\delta'\to\Set{e\in\delta\mid e \text{ is an interface edge}}$ is such that 
+%$\I(M)$ as the CFSM obtained out of $\bm{\varepsilon}(M)$ using the standard procedure
+%to get a FSA without $\varepsilon$-transitions out of a $\varepsilon$-FSA \cite[someStandardReference]. 
+%Roughly:\\ 
+%- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+%\end{itemize}
+%\end{definition}
+
+\begin{definition}[$\roles$-duality]\label{def:PD}%\hfill\\
+\begin{enumerate}[i)]
+\item
+Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
+$\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
+\centerline{
+$\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
+\item
+Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles\neq\emptyset$ be a set of participants.
+We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
+\begin{itemize}
+\item[-]
+$l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$, $\tts\neq\ttq$;
+\item[-]
+$l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$, $\tts\neq\ttq$.
+\end{itemize}
+\item
+Let $\delta,\delta'\in Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ and  let $\roles$ be a set of participants.
+We say that $\delta'$ is {\em a $\roles$-dual of $\delta$} whenever is a minimal relation over
+ $Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ such that\\
+\centerline{
+$q\lts{l}q'\in\delta \implies q\lts{l'}q'\in\delta'$, where $l'$ is a $\roles$-dual of $l$.
+}
+\item
+Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ and $M'=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$ be two $\varepsilon$-FSA and  let $\roles$ be a set of participants.
+We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\roles$-dual of $\delta$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+\label{def:noepsver}
+%\begin{enumerate}
+%\item
+%We define the set of the {\em duals of $\delta'$ with respect to} $\roles$  as the following set of $\epsilon$-FSA
+%$$\bm{\delta}\text{-}\duals_{\,\roles}(M) = 
+%\Set{(Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta'') \mid q\lts{l'}q'\in\delta'' \text{ if } }$$
+%where $\bm{\varepsilon}(M) = (Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta')$.
+%\item
+Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA
+and $M'=(Q',q'_0,\textit{Act},\delta)$ be a CFSM.
+We say that $M'$ is a {\em $\noeps$-version of $M$ via $f$} ($\noeps_f$-version of $M$ for short)
+whenever 
+\begin{enumerate}[a)]
+\item
+$M'$ is deterministic;
+\item 
+$f:Q\to Q'$ is onto and such that $f(p_0) = f(p'_0)$;
+\item
+$p_1\lts{\epsilon}p_2 \quad\text{implies}\quad f(p_1)=f(p_2)$; 
+\item
+$p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$; 
+\item
+\label{def:noepsver-e}
+$ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
+\end{enumerate}
+(((i.e. $f$ is a weak bisimulation?)))
+
+\begin{remark}
+\label{rem:neccond}
+{\em
+Notice that without the condition\\
+\centerline{
+$(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$}
+in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
+}
+\end{remark}
+
+%We define $\noeps(M)$ as the CFSM obtained out of $M$ 
+%using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
+%out of a $\varepsilon$-FSA \cite{sipser96}, where final states are not taken into account and
+%the set of states of $\I(M)$ and $\noeps(M)$ stay the same . 
+%Roughly:\\ 
+%- Add an arc from p to q labeled a iff there is an arc labeled a in N from some state in eps-CLOSE(p) to q.;\\
+%- Delete all arcs labeled with epsilon.
+%%- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
+%%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
+%\end{enumerate}
+\end{definition}
+%Notice that the states of $\I(M)$ and $M$ are the same.
+
+
+
+\begin{definition}[$\roles$-complementarity]
+\label{def:Pcomplementarity}
+Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
+$M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  
+be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
+Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
+We say that
+$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
+$$M^1_\hh \text{ is a $\noeps_{\!f}$-version of } M''_\hh$$
+where $M''_\hh$ is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
+We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
+\end{definition}
+
+By definition of CFSM with interface edges it follows that $\varepsilon(M'_\hh)$ in the above definition
+does not contain any $\varepsilon$-clique. [*make a lemma*].
+
+We write simply $\emb{}{\bm{}}{M^1_\hh}{M^2_\hh}$ whenever
+$\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
+
+
+
+
+\section{Partial-fusion Composition}
+
+%We make distinct two equal labels when they are used in different transitions. 
+%\begin{definition}[$M^+$]
+%Let $M = (Q, q_0, \textit{Act}, \delta)$. We define
+%$$M^+ = (Q, q_0, \textit{Act}', \delta')$$
+%where $\textit{Act}'= \Set{\ttr\tts!\msg[m]^{(q,l,q')},\ttr\tts?\msg[m]^{(q,l,q')} \mid (q,l,q')\in Q\times\textit{Act}\times Q,\ttr,\tts\in\roles, \msg[m] \text{ a message}}$\\
+% and 
+%$\delta'= \Set{q\lts{\ttr\tts!\msg[m]^{(q,\ttr\tts!\msg[m],q')}}q' \mid q\lts{\ttr\tts!\msg[m]}q'\in\delta}$.
+%\end{definition}
+
+
+%\begin{definition}[$\bm{\delta}$-complementarity]
+%Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$.
+%We say that
+%\begin{enumerate}[i)]
+%\item
+%$M^1_\hh$ is {\em $\bm{\delta^2}$-complementary} with $M^2_\hh$, written $\emb{\bm{\delta^2}}{}{M^1_\hh}{M^2_\hh}$, whenever 
+%\begin{itemize}
+%\item[-] 
+%there exists $M'_\hh = (Q, q_0, \textit{Act}, \bm{\delta^2})\in\IDS(M^2_\hh)$;
+%\item[-]
+%$\I(\bm{\varepsilon}(M'_\hh)^+) = (Q, q_0, \textit{Act}, \delta')$;
+%\item[-]
+%$q_1 \lts{\hh\ttp!\msg[m]} q_2 \in \delta^1$ for some $\ttp$ \quad iff \quad 
+%$q_1\lts{\ttp'\hh?\msg[m]^{(q,l,q')}}q_2\in \delta'$ for some $\ttp'$;
+%\item[-]
+%$q_1 \lts{\ttp\hh?\msg[m]} q_2 \in \delta^1$ for some $\ttp$ \quad iff \quad 
+%$q_1\lts{\hh\ttp'!\msg[m]^{(q,l,q')}}q_2\in \delta'$  for some $\ttp'$;
+%
+%
+%\item[-]
+%$q_1\lts{\ttp\hh?\msg[m]^{(q,l,q')}}q_2,q'_1\lts{\ttp\hh?\msg[m]^{(q,l,q')}}q'_2\in \delta'$
+%implies
+%$q_1 \lts{\hh\ttp'!\msg[m]} q_2, q'_1 \lts{\hh\ttp'!\msg[m]} q'_2 \in \delta^1$;
+%\item[-]
+%$q_1\lts{\hh\ttp!\msg[m]^{(q,l,q')}}q_2,q'_1\lts{\hh\ttp!\msg[m]^{(q,l,q')}}q'_2\in \delta'$
+%implies
+%$q_1 \lts{\ttp'\hh?\msg[m]} q_2, q'_1 \lts{\ttp'\hh?\msg[m]} q'_2 \in \delta^1$.
+%\end{itemize}
+%\end{enumerate}
+%\end{definition}
+%The fifth and sixth items guarantees that if two labels in $\I(\bm{\varepsilon}(M'_\hh)^+))$ comes
+%from the very same transition in $\bm{\varepsilon}(M'_\hh)$ then in $M^1_\hh$ they must
+%send(receive) to(from) the same participant.
+
+\begin{definition}[Partial Fusion]
+\label{def:parfus}
+Let $M^1_\hh = (Q^1, q^1_0, \textit{Act}, \delta^1)$ and $M^2_\hh = (Q^2, q^2_0, \textit{Act}, \delta^2)$  be two CFSMs with the same name $\hh$ such that 
+$\emb{f}{\bm{\delta}}{\roles\setminus\Set{\hh}}{M^1_{\hh}}{M^2_\hh}$.
+We define the {\em partial fusion of $M^1_{\hh}$ and $M^2_{\hh}$ via $\bm{\delta}$ and $\roles$} as
+$$\fusion_{\!\!\bm{\delta}}^{\roles}(M^1_{\hh},M^2_{\hh}) = (Q^2\cup\widehat{Q},q_0,\textit{Act},\widehat{\delta})$$
+\begin{tabular}{l@{\hspace{1mm}}c@{\hspace{2mm}}l}
+where &  $\bullet$  & $\widehat{Q} =\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta}}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q, l,q') \mid (q, l,q',\nintf)\in\bm{\delta}}\,\cup$\\ 
+           &    & ${\hspace{20pt}}\Set{(q,\ttr\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm{\delta}, (q,\ttr\hh?\msg[a],\ q')\in\delta^1,\ \widehat q=q^{(q,\HH\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH'\ttr!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm{\delta},\ (q,\hh\ttr!\msg[a],q')\in\delta^1,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}.$
+ \end{tabular} 
+\end{definition}
+
+
+
+\begin{definition}[Composition by Partial Fusion]
+\label{def:cpf}
+Let $S_1=(M^1_\ttx)_{\ttx\in\roles_1}$ and $S_2=(M^2_\ttx)_{\ttx\in\roles_2}$ be two communicating systems such that $\roles_1\cap\roles_2=\Set{\hh}$
+and $\emb{f}{\bm{\delta}}{\roles_1}{M^1_{\hh}}{M^2_{\hh}}$.
+We define the {\em composition of $S_1$ and $S_2$ via partial fusion of $\hh$} by
+$$\fusioncomp_{\!\hh}(S_1,S_2) = (\widetilde{M}_\ttx)_{\ttx\in\roles_1\cup\roles_2}$$ 
+\begin{tabular}{lc@{\hspace{2mm}}l@{\hspace{4mm}}l}
+where &  $\bullet$  & $\widetilde M_\ttx = M^1_\ttx$  & $\text{if}\quad \ttx\in\roles_1 $; \\[1mm]
+          &   $\bullet$  & $\widetilde M_\ttx = M^2_\ttx$ &  $\text{if}\quad \ttx\in\roles_2 $; \\[1mm]
+                    &   $\bullet$  & $\widetilde M_{\hh} =\fusion_{\!\!\bm{\delta}}^{{\roles_1\setminus\Set{\hh}}}(M^1_{\hh},M^2_{\hh})$.
+ \end{tabular} 
+ We call $\widetilde M_{\hh}$ the {\em connector} of $S_1$ and $S_2$ in the composition.
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
