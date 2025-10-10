@@ -1,6 +1,66 @@
-%!TEX root = Main-JLAMP-asynchCFSM-multicomp.tex
+
 \section{Introduction}
 \label{sec:Intro}
+
+PaI is an approach to concurrent/distributed system composition. 
+Specifically for systems comminicating via message passing and where
+communication behaviours of participants can be interpreted as interfaces.  
+Our intended meaning of ``interface'' (a term actually used in the literature with  several different connotations) is, informally: description of the interactions an outer system can
+exhibit. 
+In the simple example sketched in \cref{fig:twointerfaces}
+--  where we abstract the participants' behaviours from everything but the possibility of 
+ sending/receiving messages\footnote{Such abstract diagrammatic notation not only facilitates  
+ discussion of the main ideas underlying PaI composition in a quite general  and formalism-independent way.}
+   -- system $S_1$ possesses a participant 
+ $\hh_1$ which can receive messages $\msg[sbs]$ and $\msg[hum]$ from some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and $\msg[hum]$ to some other participant of $S_2$, say $\tts$. 
+For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, respectively, inside the dashed boxes representing systems  $S_1$ and $S_2$.
+ \begin{figure}[h]
+    \centering{\small
+    $
+\raisebox{12mm}{\text{\large $S_1$}\,\,}
+    \dbox{
+\hspace{14mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
+        \draw [-stealth] (h-c) --  node[above] {$\msg[hum]$} (square-h);
+ \end{tikzpicture}
+            }
+\hspace{12mm}
+     \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh'$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [stealth-] (k-b) --  node[right] {$\msg[hum]$} (square-k);
+        \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
+ \end{tikzpicture}
+             }
+ \raisebox{12mm}{\text{\large $\,\,S_2$}}
+ $\vspace{-2mm}
+ \caption{\label{fig:twointerfaces} Two interfaces participants belonging to, respectively, systems $S_1$ and $S_2$.}
+ }
+\end{figure}
+
+\noindent
+%\brc Perhaps show also r and r' and s in the figure?
+%\erc
+$S_1$ could be a domotic system where the component $\hh_1$ drives the diffusioneither of a certain substance or just humidity upon requests from $\ttr$ and $\ttr'$.
+System $S_2$, instead, could be a system for aromas diffusion where, upon $\hh_2$'s request
+(possibly driven by some sensors), 
+the component $\tts$ coordinates the diffusion of some aroma or of humidity.  
+ Looking at $\hh_2$ as an interface makes it the representation of an outer system with which
+ $S_1$ can interact by sending messages $\msg[sbs]$ and $\msg[hum]$. S
+ imilarly, we can look at $\hh_2$ as the
+ representation of an outer system with which
+ $S_2$ can interact by receiving from it messages $\msg[sbs]$ and $\msg[hum]$.
+ 
+ =====================
+ 
+ 
+ 
+
 Concurrent/Distributed systems are  hardly -- especially nowadays -- 
 stand-alone entities. They are part of 
 ``jigsaws puzzles''  
