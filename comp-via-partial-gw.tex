@@ -607,11 +607,12 @@ $$
             (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
 $$
-In fact, some states in $s=(0_\ttu,0_{\hh_1},1\_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. 
+In fact, some states in $s=(0_\ttu,0_{\hh_1},1_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. 
 \finex
 \end{example}
 
-[[TO CHECK]] The following can be used for lack of deadlock-freedom preservation. (????)
+The following example shows lack of progress preservation when interface edges follow
+interface choices 
 $$
 \begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
     \begin{array}{cc}
@@ -621,17 +622,17 @@ $$
    \node[state]            (1) [below of=0, yshift=4mm] {$1$};
 
    \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
+            (0)  edge    node [above] {$\hh_1\ttu?\msg[a]$} (1) ;
        \end{tikzpicture}
 &
        \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_1$};
   \node[state]            (1) [right of=0] {$1$};
   %\node[state]           (2) [above right of=0] {$2$};
 
    \path  (start) edge node {} (0) 
-            (0)  edge      node [below] {$\hh\ttu!\msg[a]$} (1);
+            (0)  edge  [line width=0.5mm]     node [below] {$\hh_1\ttu!\msg[a]$} (1);
        \end{tikzpicture}
     \end{array}
        &
@@ -644,15 +645,15 @@ $$
        &
        \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
   \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
   \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
   \node[state]           (3) [right of=2] {$3$};
 %
    \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
-            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
-            (2)   edge    [line width=0.5mm]            node [above]  {$\ttv\hh?\msg[a]$} (3);
+            (0)  edge     [bend left]      node [above] {$\ttv\hh_2?\msg[b]$} (1)
+            (0)   edge    [bend right]            node [above]  {$\ttv\hh_2?\msg[c]$} (2)
+            (2)   edge    [line width=0.5mm]            node [above]  {$\ttv\hh_2?\msg[a]$} (3);
        \end{tikzpicture}
 &
       \begin{tikzpicture}[mycfsm]
@@ -661,13 +662,13 @@ $$
    \node[state]            (1) [below of=0, yshift=4mm] {$1$};
 
    \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+            (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
 \end{array}
 $$
-
+The (unique) connection policy satisfies progress.
+The composition below, however, does not.
 $$
-\begin{array}{c@{\hspace{1cm}}c@{\qquad}c}
       \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
    \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
@@ -676,34 +677,45 @@ $$
    \path  (start) edge node {} (0)
             (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
        \end{tikzpicture}
-       &
+\quad
+        \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_1$};
+  \node[state]            (0hat) [right of=0] {$\widehat 0$};
+  \node[state]           (1) [above of=0hat] {$1$};
+%
+   \path  (start) edge node {} (0) 
+            (0)  edge     node [below] {$\hh_2\hh_1?\msg[a]$} (0hat)
+            (0hat)  edge     node [below] {$\hh_1\ttu!\msg[a]$} (1)
+            ;
+       \end{tikzpicture}
+\quad
        \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
   \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
   \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
   \node[state]           (2hat) [right of=2] {$\hat{2}$};
   \node[state]           (3) [right of=2hat] {$3$};
 %
    \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
-            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
-            (2)   edge           node [above]  {$\ttv\hh?\msg[a]$} (2hat)
-            (2hat)   edge      node [above]  {$\hh\ttu!\msg[a]$} (3)
+            (0)  edge     [bend left]      node [above] {$\ttv\hh_2?\msg[b]$} (1)
+            (0)   edge    [bend right]            node [above]  {$\ttv_2\hh?\msg[c]$} (2)
+            (2)   edge           node [above]  {$\ttv\hh_2?\msg[a]$} (2hat)
+            (2hat)   edge      node [above]  {$\hh_2\ttu!\msg[a]$} (3)
             ;
        \end{tikzpicture}
-&
+\quad
       \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
    \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
    \node[state]            (1) [below of=0, yshift=4mm] {$1$};
 
    \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+            (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
-\end{array}
 $$
-
+In fact, some states in $s=(0_\ttu,0_{\hh_1},1_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. 
 
 
 The main problem is that a choice should depend on a single participant.
@@ -711,6 +723,8 @@ In one of the previous examples, problems arise when a choice involves both
 $\hh_1$ and $\hh_2$.
 Problems also arise when a choice made by an interface is in conflict with what the other 
 interface does. 
+
+[[*Conditions for interfaces edges*]](Claim: non necessary for deadlock-freedom)
 
 
 \begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
