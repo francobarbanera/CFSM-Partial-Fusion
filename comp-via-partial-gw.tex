@@ -54,7 +54,7 @@ $$
    \node[state]           (4) [right of=2] {$4$};
    %
    \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+            (0)  edge     [bend left]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
                    edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
                    edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
             (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
@@ -72,8 +72,8 @@ $$
    %
    \path  (start) edge node {} (0) 
             (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+                   edge                          node [above]  {$\tts\hh_2?\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\tts\hh_2?\msg[mus]$} (3)
             (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
                    ;
        \end{tikzpicture}
@@ -169,7 +169,7 @@ $$
    \node[state]           (4) [right of=2] {$4$};
    %
    \path  (start) edge node {} (0) 
-            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
                    edge     [line width=0.5mm]                     node [above]  {$\hh_2\tts!\msg[hum]$} (2)
                    edge    [bend right, line width=0.5mm]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
             (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
@@ -187,14 +187,81 @@ $$
    %
    \path  (start) edge node {} (0) 
             (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+                   edge                          node [above]  {$\tts\hh_2?\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\tts\hh_2?\msg[mus]$} (3)
             (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
                    ;
        \end{tikzpicture}
        }
 \end{array}
 $$
+
+
+$
+     \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\varepsilon$} (1) 
+            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+$
+is equivalent to 
+$
+     \begin{tikzpicture}[mycfsm]
+   \node[state]            (1) [above of=0] {$1$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (1)
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+$
+
+whereas
+
+$ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\varepsilon$} (4)
+                   ;
+       \end{tikzpicture}
+$
+is equivalent to
+$
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
+                   ;
+       \end{tikzpicture}
+$
+
 
 $$
 \dbox{
@@ -225,7 +292,192 @@ $$
        \end{tikzpicture}
 }
 $$
- 
+
+It is not possible to consider any edge as an interface edge.
+
+ $$
+\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
+                   edge     [line width=0.5mm]                     node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+$$
+
+The corresponding connection policy is 
+
+$$
+\dbox{
+     \begin{tikzpicture}[mycfsm]
+   \node[state]            (1) [above of=0] {$1$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (1)
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+       \qquad
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [below right of=0] {$2$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge    [bend right]    node [below]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   ;
+       \end{tikzpicture}
+}
+$$
+The above communicating system is orphan-message free.
+However, the composition obtaining by building  gateways built out of such connection policy is not.
+
+$$
+\begin{array}{cc@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (1hat) [above left of=1, yshift=-4mm,xshift=2mm] {$\widehat 1$};
+   \node[state]            (2) [above of=1hat, yshift=-2mm] {$2$};
+   \node[state]            (2hat) [above right of=1, yshift=-4mm,xshift=-2mm] {$\widehat 2$};
+   \node[state]            (3) [above of=2hat, yshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (1hat)
+             (1hat)  edge   node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (2hat) 
+             (2hat)  edge   node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+  &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1hat) [above right of=0] {$\widehat 1$};
+    \node[state]            (1) [right of=1hat] {$1$};
+   \node[state]           (2hat) [right of=0,xshift=-6mm] {$\widehat 2$};
+    \node[state]           (2) [right of=2hat] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1hat)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2hat)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (1hat)  edge                      node [above]  {$\hh_2\tts!\msg[sbs]$} (1)
+            (2hat)  edge                      node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\tts\hh_2?\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\tts\hh_2?\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+$$
+
 
 \begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
 A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
