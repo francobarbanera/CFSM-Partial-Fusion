@@ -121,8 +121,16 @@ $$
 }
 $$
 
- $$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
+Instead of looking at a whole participant as an interface, we can 
+consider only specific edges as description of actions of an outer system.
+In our running example, for instance, we could still decide to compose $S_1$ and $S_2$ trough
+$\hh_1$ and $\hh_2$, proviso that only the edges in bold in the drawing below
+have to be interpreted as actions of the outer systems one intend to be connected to.  
+
+
+\begin{equation}
+\label{eq:1}
+\begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
     \begin{array}{cc}
       \begin{tikzpicture}[mycfsm]
    \node[state]           (0)                        {$0$};
@@ -194,74 +202,11 @@ $$
        \end{tikzpicture}
        }
 \end{array}
-$$
+\end{equation}
 
-
-$
-     \begin{tikzpicture}[mycfsm]
-   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
-   \node[state]            (1) [above of=0] {$1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (0)
-            (0)  edge                    node [above] {$\varepsilon$} (1) 
-            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
-            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-$
-is ``equivalent'' to 
-$
-     \begin{tikzpicture}[mycfsm]
-   \node[state]            (1) [above of=0] {$1$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (1)
-            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
-            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-$
-
-whereas
-
-$ \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
-   \node[state]           (4) [right of=2] {$4$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
-            (2)  edge                           node [above]  {$\varepsilon$} (4)
-                   ;
-       \end{tikzpicture}
-$
-is ``equivalent'' to
-$
-     \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
-                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
-                   ;
-       \end{tikzpicture}
-$
-
+The connection policy has now to be formed by CFSM describing the interactions 
+between the ``interface'' parts of $\hh_1$ and $\hh_2$, which in our running examples 
+turn out to be simply as follows.
 
 $$
 \dbox{
@@ -293,114 +238,12 @@ $$
 }
 $$
 
-It is not possible to consider any edge as an interface edge.
+Such a communicating system does enjoy all communication properties we considered.
 
- $$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
-    \begin{array}{cc}
-      \begin{tikzpicture}[mycfsm]
-   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
-   \node[state]            (1) [below of=0] {$1$};
-   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
-            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
-            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-&
-      \begin{tikzpicture}[mycfsm]
-   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
-   \node[state]            (1) [above of=0] {$1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (0)
-            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
-            (1)  edge[bend left, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
-            (1)  edge[bend right, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-    \end{array}
-       &
-       \begin{array}{c}
-       |\\
-       |\\
-       |\\
-       |
-       \end{array}
-       &
-      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
-   \node[state]           (4) [right of=2] {$4$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
-                   edge     [line width=0.5mm]                     node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
-            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
-                   ;
-       \end{tikzpicture}
-        }
-&
-      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)            {$0$};
-   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
-  \node[state]            (1) [above left of=0] {$1$};
-   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
-   \node[state]           (3) [below left of=0] {$3$};
-   \node[state]           (4) [left of=2] {$4$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
-            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
-                   ;
-       \end{tikzpicture}
-       }
-\end{array}
-$$
+The partial gateways have to act as forwarders only for what concerns the interface parts,
+whereas non interface parts describe what is still in charge of the participants $\hh_1$ and $\hh_2$.
 
-The corresponding connection policy is 
-
-$$
-\dbox{
-     \begin{tikzpicture}[mycfsm]
-   \node[state]            (1) [above of=0] {$1$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (1)
-            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
-            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-       \qquad
-     \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [below right of=0] {$2$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
-                   edge    [bend right]    node [below]  {$\hh_1\hh_2?\msg[hum]$} (2)
-                   ;
-       \end{tikzpicture}
-}
-$$
-The above communicating system is orphan-message free.
-However, the composition obtaining by building  gateways built out of such connection policy is not.
+So, the resulting composed system is as follows.
 
 $$
 \begin{array}{cc@{\hspace{-4mm}}c}
@@ -477,16 +320,222 @@ $$
        }
 \end{array}
 $$
-Enabling any edge to be considered as an interface edges may lead to leak of deadlock freedom 
-and progress preservation.
+
+Our result will allow to infer that in this particular case the composition via partial gateways
+satisfies also the communication properties (but lock-freedom).
+
+Some care has however to be taken when, onece choosen the participants playing the roles of 
+partial interfaces,  we decide which are the interface edge.
+It is in fact not possible to consider any edge as an interface edge.
+
+Let us consider again our running example, and let us consider again $\hh_1$ and 
+$\hh_2$ as (partial) interfaces. However, let us consider now the following interface edges.
+
+
+
+%We hence introduce the notion of CFSM with interface edges. 
+
+ \begin{equation}
+ \label{eq:2}
+\begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right, line width=0.5mm]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left, line width=0.5mm]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
+                   edge     [line width=0.5mm]                     node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+\end{equation}
+
+The corresponding connection policy is 
+
+$$
+\dbox{
+     \begin{tikzpicture}[mycfsm]
+   \node[state]            (1) [above of=0] {$1$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (1)
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+       \qquad
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0, xshift=1mm] {$1$};
+   \node[state]           (2) [right of=0, xshift=-4.5mm] {$2$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [below]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   ;
+       \end{tikzpicture}
+}
+$$
+This communicating system is orphan-message free.
+
+ The composition obtaining by building partial gateways of such connection policy is then the 
+ following communication system.
+
+$$
+\begin{array}{cc@{\hspace{-4mm}}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttr$};
+   \node[state]            (1) [below of=0] {$1$};
+   \node[state]            (2) [below left of=1, yshift=4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [below right of=1, yshift=4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttr\hh_1!\msg[start]$} (1) 
+            (1)  edge[bend right]    node [above] {$\ttr\hh1!\msg[sbs]$} (2)
+            (1)  edge[bend left]    node [above] {$\ttr\hh_1!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (1hat) [above left of=1, yshift=-4mm,xshift=2mm] {$\widehat 1$};
+   \node[state]            (2) [above of=1hat, yshift=-2mm] {$2$};
+   \node[state]            (2hat) [above right of=1, yshift=-4mm,xshift=-2mm] {$\widehat 2$};
+   \node[state]            (3) [above of=2hat, yshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\ttr\hh_1?\msg[start]$} (1) 
+            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (1hat)
+             (1hat)  edge   node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (2hat) 
+             (2hat)  edge   node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+    \end{array}
+  &
+      \raisebox{3mm}{\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1hat) [above right of=0] {$\widehat 1$};
+    \node[state]            (1) [right of=1hat] {$1$};
+   \node[state]           (2hat) [right of=0,xshift=-6mm] {$\widehat 2$};
+    \node[state]           (2) [right of=2hat] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1hat)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2hat)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (1hat)  edge                      node [above]  {$\hh_2\tts!\msg[sbs]$} (1)
+            (2hat)  edge                      node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+        }
+&
+      \raisebox{-3mm}{ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)            {$0$};
+   \node[draw=none,fill=none] (start) [above right = 0.3cm  of 0]{$\tts$};
+  \node[state]            (1) [above left of=0] {$1$};
+   \node[state]           (2) [left of=0,xshift=6mm] {$2$};
+   \node[state]           (3) [below left of=0] {$3$};
+   \node[state]           (4) [left of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend right]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\tts\hh_2?\msg[hum]$} (2)
+                   edge    [bend left]     node [below]  {$\tts\hh_2?\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\hh_2\tts!\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+       }
+\end{array}
+$$
+
+Scuh communicating system, however, is not orphan-message free.
+In fact the following configuration, made by final states only, is reachable:\\
+\centerline{
+$s=((3_\ttr,3_{\hh_1},3_{\hh_2},3_\tts),\vec{w})$
+}
+where $\vec{w}\neq\vec{\varepsilon}$, in particular $w_{\hh_1\hh_2}=\langle\msg[hum]\rangle$.\\
+Hence $s$ is an orphan-message configuration.
+
+A similar choice of interface edges can disrupt progress preservation.
  
-\begin{example}[Unrestricted choice of interface edges leads to leak of progress preservation]
-\label{ex:singleepsdf}
-\em
 Let us consider the two following systems $S_1$ and $S_2$ with interfaces, respectively,
 $\hh_1$ and $\hh_2$. Both satisfying the progress property.
-$$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+\begin{equation}
+\label{eq:3}
+\begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\qquad}c}
     \begin{array}{cc}
       \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
@@ -535,7 +584,7 @@ $$
             (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
 \end{array}
-$$
+\end{equation}
 
 The (unique) connection policy below satisfies the progress property.
  
@@ -608,13 +657,18 @@ $$
        \end{tikzpicture}
 $$
 In fact, some states in $s=(0_\ttu,0_{\hh_1},1_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. 
-\finex
-\end{example}
 
-The following example shows lack of progress preservation when interface edges follow
-interface choices 
-$$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+The previous two examples, where some properties are not preserved by composition via
+partial gateways, share the fact that interfaces have a state with normal and interface outgoing
+transitions.
+  
+The following example shows that progress preservation can be disrupted also in presence of
+states all with non interface transitions.
+
+Let us consider the following communicating system.
+\begin{equation}
+\label{eq:4}
+\begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\qquad}c}
     \begin{array}{cc}
       \begin{tikzpicture}[mycfsm]
   \node[state]           (0)                        {$0$};
@@ -665,7 +719,7 @@ $$
             (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
 \end{array}
-$$
+\end{equation}
 The (unique) connection policy satisfies progress.
 The composition below, however, does not.
 $$
@@ -724,11 +778,12 @@ $\hh_1$ and $\hh_2$.
 Problems also arise when a choice made by an interface is in conflict with what the other 
 interface does. 
 
-[[*Conditions for interfaces edges*]](Claim: non necessary for deadlock-freedom)
+We hence restrict outgoing interface transitions always to be single. (Claim: non necessary for deadlock-freedom).
+This restriction is formalised in the following definition.
 
-
-\begin{definition}[CFSM with interface edges]\label{def:cfsmie}%\hfill\\
-A {\em CFSM with interface edges} is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
+\begin{definition}[CFSM with interface transitions]\label{def:cfsmie}
+\label{def:cfsmintftrans}
+A {\em CFSM with interface transitions} ($CFSM^{\mathsf{it}}$ for short) is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
 where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas\\
 \centerline{
 $\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$}
@@ -739,11 +794,17 @@ and such that & - & $(q_1,\elle,q_2,x),(q_1,\elle,q_2,y)\in\bm{\delta} \implies 
 \end{tabular}\\
 An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
 \end{definition}
-The conditions on CFSMs with interface edges prevent the problems shown in \cref{ex:singleeps}.
+It is possible to check that $\hh_2$ in (\ref{eq:1}) above is a CFSM with interface transitions,
+whereas participants $\hh_2$ in (\ref{eq:2}), (\ref{eq:3}) and (\ref{eq:4}) are not.
 
-A CFSM can be looked at as a CFSM with interface edges where all the edges are non interface ones.
+%The conditions on CFSMs with interface edges prevent the problems shown in \cref{ex:singleeps}.
 
-We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
+It is worth noticing that the usual PaI composition via gateway is a particular case 
+of composition via partial gateways where all transitions are interface transitions.
+Absence of non interface transition makes conditions in \cref{def:cfsmintftrans}
+vacuously satisfied.
+
+As done in the previous examples, we use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
  $q
  \raisebox{2.7mm}
 {\begin{tikzpicture}[mycfsm]
@@ -757,11 +818,18 @@ We use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
  } 
 \!\! q'$ for $(q,l,q',\intf)$.
 
+Composition via partial gateways consists, first of all, in identifying two interface participants
+and then properly choosing some transitions in order to get a CFSM with
+interface transitions. Given a CFSM $M$, an interface decoration is one of the possible
+CFSM with interface transition that we can get out of $M$. 
+
+
 \begin{definition}[Interface decorations]\label{def:IDM}
 Let $M=(Q,q_0,\textit{Act},\delta)$ be a CFSM. We define the {\em interface decorations set} of $M$
-as the following set of CFSMs with interface edges:
-$$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta'}) \mid \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
+as the following set of CFSMs with interface transitions:
+$$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta}) \mid (Q,q_0,\textit{Act},\bm{\delta}) \text{ is a CFSM$^\mathsf{it}$ with } \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
 \end{definition}
+
 
 %\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
 %Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
@@ -846,6 +914,72 @@ $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle
 in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
 }
 \end{remark}
+
+$
+     \begin{tikzpicture}[mycfsm]
+   \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
+   \node[state]            (1) [above of=0] {$1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (0)
+            (0)  edge                    node [above] {$\varepsilon$} (1) 
+            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+$
+is ``equivalent'' to 
+$
+     \begin{tikzpicture}[mycfsm]
+   \node[state]            (1) [above of=0] {$1$};
+   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
+   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
+   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
+%
+   \path  (start) edge node {} (1)
+            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
+            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
+            ;
+       \end{tikzpicture}
+$
+
+whereas
+
+$ \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\varepsilon$} (4)
+                   ;
+       \end{tikzpicture}
+$
+is ``equivalent'' to
+$
+     \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
+                   ;
+       \end{tikzpicture}
+$
+
 
 %We define $\noeps(M)$ as the CFSM obtained out of $M$ 
 %using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
