@@ -244,6 +244,54 @@ Such a communicating system does enjoy all communication properties we considere
 
 The partial gateways have to act as forwarders only for what concerns the interface parts,
 whereas non interface parts describe what is still in charge of the participants $\hh_1$ and $\hh_2$.
+A partial gateway is hence built out of an interface machine and its counterpart in the
+communication policy we intend to use for the composition. 
+ \vspace{-1mm} In particular, out of the interface transition
+\raisebox{2mm}
+{\begin{tikzpicture}[mycfsm]
+      % 
+      \node[state] (zero) [yshift=-4mm] {$0$};
+      \node[state] (one) [right of=zero, xshift=-2mm]   {$1$};
+      % 
+      \path
+      (zero) edge[bend left=15, line width=0.5mm] node[above] {$\aout[h_2][s][][sbs]$} (one)
+      ;
+ \end{tikzpicture}
+ } 
+ of $\hh_2$ in (\ref{eq:1}) and of the transition
+ \raisebox{2mm}
+{\begin{tikzpicture}[mycfsm]
+      % 
+      \node[state] (zero) [yshift=-4mm] {$0$};
+      \node[state] (one) [right of=zero, xshift=-2mm]   {$1$};
+      % 
+      \path
+      (zero) edge[bend left=15] node[above] {$\ain[\hh_2][\hh_2][][sbs]$} (one)
+      ;
+ \end{tikzpicture}
+ }  
+ of $\hh_2$ in the connection policy (\ref{eq:cp1}) , we introduce 
+  \raisebox{2mm}
+{\begin{tikzpicture}[mycfsm]
+      % 
+      \node[state] (zero) [yshift=-4mm] {$0$};
+      \node[state] (one) [right of=zero, xshift=-2mm, yshift=2mm]   {$\widehat 1$};
+       \node[state] (two) [right of=one, xshift=-2mm, yshift=-2mm,]   {$1$};
+      % 
+      \path
+      (zero) edge[bend left=10] node[above] {$\ain[h_1][h_2][][sbs]$} (one)
+      (one) edge[bend left=10] node[above] {$\aout[\hh_2][s][][sbs]$} (two)
+      ;
+ \end{tikzpicture}
+ }
+in the resulting partial gateway, where the $\widehat 1$ stated is specifically introduced 
+by the partial gateway construction.
+Recall that, in order to enforce conservativity, gateways are given the same names as the
+corresponding interfaces.
+The above discussion applies, dually, for edges in the interface $\hh_1$ labelled with output actions.
+Non interface transitions are left unchanged by the partial gateway construction.
+
+
 
 So, the resulting composed system is as follows.
 
@@ -290,13 +338,15 @@ $$
     \node[state]            (1) [right of=1hat] {$1$};
    \node[state]           (2hat) [right of=0,xshift=-6mm] {$\widehat 2$};
     \node[state]           (2) [right of=2hat] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (3hat) [below right of=0] {$\widehat 3$};
+   \node[state]           (3) [ right of=3hat] {$3$};
    \node[state]           (4) [right of=2] {$4$};
    %
    \path  (start) edge node {} (0) 
             (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1hat)
                    edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2hat)
-                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3hat)
+            (3hat)  edge                      node [below]  {$\hh_2\tts!\msg[mus]$} (3)
             (1hat)  edge                      node [above]  {$\hh_2\tts!\msg[sbs]$} (1)
             (2hat)  edge                      node [above]  {$\hh_2\tts!\msg[hum]$} (2)
             (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
@@ -820,8 +870,14 @@ As done in the previous examples, we use the notation $q\lts{l}q'$ for $(q,l,q',
       ;
  \end{tikzpicture}
  } 
-\!\! q'$ for $(q,l,q',\intf)$.
+\!\! q'$ for $(q,l,q',\intf)$.\\
 
+We describe now step-by step the composition via partial gateways that we have
+roughly presented above.
+We use our running example to describe the various steps. 
+For each of them we provide the formal definitions.
+
+\paragraph{Indentifying the interface transitions in the interface participants.}
 Composition via partial gateways consists, first of all, in identifying two interface participants
 and then properly choosing some transitions in order to get a CFSM with
 interface transitions. Given a CFSM $M$, an interface decoration is one of the possible
@@ -834,6 +890,7 @@ as the following set of CFSMs with interface transitions:
 $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta}) \mid (Q,q_0,\textit{Act},\bm{\delta}) \text{ is a CFSM$^\mathsf{it}$ with } \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
 \end{definition}
 
+\paragraph{Extract the intended interface out of a choosen decoration.}
 Given a CFSM with interface transitions, say $\hh_2$ in (\ref{eq:1}), these transitions identifies the behaviour of the external system intended for the composition.
 Such a behaviour should be the one described in terms of a particular CFSM, like
 \begin{equation}
@@ -855,6 +912,16 @@ Such a behaviour should be the one described in terms of a particular CFSM, like
        \end{tikzpicture}
 \end{equation}
 
+In order to formally get that, we use the following function.
+
+\begin{definition}[$\varepsilon(M)$]
+\label{def:epsfun}
+\item
+Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
+$\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
+\centerline{
+$\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
+\end{definition}
 In this simple case such a behaviour does correspond to the proper CFSM
 
 \begin{equation}
@@ -883,26 +950,59 @@ can be obtained by simply making all the $\varepsilon$-transition ``collapse''.
 Such transformation is a much simpler algorithm then the usual algorithm for 
 the elimination of $\varepsilon$-transitions in $\varepsilon$-FSA, due to the strong
 restriction we have on $\varepsilon$-transitions.
+In general, the CFSM describing the behaviour of the $\varepsilon$-FSA could be also 
+different from the one obtained with the mentioned algorithm, as far as  it is possible
+to get a precise correspondence among the non-$\varepsilon$ transition in the 
+$\varepsilon$-FSA and the transitions of the CFSM.
+We hence introduce the following definition where we focus not on the particula algorithm
+but rather on the properties it has to satisfy.
+This definition will also prove more adapt when we shall deal with partial fusion (see XYZ).
 
+\begin{definition}[$\noeps$-versions]
+\label{def:noepsver}
+Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA
+and $M'=(Q',q'_0,\textit{Act},\delta)$ be a CFSM.
+We say that $M'$ is a {\em $\noeps$-version of $M$ via $f$} ($\noeps_f$-version of $M$ for short)
+whenever 
+\begin{enumerate}[a)]
+\item
+$M'$ is deterministic;
+\item 
+$f:Q\to Q'$ is onto and such that $f(p_0) = f(p'_0)$;
+\item
+$p_1\lts{\epsilon}p_2 \quad\text{implies}\quad f(p_1)=f(p_2)$; 
+\item
+$p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$; 
+\item
+\label{def:noepsver-e}
+$ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
+\end{enumerate}
+\end{definition}
+(((i.e. $f$ is a weak bisimulation?)))
 
+\begin{remark}
+\label{rem:neccond}
+{\em
+Notice that without the condition\\
+\centerline{
+$(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$}
+in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
+}
+\end{remark}
 
+\begin{example}
+((*Example of how (\ref{eq:cfsmnoeps}) is a $\noeps$-version of (\ref{eq:epsrunex})*))
+\end{example}
 
+\paragraph{Describing the forwarding behaviour for the connection policy.}
+Out of a $\noeps$-version $M'$ of an $\varepsilon$-FSA, 
+we can get an element for the intended connection policy by ``dualising'' the actions labelling the transitions and replacing the senders (of inputs) and receivers (of outputs) with
+the names of the other participants of the connection policy. (Recall that in the binary case
+such a replacement is uniquely determined.) 
+The role of the set of the names of the other participants in a connection policy
+is played by the set $\roles$ in the following definition of $\roles$-duality.
 
-which, in turn is used to identify one of the CFSMs of the connection policy (uniquely identified
-for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
-for our running example.
-
-By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
-$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
-are the argument to buil the partial gateway intended to be substituted for $\hh_2$ in the composition.
-Namely $\hh_2$ in (\ref{eq:comprunex}).
-The construction of partial gateways is formally defined as follows.
-
-  
-
-
-for  our example.\\
-The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.    
+ 
 
 %\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
 %Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
@@ -923,13 +1023,13 @@ The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.
 
 \begin{definition}[$\roles$-duality]\label{def:PD}%\hfill\\
 \begin{enumerate}[i)]
+%\item
+%Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
+%$\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
+%\centerline{
+%$\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
 \item
-Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges. We define
-$\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$   where\\
-\centerline{
-$\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
-\item
-Let $l,l'\in\textit{Act}\cup\Set{\varepsilon}$ and  let $\roles\neq\emptyset$ be a set of participants.
+Let $l,l'\in\textit{Act}$ and  let $\roles\neq\emptyset$ be a set of participants.
 We say that $l'$ is {\em a $\roles$-dual of $l$} whenever 
 \begin{itemize}
 \item[-]
@@ -938,55 +1038,63 @@ $l = \ttr\ttq?\msg[m] \implies l'= \ttq\tts!\msg[m] \text{ with } \tts\in\roles$
 $l = \ttq\ttr!\msg[m] \implies l'= \tts\ttq?\msg[m] \text{ with } \tts\in\roles$, $\tts\neq\ttq$.
 \end{itemize}
 \item
-Let $\delta,\delta'\in Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ and  let $\roles$ be a set of participants.
+Let $\delta,\delta'\in Q\times\textit{Act}\times Q$ and  let $\roles$ be a set of participants.
 We say that $\delta'$ is {\em a $\roles$-dual of $\delta$} whenever is a minimal relation over
  $Q\times\textit{Act}\cup\Set{\varepsilon}\times Q$ such that\\
 \centerline{
 $q\lts{l}q'\in\delta \implies q\lts{l'}q'\in\delta'$, where $l'$ is a $\roles$-dual of $l$.
 }
 \item
-Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ and $M'=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$ be two $\varepsilon$-FSA and  let $\roles$ be a set of participants.
+Let $M=(Q,q_0,\textit{Act},\delta)$ and $M'=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta')$ be two CFSM and  let $\roles$ be a set of participants.
 We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\roles$-dual of $\delta$.
 \end{enumerate}
 \end{definition}
 
-\begin{definition}
-\label{def:noepsver}
-%\begin{enumerate}
-%\item
-%We define the set of the {\em duals of $\delta'$ with respect to} $\roles$  as the following set of $\epsilon$-FSA
-%$$\bm{\delta}\text{-}\duals_{\,\roles}(M) = 
-%\Set{(Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta'') \mid q\lts{l'}q'\in\delta'' \text{ if } }$$
-%where $\bm{\varepsilon}(M) = (Q,q_0,\textit{Act}\cup\Set{\epsilon},\delta')$.
-%\item
-Let $M=(Q,q_0,\textit{Act}\cup\Set{\varepsilon},\delta)$ be a $\varepsilon$-FSA
-and $M'=(Q',q'_0,\textit{Act},\delta)$ be a CFSM.
-We say that $M'$ is a {\em $\noeps$-version of $M$ via $f$} ($\noeps_f$-version of $M$ for short)
-whenever 
-\begin{enumerate}[a)]
-\item
-$M'$ is deterministic;
-\item 
-$f:Q\to Q'$ is onto and such that $f(p_0) = f(p'_0)$;
-\item
-$p_1\lts{\epsilon}p_2 \quad\text{implies}\quad f(p_1)=f(p_2)$; 
-\item
-$p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$; 
-\item
-\label{def:noepsver-e}
-$ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
-\end{enumerate}
-(((i.e. $f$ is a weak bisimulation?)))
+We have that $\hh_2$ in (\ref{eq:cp1}) is a $\Set{\hh_1}$-dual of (\ref{eq:cfsmnoeps}) (actually the
+unique $\Set{\hh_1}$-dual since we are in a binary setting).
 
-\begin{remark}
-\label{rem:neccond}
-{\em
-Notice that without the condition\\
-\centerline{
-$(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$}
-in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
-}
-\end{remark}
+\paragraph{Build the partial gateway.}
+Towards the formal definition of partial gateway, 
+we define now the relation of $\roles$-complementarity in terms of the definitions of interface decoration,
+$\varepsilon(\_)$, $\noeps$-version and $\roles$-duality.
+
+
+ \begin{definition}[$\roles$-complementarity]
+\label{def:Pcomplementarity}
+Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
+$M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  
+be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
+Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
+We say that
+$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
+$$M^1_\hh \text{ is a $\roles$-dual of a $\noeps_{\!f}$-version of } \varepsilon(M'_\hh)$$
+where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
+We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
+\end{definition}
+
+\noindent
+We write simply $M^1_\hh \embd M^2_\hh$ whenever
+$\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
+
+A partial gateway is 
+
+-- (\ref{eq:cfsmnoeps}) in our running example --
+
+which, in turn is used to identify one of the CFSMs of the connection policy (uniquely identified
+for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
+for our running example.
+
+By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
+$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
+are the argument to buil the partial gateway intended to be substituted for $\hh_2$ in the composition.
+Namely $\hh_2$ in (\ref{eq:comprunex}).
+The construction of partial gateways is formally defined as follows.
+
+  
+
+
+for  our example.\\
+The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.   
 
 $
      \begin{tikzpicture}[mycfsm]
@@ -1064,29 +1172,11 @@ $
 %%- one first calculate the $\varepsilon$-closure for each state, which is the set of all states reachable from a given state using only $\varepsilon$-transitions;\\ 
 %%- then, for each element of $\textit{Act}$, define new transitions for each state by considering the $\varepsilon$-closures of the states reachable via the original transition function.
 %\end{enumerate}
-\end{definition}
+
 %Notice that the states of $\I(M)$ and $M$ are the same.
 
 
 
-\begin{definition}[$\roles$-complementarity]
-\label{def:Pcomplementarity}
-Let $M^1_\hh = (Q, q_0, \textit{Act}, \delta^1)$ and 
-$M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$  
-be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
-Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
-We say that
-$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
-$$M^1_\hh \text{ is a $\noeps_{\!f}$-version of } M''_\hh$$
-where $M''_\hh$ is a $\roles$-dual of $\varepsilon(M'_\hh)$ where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
-We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
-\end{definition}
-
-By definition of CFSM with interface edges it follows that $\varepsilon(M'_\hh)$ in the above definition
-does not contain any $\varepsilon$-clique. [*make a lemma*].
-
-We write simply $\emb{}{\bm{}}{M^1_\hh}{M^2_\hh}$ whenever
-$\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
 
 
 
