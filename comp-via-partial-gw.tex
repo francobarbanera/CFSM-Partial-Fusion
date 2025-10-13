@@ -6,7 +6,8 @@ Running example
 
 Let us consider the two following systems $S_1$ and $S_2$ with interfaces, respectively,
 $\hh_1$ and $\hh_2$.
-$$
+\begin{equation}
+\label{eq:runex}
 \begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\hspace{-4mm}}c}
     \begin{array}{cc}
       \begin{tikzpicture}[mycfsm]
@@ -79,7 +80,7 @@ $$
        \end{tikzpicture}
        }
 \end{array}
-$$
+\end{equation}
 
 $S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
 
@@ -208,7 +209,8 @@ The connection policy has now to be formed by CFSM describing the interactions
 between the ``interface'' parts of $\hh_1$ and $\hh_2$, which in our running examples 
 turn out to be simply as follows.
 
-$$
+\begin{equation}
+\label{eq:cp1}
 \dbox{
      \begin{tikzpicture}[mycfsm]
    \node[state]            (1) [above of=0] {$1$};
@@ -236,7 +238,7 @@ $$
                    ;
        \end{tikzpicture}
 }
-$$
+\end{equation}
 
 Such a communicating system does enjoy all communication properties we considered.
 
@@ -445,7 +447,8 @@ This communicating system is orphan-message free.
  The composition obtaining by building partial gateways of such connection policy is then the 
  following communication system.
 
-$$
+\begin{equation}
+\label{eq:comprunex}
 \begin{array}{cc@{\hspace{-4mm}}c}
     \begin{array}{cc}
       \begin{tikzpicture}[mycfsm]
@@ -519,7 +522,7 @@ $$
        \end{tikzpicture}
        }
 \end{array}
-$$
+\end{equation}
 
 Scuh communicating system, however, is not orphan-message free.
 In fact the following configuration, made by final states only, is reachable:\\
@@ -779,7 +782,8 @@ Problems also arise when a choice made by an interface is in conflict with what 
 interface does. 
 
 We hence restrict outgoing interface transitions always to be single. (Claim: non necessary for deadlock-freedom).
-This restriction is formalised in the following definition.
+This restriction is formalised in the following definition, where $\intf$ is intended to identify
+interface transitions, whereas $\nintf$ the non interface transitions.
 
 \begin{definition}[CFSM with interface transitions]\label{def:cfsmie}
 \label{def:cfsmintftrans}
@@ -830,6 +834,69 @@ as the following set of CFSMs with interface transitions:
 $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta}) \mid (Q,q_0,\textit{Act},\bm{\delta}) \text{ is a CFSM$^\mathsf{it}$ with } \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
 \end{definition}
 
+Given a CFSM with interface transitions, say $\hh_2$ in (\ref{eq:1}), these transitions identifies the behaviour of the external system intended for the composition.
+Such a behaviour should be the one described in terms of a particular CFSM, like
+\begin{equation}
+\label{eq:epsrunex}
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\varepsilon$} (4)
+                   ;
+       \end{tikzpicture}
+\end{equation}
+
+In this simple case such a behaviour does correspond to the proper CFSM
+
+$$
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   %\node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            %(2)  edge                           node [above]  {$\varepsilon$} (4)
+                   ;
+       \end{tikzpicture}
+$$
+
+Since (\ref{eq:epsrunex}) above
+has been obtained out of a CFSM with interface transitions -- where, by definition, outgoing
+transitions are single whenever they are non-interface --   
+
+
+
+
+which, in turn is used to identify one of the CFSMs of the connection policy (uniquely identified
+for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
+for our running example.
+
+By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
+$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
+are the argument to buil the partial gateway intended to be substituted for $\hh_2$ in the composition.
+Namely $\hh_2$ in (\ref{eq:comprunex}).
+The construction of partial gateways is formally defined as follows.
+
+  
+
+
+for  our example.\\
+The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.    
 
 %\begin{definition}[$\I(M)$]\label{def:IM}%\hfill\\
 %Let $M=(Q,q_0,\textit{Act},\bm{\delta})$ be a CFSM with interface edges
