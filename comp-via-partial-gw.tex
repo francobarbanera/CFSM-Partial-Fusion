@@ -1084,16 +1084,67 @@ which, in turn is used to identify one of the CFSMs of the connection policy (un
 for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
 for our running example.
 
-By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
-$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
-are the argument to buil the partial gateway intended to be substituted for $\hh_2$ in the composition.
-Namely $\hh_2$ in (\ref{eq:comprunex}).
+
 The construction of partial gateways is formally defined as follows.
 
+\begin{definition}[Partial Gateway]
+\label{def:gatewaycs} 
+\label{def:gatewaymc}
+Let $M^1_{\hh}= (Q_1, q^1_0,\textit{Act},\delta_1)$ and 
+$M^2_{\hh} = (Q_2, {q^2_0},\textit{Act},\delta^2)$ such that \linebreak
+$\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$.
+The {\em partial gateway} $M^1_{\hh}{\gts} M^2_{\hh}$ obtained out of  $M^1_\HH$ and $M^2_\hh$  is the CFSM with name $\hh$ defined by  
+$$
+M^1_{\hh}{\gts} M^2_{\hh} = (Q^2\cup\widehat Q, q^2_0, \textit{Act},\widehat{\delta})
+$$
+\begin{tabular}{l@{\hspace{4pt}}c@{\hspace{2mm}}l}
+where &  $\bullet$  & $\widehat{Q} =\bigcup_{q\in Q}\Set{q^{(q, l,q')} \mid (q, l,q',\intf)\in\bm{\delta}}$; \\[1mm]
+          &  $\bullet$  & $\widehat\delta = \Set{(q,{\ttr}\HH?\msg[a],\widehat q), (\widehat q,\HH\tts!\msg[a],q') \mid  (q,\HH\tts!\msg[a],q',\intf)\in\bm{\delta}, (f(q),\ttr\hh?\msg[a],\ {f(q')})\in\delta^1,\ \widehat q=q^{(q,\hh\tts!\msg[a],q')}}\, \cup$ \\
+                &    & ${\hspace{20pt}}\Set{(q,\tts\HH?\msg[a],\widehat q), (\widehat q,\HH {\ttr}!\msg[a],q') \mid  (q,\tts\HH?\msg[a],q',\intf)\in\bm{\delta},\ (q,\hh\ttr!\msg[a],{q'})\in\delta^1,\ \widehat q=q^{(q,\tts\HH?\msg[a],q')}}\, \cup$ \\
+                 &    & ${\hspace{20pt}}\Set{(q,\elle, q') \mid (q,\elle, q',\nintf) \in\bm{\delta}}.$
+ \end{tabular} 
+ 
+\smallskip
+\noindent
+We refer to $\widehat\delta$ as $\widehat\delta_{\HH}$ whenever $\HH$ is not clear from the
+context; similarly for $\widehat Q$.
+\end{definition}
   
+By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
+$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
+are the argument to build the partial gateway intended to be substituted for $\hh_2$ in the composition.
+Namely $\hh_2$ in (\ref{eq:comprunex}).
+
+ \begin{definition}[Composability]
+ \label{def:composability}
+Let $S_1$ and $S_2$  be two communicating systems such that $S_i=(M_{\ttx})_{\ttx\in\roles_i}$ ($i=1,2$). 
+%Moreover, let $\hh_1$ and $\hh_2$ be two participants of, respectively,  $S_1$ and $S_2$
+%and appointed as interfaces.
+We say that $S_1$ and $S_2$ are {\em composable} whenever $\roles_1\cap\roles_2=\emptyset$.
+\end{definition} 
 
 
-for  our example.\\
+\begin{definition}[PaI binary composition of communicating systems via partial gateways]
+\label{def:comppgw} 
+Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to $H=\Set{\hh_i}_{i\in I}$ 
+and let  $\cs=(M_{\ttp})_{\ttp\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$  % $\cs=(M_{\kk_i})_{i\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$
+ be an orchestrated connection policy for $H$. 
+The {\em orchestrated multicomposition of $\Set{S_i}_{i\in I}$ with respect to $\cs$} (multicomposition for short)
+ is the communicating system 
+$$\MC(\Set{S_i}_{i\in I}, \cs) =  (M'_\ttp)_{\ttp\in(\bigcup_{i\in I}\roles_i)\cup\rolescsint}$$
+where\\
+${\qquad\qquad}M'_\ttp = \left\{ \begin{array}{ll}
+                          M_\ttp 
+                                    &  \text{ if } \ttp\not\in\Set{\hh_i}_{i\in I}\cup \rolescsint  
+                          \\[2mm]
+                           \widetilde{\widetilde{M_\ttp}}  %M_\ttp 
+                                    &  \text{ if } \ttp\in \rolescsint %\not\in\Set{\kk_i}_{i\in I} 
+                          \\[2mm]
+                          M_{\hh_i}{\gts\,}M_{\kk_i} & \text{ if } \ttp=\hh_i \text{ with $i\in I$}
+                           \end{array}
+                 \right.$
+\end{definition}
+
 The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.   
 
 $
