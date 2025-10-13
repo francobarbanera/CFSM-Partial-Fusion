@@ -857,7 +857,8 @@ Such a behaviour should be the one described in terms of a particular CFSM, like
 
 In this simple case such a behaviour does correspond to the proper CFSM
 
-$$
+\begin{equation}
+\label{eq:cfsmnoeps}
 \begin{tikzpicture}[mycfsm]
   \node[state]           (0)              {$0$};
    \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
@@ -873,11 +874,16 @@ $$
             %(2)  edge                           node [above]  {$\varepsilon$} (4)
                    ;
        \end{tikzpicture}
-$$
+\end{equation}
 
 Since (\ref{eq:epsrunex}) above
 has been obtained out of a CFSM with interface transitions -- where, by definition, outgoing
-transitions are single whenever they are non-interface --   
+transitions are single whenever they are non-interface --  the CFSM  (\ref{eq:cfsmnoeps})
+can be obtained by simply making all the $\varepsilon$-transition ``collapse''.
+Such transformation is a much simpler algorithm then the usual algorithm for 
+the elimination of $\varepsilon$-transitions in $\varepsilon$-FSA, due to the strong
+restriction we have on $\varepsilon$-transitions.
+
 
 
 
