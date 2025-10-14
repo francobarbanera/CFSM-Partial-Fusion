@@ -12,7 +12,7 @@ In the simple example sketched in \cref{fig:twointerfaces}
  sending/receiving messages\footnote{Such abstract diagrammatic notation not only facilitates  
  discussion of the main ideas underlying PaI composition in a quite general  and formalism-independent way.}
    -- system $S_1$ possesses a participant 
- $\hh_1$ which can receive messages $\msg[sbs]$ and $\msg[hum]$ from some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and $\msg[hum]$ to some other participant of $S_2$, say $\tts$. 
+ $\hh_1$ which can receive messages $\msg[sbs]$ and $\msg[inf]$ from some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and $\msg[inf]$ to some other participant of $S_2$, say $\tts$. 
 For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, respectively, inside the dashed boxes representing systems  $S_1$ and $S_2$.
  \begin{figure}[h]
     \centering{\small
@@ -20,21 +20,22 @@ For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, res
 \raisebox{12mm}{\text{\large $S_1$}\,\,}
     \dbox{
 \hspace{14mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
-        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \node [state] (h-a) [above of = square-h, draw=none] {};
-        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
         \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
-        \draw [-stealth] (h-c) --  node[above] {$\msg[hum]$} (square-h);
+        \draw [stealth-] (h-c) --  node[above] {$\msg[inf]$} (square-h);
  \end{tikzpicture}
             }
 \hspace{12mm}
      \dbox{
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
-        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh'$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
         \node [state] (k-b) [above of = square-k, draw=none] {};
-        \node [state] (k-a) [right of = square-k, draw=none] {};
-        \draw [stealth-] (k-b) --  node[right] {$\msg[hum]$} (square-k);
+        \node [state] (k-a) [right of = square-k, draw=none, xshift=2mm] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
         \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
+        \draw  [stealth-] (0.4,-0.2)   --  node [below] {$\msg[inf]$} (1.2,-0.2);
  \end{tikzpicture}
              }
  \raisebox{12mm}{\text{\large $\,\,S_2$}}
@@ -46,15 +47,112 @@ For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, res
 \noindent
 %\brc Perhaps show also r and r' and s in the figure?
 %\erc
-$S_1$ could be a domotic system where the component $\hh_1$ drives the diffusioneither of a certain substance or just humidity upon requests from $\ttr$ and $\ttr'$.
+$S_1$ could be a domotic system where the component $\hh_1$ drives the diffusioneither of a certain substance or just paridity upon requests from $\ttr$ and $\ttr'$.
 System $S_2$, instead, could be a system for aromas diffusion where, upon $\hh_2$'s request
 (possibly driven by some sensors), 
 the component $\tts$ coordinates the diffusion of some aroma or of humidity.  
  Looking at $\hh_2$ as an interface makes it the representation of an outer system with which
- $S_1$ can interact by sending messages $\msg[sbs]$ and $\msg[hum]$. S
+ $S_1$ can interact by sending messages $\msg[sbs]$ and $\msg[inf]$. S
  imilarly, we can look at $\hh_2$ as the
  representation of an outer system with which
- $S_2$ can interact by receiving from it messages $\msg[sbs]$ and $\msg[hum]$.
+ $S_2$ can interact by receiving from it messages $\msg[sbs]$ and $\msg[inf]$.
+ 
+ To get a more conservative composition, in~\cite{BdLH19} $\hh_1$ and $\hh_2$ are
+replaced by forwarders (that we dub ``gateways'') preserving the very same names.
+The gateway for $\hh$ now forwards to the gateway for $\hh_2$ the $\msg[req]$ received from either 
+$\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depicted in \cref{fig:bincomp}.  
+\begin{figure}[h]
+    \centering{\small
+    $
+\begin{array}{l}
+\text{\large $S_1$}\!\mathtt{comp}\text{\large $S_2$}\\[22mm]
+\end{array}
+ \dbox{ \hspace{28mm}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+        \node [state] (k-a) [right of = square-k, draw=none,xshift=2mm] {};
+         \node[draw=none,fill=none] (phantom) [above = 12mm  of square-h]{};
+         \node[draw=none,fill=none] (phantom2) [left = 10mm  of square-h]{};
+        \draw [-stealth] (square-k) --  node [above]{$\msg[sbs]$} (k-a);
+        \draw [stealth-] (phantom2) --  node [above]{$\msg[inf]$} (square-h);
+         %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying sbs inside h 
+        \draw (-0.4,0)[dotted,thick]  --  (0.4,-0.2); % carrying par inside h 
+        \draw [-stealth] (0.4,0)  --  (1.6,0); % carrying sbs from h1 to h2
+        \draw [stealth-] (0.4,-0.2)  --  (1.6,-0.2); % carrying inf from h1 to h2
+        \draw (1.6,-0.2) [dotted,thick]  --  (2.4,-0.2); % carrying inf inside h2
+        \draw  [stealth-] (2.4,-0.2)   --  node [below] {$\msg[inf]$} (3.25,-0.2); % carrying inf outside h2
+        \draw (1.6,0)[dotted,thick]  --  (2.4,0); % carrying sbs inside h2
+ \end{tikzpicture}
+ \hspace{4mm}
+        }
+ $
+ \caption{\label{fig:bincomp} The PaI idea for binary composition via gateways}
+ }
+\end{figure}
+
+ \begin{figure}[h]
+    \centering{\small
+    $
+\raisebox{10mm}{\text{\large $S_1$}\,\,}
+    \dbox{
+\hspace{10mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
+        \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
+        \draw [-stealth] (h-c) --  node[above] {$\msg[inf]$} (square-h);
+ \end{tikzpicture}
+            }
+\hspace{12mm}
+     \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
+        \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
+ \end{tikzpicture} \hspace{24mm}
+             }
+ \raisebox{12mm}{\text{\large $\,\,S_2$}}
+ $\vspace{-2mm}
+ \caption{\label{fig:twoipnterfaces} Two interfaces participants belonging to, respectively, systems $S_1$ and $S_2$.}
+ }
+\end{figure}
+
+
+\begin{figure}[h]
+    \centering{\small
+    $
+\begin{array}{l}
+\text{\large $S_1$}\!\mathtt{comp}\text{\large $S_2$}\\[22mm]
+\end{array}
+ \dbox{ \hspace{28mm}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+        \node [state] (k-a) [right of = square-k, draw=none,xshift=2mm] {};
+         \node[draw=none,fill=none] (phantom) [above = 12mm  of square-h]{};
+         \node[draw=none,fill=none] (phantom2) [left = 10mm  of square-h]{};
+        \draw [-stealth] (square-k) --  node [above]{$\msg[sbs]$} (k-a);
+        \draw [stealth-] (phantom2) --  node [above]{$\msg[inf]$} (square-h);
+         %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying sbs inside h 
+        \draw [-stealth] (0.4,0)  --  (1.6,0); % carrying sbs from h1 to h2
+        \draw  [-stealth] (2.4,-0.2)   --  node [below] {$\msg[par]$} (3.25,-0.2); % carrying par outside h2
+        \draw (1.6,0)[dotted,thick]  --  (2.4,0); % carrying sbs inside h2
+ \end{tikzpicture}
+ \hspace{4mm}
+        }
+ $
+ \caption{\label{fig:binpcomp} Pai binary composition via partial gateways}
+ }
+\end{figure}
+
  
  =====================
  

@@ -1066,7 +1066,8 @@ $M^2_\hh = (Q, q_0, \textit{Act}, \delta^2)$
 be two CFSMs with the same name $\hh$, and let $\roles$ be a set of participants.
 Moreover, let $\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$
 We say that
-$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
+$M^1_\hh$ is {\em $\roles$-complementary} with $M^2_\hh$ via $\bm{\delta}$ and $f$, 
+written $\emb{f}{\roles}{\bm{\delta}}{M^1_\hh}{M^2_\hh}$, whenever 
 $$M^1_\hh \text{ is a $\roles$-dual of a $\noeps_{\!f}$-version of } \varepsilon(M'_\hh)$$
 where $M'_\hh= (Q, q_0, \textit{Act}, \bm{\delta})\in\IDS(M^2_\hh)$.\\
 We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
@@ -1083,6 +1084,14 @@ A partial gateway is
 which, in turn is used to identify one of the CFSMs of the connection policy (uniquely identified
 for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
 for our running example.
+
+ \begin{definition}[Connection policy]\label{def:cp}
+ Let $S_i=(M^i_{\ttx})_{\ttx\in\roles_i}$ be two composable communicating systems such that $S_i=(M^i_{\ttx})_{\ttx\in\roles_i}$  with interfaces $\hh_i$ ($i=1,2$) . 
+ A {\em connection policy} for the set of interfaces $H=\Set{\hh_1,\hh_2}$ is a communicating system 
+ $$\cs = (M^\cs_\ttu)_{\ttu\in H}$$ 
+ such that,
+ for each $i\in\Set{1,2}$, for some $f_i$ and $\bm{\delta_i}$: \  $\emb{f_i}{H\setminus\Set{\hh_i}}{\bm{\delta_i}}{M^\cs_\hh}{M^i_\hh}$\\
+\end{definition}
 
 
 The construction of partial gateways is formally defined as follows.
@@ -1124,23 +1133,22 @@ We say that $S_1$ and $S_2$ are {\em composable} whenever $\roles_1\cap\roles_2=
 \end{definition} 
 
 
-\begin{definition}[PaI binary composition of communicating systems via partial gateways]
+\begin{definition}[PaI composition of communicating systems via partial gateways]
 \label{def:comppgw} 
-Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to $H=\Set{\hh_i}_{i\in I}$ 
-and let  $\cs=(M_{\ttp})_{\ttp\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$  % $\cs=(M_{\kk_i})_{i\in \Set{\kk_i}_{i\in I}\cup\rolescsint}$
- be an orchestrated connection policy for $H$. 
-The {\em orchestrated multicomposition of $\Set{S_i}_{i\in I}$ with respect to $\cs$} (multicomposition for short)
- is the communicating system 
-$$\MC(\Set{S_i}_{i\in I}, \cs) =  (M'_\ttp)_{\ttp\in(\bigcup_{i\in I}\roles_i)\cup\rolescsint}$$
+Let $S_1$ and $S_2$ be two composable communicating systems
+such that $S_i=(M^i_{\ttx})_{\ttx\in\roles_i}$ ($i\in\Set{1,2}$)
+and let  $\cs=(M^\cs_{\ttp})_{\ttp\in H}$  
+ be an orchestrated connection policy for the set of interfaces $H=\Set{1,2}$. 
+The {\em PaI composition of communicating systems via partial gateways  
+(partial composition for short) of 
+ $S_1$ and $S_2$ with respect to $\cs$} is the communicating system 
+$$\PC(\Set{S_i}_{i\in \Set{1,2}}, \cs) =  (M'_\ttp)_{\ttp\in\roles_1\cup\roles_2}$$
 where\\
 ${\qquad\qquad}M'_\ttp = \left\{ \begin{array}{ll}
-                          M_\ttp 
-                                    &  \text{ if } \ttp\not\in\Set{\hh_i}_{i\in I}\cup \rolescsint  
+                          M^i_\ttp 
+                                    &  \text{ if }\ \ttp\not\in H \text{ and } i\in\Set{1,2}
                           \\[2mm]
-                           \widetilde{\widetilde{M_\ttp}}  %M_\ttp 
-                                    &  \text{ if } \ttp\in \rolescsint %\not\in\Set{\kk_i}_{i\in I} 
-                          \\[2mm]
-                          M_{\hh_i}{\gts\,}M_{\kk_i} & \text{ if } \ttp=\hh_i \text{ with $i\in I$}
+                          M^\cs_{\hh_i}{\gts\,}M^i_{\hh_i} & \text{ if } \ttp=\hh_i \text{ and $i\in \Set{1,2}$}
                            \end{array}
                  \right.$
 \end{definition}
