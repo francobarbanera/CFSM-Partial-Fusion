@@ -14,6 +14,8 @@ In the simple example sketched in \cref{fig:twointerfaces}
    -- system $S_1$ possesses a participant 
  $\hh_1$ which can receive messages $\msg[sbs]$ and $\msg[inf]$ from some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and $\msg[inf]$ to some other participant of $S_2$, say $\tts$. 
 For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, respectively, inside the dashed boxes representing systems  $S_1$ and $S_2$.
+
+As in~\cref{fig:bincomp}, we begin by considering only static aspects, i.e. we abstract from dynamic issues like the logical order of the exchanged messages, whose representation depends, instead, on the chosen formalism (CFSM in the present paper).
  \begin{figure}[h]
     \centering{\small
     $
@@ -93,6 +95,297 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
  }
 \end{figure}
 
+This approach to composition easily scales up to general multiple composition. 
+
+Let us consider an example from~\cite{BDGY23} having four systems $S_1$,  $S_2$, $S_3$ and $S_4$.
+As shown in~\cref{fig:four-ips}, we have selected for each system one participant
+as an interface, named respectively $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$.
+ 
+%\begin{wrapfigure}{r}{0.45\textwidth}
+\begin{figure}[h]
+    %\vspace{-8mm}
+     \centering{\small
+    $
+    \begin{array}{@{\hspace{0mm}}c@{\hspace{-2mm}}}
+    \begin{array}{c@{\hspace{-2mm}}c}
+    \text{\large $S_1$}
+    &
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
+ \end{tikzpicture}
+ \end{array}
+ \hspace{4mm}
+\begin{array}{c}
+ \\
+ \\
+| \\
+| \\
+|\\
+|\\
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c@{\hspace{-2mm}}c}
+\begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [-stealth] (k-b) --  node {$\msg[b]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+ \end{tikzpicture}
+ &
+ \text{\large $S_2$} 
+ \end{array}
+ \\[12mm]
+\hspace{3mm}- - - -    \hspace{8mm}- - - - -  \\[-5mm]
+\begin{array}{@{\hspace{0mm}}c@{\hspace{0mm}}c}
+\\[4mm]
+\text{\large $S_3\hspace{-2mm}$} 
+&
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-v) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_3$};
+        \node [state] (v-b) [left of = square-v, draw=none] {};
+        \node [state] (v-a) [below of = square-v, draw=none] {};
+        \draw [-stealth] (v-a) --  node {$\msg[a]$} (square-v);
+        \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
+ \end{tikzpicture}
+ \end{array}
+ \hspace{4mm}
+\begin{array}{c}
+ \\[-8mm]
+| \\
+| \\
+| \\
+|
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c@{\hspace{-2mm}}}
+ \\[-6mm]
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-w) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_4$};
+        \node [state] (w-c) [right of = square-w, draw=none] {};
+        \node [state] (w-a) [below of = square-w, draw=none] {};
+        \node [state] (w-b) [above right of = square-w, draw=none] {};
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
+ \end{tikzpicture}
+ \hspace{-6mm}
+ \begin{array}{l}
+ \\[6mm]
+ \text{\large\ \ $S_4$}
+ \end{array} 
+ \end{array}
+ \\[-4mm]
+ \end{array}
+ $
+ }
+\caption{\label{fig:four-ips}
+Four systems with their respective interface participants}
+ \end{figure}
+% \vspace{-5mm}
+% \end{wrapfigure}
+
+For what concerns  our example of \cref{fig:four-ips},
+ one could decide that message $\msg[a]$ received by $\hh_1$ has 
+ to be forwarded
+ to $\hh_4$; the $\msg[a]$ received by $\hh_3$
+ to $\hh_2$; the $\msg[b]$ received by $\hh_2$ 
+ or by $\hh_4$ to $\hh_3$; 
+ the $\msg[c]$ received by $\hh_4$ to $\hh_1$.
+ Another possible choice %(see policy B  in Figure~\ref{fig:twocm})) 
+could be similar to the previous one but for the forwarding
+of the messages $\msg[a]$: the one received by $\HH_1$ could be forwarded now to $\hh_2$
+whereas the one received by $\hh_3$ could be forwarded to $\hh_4$. 
+ Such different ``choices of partners'' can be represented 
+ by the {\em connection models} $\cm_\mathrm{A}$ and $\cm_\mathrm{B}$ in \cref{fig:choicesAB} (we now avoid enclosing systems within dashed squares).
+  
+As previously mentioned, dotted names are used for ``virtual'' participants whose behaviours  represent 
+ the forwarding policies of their undotted counterparts.
+ 
+
+%%% CONNECTION MODELS
+ \begin{figure}[ht]
+    \centering{
+    \raisebox{15mm}{$\cm_\mathrm{A}$}
+    $\begin{array}{c@{\qquad\qquad\qquad\qquad\qquad}c}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\dot\hh_1$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {\large $\dot\hh_2$};
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {\large $\dot\hh_3$};
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {\large $\dot\hh_4$};
+        \draw[-stealth]  (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+        %
+        %
+        \draw [-stealth] (0.4,0)  -- node {$\msg[a]$}  (1.5,-1.5 ); % carryng a from h to w    
+         \draw [stealth-] (0,-0.4)  -- node {$\msg[c]$} (1.1,-1.9); % carryng c from w to h 
+        \draw [-stealth] (0.4,-1.9)  --  node {$\msg[a]$} (1.5,-0.4 ); % carrying a from v to k
+        \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
+ \end{tikzpicture}
+&
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\dot\HH_1$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {{\large $\dot\hh_2$}};
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {{\large $\dot\hh_3$}};
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {{\large $\dot\hh_4$}};
+        %
+        \draw [-stealth] (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+        %
+        %
+        \draw [-stealth] (0.4,-1.9) to[out=45,in=90] node {$\msg[a]$} (1.5,-1.5 ); % carryng a from v to w    
+         \draw [stealth-] (0,-0.4)  -- node {$\msg[c]$} (1.1,-1.9) ; % carryng c from w to h 
+        \draw [-stealth]  (0.4,0)  to[out=-45,in=-90]  node {$\msg[a]$} (1.5,-0.4 ); % carrying a from h to k
+        \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
+ \end{tikzpicture}
+ \raisebox{14.5mm}{$\,\,\,\,\cm_\mathrm{B}$}
+% \\
+% \begin{array}{c}
+%  \\[1mm]
+% (\text{Choice A})
+% \end{array}&
+% \begin{array}{c}
+% \\[1mm]
+% (\text{Choice B})
+% \end{array}
+ \end{array}
+ $
+ }
+ \caption{\label{fig:choicesAB} Two connection models for multicomposition.}\label{fig:twocm}
+ \end{figure}
+ 
+ \noindent
+ The  architecture  of the resulting composed systems, according to the connection models is
+represented  by the diagrams  in~\cref{fig:multiconnection},  where the names $\hh_1, \hh_2, \hh_3$
+and $\hh_4$ now represent gateways.
+\begin{figure}[h]%{c}{0.6\textwidth}
+\vspace{-4mm}
+    \centering{
+    $\begin{array}{c@{\quad\qquad}c}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {\large $\hh_2$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [-stealth] (k-b) --  node {$\msg[b]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {\large $\hh_3$};
+        \node [state] (v-b) [left of = square-v, draw=none] {};
+        \node [state] (v-a) [below of = square-v, draw=none] {};
+        \draw [-stealth] (v-a) --  node {$\msg[a]$} (square-v);
+        \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {\large $\hh_4$};
+        \node [state] (w-c) [right of = square-w, draw=none] {};
+        \node [state] (w-a) [below of = square-w, draw=none] {};
+        \node [state] (w-b) [above right of = square-w, draw=none] {};
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
+        %
+      %  \draw (square-h)  to[out=-90,in=90]   node {} (square-w);
+       % \draw (square-k) to[out=-90,in=90]  node {} (square-v);
+      %  \draw (square-h) to[out=0,in=180]  node {} (square-w);
+        \draw [-stealth] (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+      %  \draw (square-k) to[out=-135,in=45]  node {} (square-v);
+        %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying a inside h  
+        \draw (-0.4,0)[dotted,thick]  --  (0,-0.4); % carrying c inside h
+        %
+        \draw (1.5,0.4)[dotted,thick]  --  (1.1,0); % carrying b inside k
+        \draw (1.5,-0.4)[dotted,thick]  --  (1.9,0); % carrying a inside k
+        %
+        \draw (0.4,-1.9)[dotted,thick]  --  (0,-2.3); % carrying a inside v
+        \draw (0,-1.5)[dotted,thick]  --  (-0.4,-1.9); % carrying k's b inside v
+        \draw (0.4,-2.3)[dotted,thick]  --  (-0.4,-1.9); % carrying b inside v
+        %
+        \draw (1.5,-1.5)[dotted,thick]  --  (1.5,-2.3); % carrying a inside w
+        \draw (1.1,-1.9)[dotted,thick]  --  (1.9,-1.9); % carrying c inside w
+        \draw (1.1,-2.3)[dotted,thick]  to[out=30,in=260]  (1.9,-1.5); % carrying b inside w
+        %
+        %
+        \draw[-stealth]   (0.4,0)  -- node  {$\msg[a]$}   (1.5,-1.5 ); % carryng a from h to w    
+         \draw  [stealth-]  (0,-0.4)  --  node  {$\msg[c]$}  (1.1,-1.9); % carryng c from w to h 
+        \draw [-stealth]  (0.4,-1.9)  --   node  {$\msg[a]$} (1.5,-0.4 ); % carrying a from v to k
+        \draw [stealth-]  (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
+ \end{tikzpicture}
+& 
+\begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\HH$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {\large $\KK$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [-stealth] (k-b) --  node {$\msg[b]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+        \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {\large $\hh_3$};
+        \node [state] (v-b) [left of = square-v, draw=none] {};
+        \node [state] (v-a) [below of = square-v, draw=none] {};
+        \draw [-stealth] (v-a) --  node {$\msg[a]$} (square-v);
+        \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
+        \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {\large $\hh_4$};
+        \node [state] (w-c) [right of = square-w, draw=none] {};
+        \node [state] (w-a) [below of = square-w, draw=none] {};
+        \node [state] (w-b) [above right of = square-w, draw=none] {};
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
+        %
+        \draw [-stealth] (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+        %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying a inside h  
+        \draw (-0.4,0)[dotted,thick]  --  (0,-0.4); % carrying c inside h
+        %
+        \draw (1.5,0.4)[dotted,thick]  --  (1.1,0); % carrying b inside k
+        \draw (1.5,-0.4)[dotted,thick]  --  (1.9,0); % carrying a inside k
+        %
+        \draw (0.4,-1.9)[dotted,thick]  --  (0,-2.3); % carrying a inside v
+        \draw (0,-1.5)[dotted,thick]  --  (-0.4,-1.9); % carrying k's b inside v
+        \draw (0.4,-2.3)[dotted,thick]  --  (-0.4,-1.9); % carrying b inside v
+        %
+        \draw (1.5,-1.5)[dotted,thick]  --  (1.5,-2.3); % carrying a inside w
+        \draw (1.1,-1.9)[dotted,thick]  --  (1.9,-1.9); % carrying c inside w
+        \draw (1.1,-2.3)[dotted,thick]  to[out=30,in=260]  (1.9,-1.5); % carrying b inside w
+        %
+        %
+        \draw [-stealth]  (0.4,-1.9) to[out=45,in=90]  node [pos=0.6] {$\msg[a]$} (1.5,-1.5 ); % carryng a from v to w    
+         \draw [stealth-]  (0,-0.4)  --  node  {$\msg[c]$} (1.1,-1.9); % carryng c from w to h 
+        \draw [-stealth]  (0.4,0)  to[out=-45,in=-90]  node [pos=0.6]  {$\msg[a]$} (1.5,-0.4 ); % carrying a from h to k
+        \draw [stealth-]  (0,-1.5)  -- node  {$\msg[b]$}  (1.1,0); % carrying  b from k to v
+ \end{tikzpicture}\\[-4mm]
+ \text{\small (Using $\cm_\mathrm{A}$)}
+ &
+ \text{\small (Using $\cm_\mathrm{B}$)}
+ \end{array}$
+  }
+  \vspace{-1mm}
+  \caption{Static description of two PaI multicompositions via gateways}
+  \label{fig:multiconnection}
+ \end{figure}
+ Similarly to the binary case, the PaI multicomposition of the four
+ systems consists in fact in replacing the participants  $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$, chosen  as
+interfaces, by gateways whose uniform task is to forward messages.
+Unlike the binary case, however, in presence of more than two systems 
+the gateways are not uniquely determined.
+Moreover, taking into a specific connection model is not sufficient either.
+This can be illustrated by looking at message $\msg[b]$ and participant $\hh_3$.
+No matter whether we consider $\cm_\mathrm{A}$ or $\cm_\mathrm{B}$, it is
+not determined when the gateway for $\hh_3$ will accept $\msg[b]$ 
+from $\hh_2$ and when from $\hh_4$.
+For instance,  
+a message $\msg[b]$ from $\hh_4$ could be accepted by $\hh_3$ only after two $\msg[b]$'s are received from $\hh_2$.
+A connection model is hence not enough to consent, in general, the identification of the gateways. 
+A behavioural (i.e. dynamic) description of how the messages have to be
+forwarded by the gateways is needed.
+
  \begin{figure}[h]
     \centering{\small
     $
@@ -103,7 +396,7 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
         \node [state] (h-a) [above of = square-h, draw=none] {};
         \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
         \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
-        \draw [-stealth] (h-c) --  node[above] {$\msg[inf]$} (square-h);
+        \draw [stealth-] (h-c) --  node[above] {$\msg[inf]$} (square-h);
  \end{tikzpicture}
             }
 \hspace{12mm}
@@ -112,7 +405,7 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
         \node [state] (k-b) [above of = square-k, draw=none] {};
         \node [state] (k-a) [right of = square-k, draw=none] {};
-        \draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
         \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
         \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
  \end{tikzpicture} \hspace{24mm}
@@ -153,6 +446,138 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
  }
 \end{figure}
 
+The composition via partial gateways scales up in the general multicomposition case.
+Partial connection policies are not uniquely determined by a choice of partners.
+
+[*Describe results*]
+
+In the binary case the connection policy for \cref{fig:twoipnterfaces} is uniquely determined, and
+abstracting from choices and dynamic aspects can be represented by the following 
+system with two participants.
+
+\begin{figure}[h]
+    \centering{\small
+    $
+\begin{array}{l}
+\text{$\cs$}\\[12mm]
+\end{array}
+ \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+         %
+        \draw [-stealth] (0.4,0)  --  node [above] {$\msg[sbs]$} (1.6,0); % carrying sbs from h1 to h2 h2
+ \end{tikzpicture}
+        }
+ $
+ \caption{\label{fig:pcp} A connection policy for composing the systems in \cref{fig:twoipnterfaces}}
+ }
+\end{figure}
+
+The partial gateways of \cref{fig:binpcomp} can be built out of  $\hh_1$ and $\hh_2$ in 
+\cref{fig:twoipnterfaces} and the connection policy $\cs$ in \cref{fig:pcp}.
+
+As a matter of fact, the system of \label{fig:binpcomp} can be obtained by 
+means of two different composition of a restricted kind (fusion).
+
+ \begin{figure}[h]
+    \centering{\small
+    $
+\raisebox{10mm}{\text{\large $S_1$}\,\,}
+    \dbox{
+\hspace{10mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
+        \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
+        \draw [stealth-] (h-c) --  node[above] {$\msg[inf]$} (square-h);
+ \end{tikzpicture}
+            }
+\hspace{12mm}
+ \begin{array}{l}
+\text{$\cs$}\\[12mm]
+\end{array}
+ \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+         %
+        \draw [-stealth] (0.4,0)  --  node [above] {$\msg[sbs]$} (1.6,0); % carrying sbs from h1 to h2 h2
+ \end{tikzpicture}
+        }
+ $\vspace{-2mm}
+ \caption{\label{fig:twoipnterfaces} Two interfaces participants belonging to, respectively, systems $S_1$ and $S_2$.}
+ }
+\end{figure}
+
+\begin{figure}[h]
+    \centering{\small
+    $
+\begin{array}{l}
+\text{\large $S_1$}\!\mathtt{fused}\text{$\cs$}\\[22mm]
+\end{array}
+ \dbox{ \hspace{28mm}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+         \node[draw=none,fill=none] (phantom) [above = 12mm  of square-h]{};
+         \node[draw=none,fill=none] (phantom2) [left = 10mm  of square-h]{};
+        \draw [stealth-] (phantom2) --  node [above]{$\msg[inf]$} (square-h);
+         %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying sbs inside h 
+        \draw [-stealth] (0.4,0)  -- node [above]{$\msg[sbs]$}  (1.6,0); % carrying sbs from h1 to h2
+ \end{tikzpicture}
+        }
+ $
+ \caption{\label{fig:binpcomp} Pai binary composition via partial gateways}
+ }
+\end{figure}
+
+\begin{figure}[h]
+    \centering{\small
+    $
+\begin{array}{l}
+\text{\large $S_1$}\!\mathtt{fused}\text{$\cs$}\\[22mm]
+\end{array}
+ \dbox{ \hspace{28mm}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h, xshift=5mm] {\large $\hh_2$};
+         \node[draw=none,fill=none] (phantom) [above = 12mm  of square-h]{};
+         \node[draw=none,fill=none] (phantom2) [left = 10mm  of square-h]{};
+        \draw [stealth-] (phantom2) --  node [above]{$\msg[inf]$} (square-h);
+         %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying sbs inside h 
+        \draw [-stealth] (0.4,0)  -- node [above]{$\msg[sbs]$}  (1.6,0); % carrying sbs from h1 to h2
+ \end{tikzpicture}
+        }
+        \hspace{12mm}
+     \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
+        \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
+ \end{tikzpicture} \hspace{24mm}
+             }
+ \raisebox{12mm}{\text{\large $\,\,S_2$}}
+ $
+ \caption{\label{fig:binpcomp} Two systems amenable for fusion composition via $\hh_2$}
+ }
+\end{figure}
+ 
+ We have that the system in \cref{fig:binpcomp} is exactly ($\text{\large $S_1$}\!\mathtt{fused}\text{$\cs$}$)$\!\mathtt{fused}\text{\large $S_1$}$ where we first fuse $\hh_1$ of $S_1$
+ with $\hh_1$ of $\cs$ and then $\hh_2$ of $\text{\large $S_1$}\!\mathtt{fused}\text{$\cs$}$
+ with $\hh_2$ of $S_2$.
+ 
+ 
+ We do not need to scale up fusion composition, since by means of binary fusion composition
+ we get Pai partial multicomposition and also its orchestrated version. 
+ 
  
  =====================
  
