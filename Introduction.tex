@@ -559,6 +559,95 @@ Four systems with their respective interface participants}
 % \vspace{-5mm}
 % \end{wrapfigure}
 
+We could take into account the following interface actions.
+
+\begin{figure}[h]
+    %\vspace{-8mm}
+     \centering{\small
+    $
+    \begin{array}{@{\hspace{0mm}}c@{\hspace{-2mm}}}
+    \begin{array}{c@{\hspace{-2mm}}c}
+    \text{\large $S_1$}
+    &
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none] {};
+        \draw [-stealth,line width=0.5mm] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
+ \end{tikzpicture}
+ \end{array}
+ \hspace{4mm}
+\begin{array}{c}
+ \\
+ \\
+| \\
+| \\
+|\\
+|\\
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c@{\hspace{-2mm}}c}
+\begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        \draw [-stealth, line width=0.5mm] (k-b) --  node {$\msg[b]$} (square-k);
+        \draw [-stealth, line width=0.5mm] (square-k) --  node {$\msg[a]$} (k-a);
+ \end{tikzpicture}
+ &
+ \text{\large $S_2$} 
+ \end{array}
+ \\[12mm]
+\hspace{3mm}- - - -    \hspace{8mm}- - - - -  \\[-5mm]
+\begin{array}{@{\hspace{0mm}}c@{\hspace{0mm}}c}
+\\[4mm]
+\text{\large $S_3\hspace{-2mm}$} 
+&
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-v) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_3$};
+        \node [state] (v-b) [left of = square-v, draw=none] {};
+        \node [state] (v-a) [below of = square-v, draw=none] {};
+        \draw [-stealth,line width=0.5mm] (v-a) --  node {$\msg[a]$} (square-v);
+        \draw [-stealth,line width=0.5mm] (square-v) --  node {$\msg[b]$} (v-b);
+ \end{tikzpicture}
+ \end{array}
+ \hspace{4mm}
+\begin{array}{c}
+ \\[-8mm]
+| \\
+| \\
+| \\
+|
+\end{array}
+ \hspace{4mm}
+ \begin{array}{c@{\hspace{-2mm}}}
+ \\[-6mm]
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-w) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_4$};
+        \node [state] (w-c) [right of = square-w, draw=none] {};
+        \node [state] (w-a) [below of = square-w, draw=none] {};
+        \node [state] (w-b) [above right of = square-w, draw=none] {};
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth,line width=0.5mm] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
+ \end{tikzpicture}
+ \hspace{-6mm}
+ \begin{array}{l}
+ \\[6mm]
+ \text{\large\ \ $S_4$}
+ \end{array} 
+ \end{array}
+ \\[-4mm]
+ \end{array}
+ $
+ }
+\caption{\label{fig:four-ips}
+Four interfaces with particular interface actions.}
+ \end{figure}
+% \vspace{-5mm}
+% \end{wrapfigure}
+
 For what concerns  our example of \cref{fig:four-ips},
  one could decide that message $\msg[a]$ received by $\hh_1$ has 
  to be forwarded
@@ -587,11 +676,11 @@ As previously mentioned, dotted names are used for ``virtual'' participants whos
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {\large $\dot\hh_2$};
         \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {\large $\dot\hh_3$};
         \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {\large $\dot\hh_4$};
-        \draw[-stealth]  (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+        %\draw[-stealth]  (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
         %
         %
         \draw [-stealth] (0.4,0)  -- node {$\msg[a]$}  (1.5,-1.5 ); % carryng a from h to w    
-         \draw [stealth-] (0,-0.4)  -- node {$\msg[c]$} (1.1,-1.9); % carryng c from w to h 
+        % \draw [stealth-] (0,-0.4)  -- node {$\msg[c]$} (1.1,-1.9); % carryng c from w to h 
         \draw [-stealth] (0.4,-1.9)  --  node {$\msg[a]$} (1.5,-0.4 ); % carrying a from v to k
         \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
  \end{tikzpicture}
@@ -602,24 +691,16 @@ As previously mentioned, dotted names are used for ``virtual'' participants whos
         \node (square-v)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-h, yshift=-4mm] {{\large $\dot\hh_3$}};
         \node (square-w)  [draw,minimum width=0.8cm,minimum height=0.8cm, below of = square-k, yshift=-4mm] {{\large $\dot\hh_4$}};
         %
-        \draw [-stealth] (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
+        %\draw [-stealth] (square-w) to[out=-135,in=-45]  node {$\msg[b]$} (square-v);
         %
         %
         \draw [-stealth] (0.4,-1.9) to[out=45,in=90] node {$\msg[a]$} (1.5,-1.5 ); % carryng a from v to w    
          \draw [stealth-] (0,-0.4)  -- node {$\msg[c]$} (1.1,-1.9) ; % carryng c from w to h 
         \draw [-stealth]  (0.4,0)  to[out=-45,in=-90]  node {$\msg[a]$} (1.5,-0.4 ); % carrying a from h to k
-        \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
+        \draw [-stealth]  (square-v)  to[out=-45,in=-90]  node {$\msg[a]$} (square-k); % carrying a from h to k
+        %\draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
  \end{tikzpicture}
  \raisebox{14.5mm}{$\,\,\,\,\cm_\mathrm{B}$}
-% \\
-% \begin{array}{c}
-%  \\[1mm]
-% (\text{Choice A})
-% \end{array}&
-% \begin{array}{c}
-% \\[1mm]
-% (\text{Choice B})
-% \end{array}
  \end{array}
  $
  }
