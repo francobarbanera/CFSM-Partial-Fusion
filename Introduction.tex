@@ -5,17 +5,14 @@
 PaI is an approach to concurrent/distributed system composition. 
 Specifically for systems comminicating via message passing and where
 communication behaviours of participants can be interpreted as interfaces.  
-Our intended meaning of ``interface'' (a term actually used in the literature with  several different connotations) is, informally: description of the interactions an outer system can
-exhibit. 
-In the simple example sketched in \cref{fig:twointerfaces}
---  where we abstract the participants' behaviours from everything but the possibility of 
- sending/receiving messages\footnote{Such abstract diagrammatic notation not only facilitates  
- discussion of the main ideas underlying PaI composition in a quite general  and formalism-independent way.}
-   -- system $S_1$ possesses a participant 
- $\hh_1$ which can receive messages $\msg[sbs]$ and $\msg[inf]$ from some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and $\msg[inf]$ to some other participant of $S_2$, say $\tts$. 
+Our intended meaning of ``interface'' (a term actually used in the literature with  several different connotations) is, informally: description of the behaviour of an outer system. 
+In the drawning below in (\ref{fig:twointerfaces}) we sketch two systems  $S_1$ and $S_2$.
+In such a drawing and throughout the present introduction, for the sake of simplicity and in order to focus only on the most relevant issues,  we abstract the participants' behaviours from everything but the possibility of  sending/receiving messages\footnote{Such abstract diagrammatic notation not only facilitates  
+ discussion of the main ideas underlying PaI composition in a quite general  and formalism-independent way.}. In particular we abstract away  from dynamic issues like the logical order of the exchanged messages, whose representation depends, instead, on the chosen formalism (CFSM in the present paper).
+System $S_1$ possesses a participant 
+ $\hh_1$ which can receive message $\msg[sbs]$ and send $\msg[inf]$ from/to some other participants of $S_1$, say $\ttr$ and $\ttr'$, whereas $\hh_2$ can send $\msg[sbs]$ and receive 
+ $\msg[inf]$ to some other participant of $S_2$, say $\tts$. 
 For the sake of simplicity, only participants $\hh_1$ and $\hh_2$ are shown, respectively, inside the dashed boxes representing systems  $S_1$ and $S_2$.
-
-As in~\cref{fig:bincomp}, we begin by considering only static aspects, i.e. we abstract from dynamic issues like the logical order of the exchanged messages, whose representation depends, instead, on the chosen formalism (CFSM in the present paper).
 % \begin{figure}[h]
 \begin{equation}
 \label{fig:twointerfaces}
@@ -50,27 +47,33 @@ As in~\cref{fig:bincomp}, we begin by considering only static aspects, i.e. we a
 \noindent
 %\brc Perhaps show also r and r' and s in the figure?
 %\erc
-$S_1$ could be a domotic system where the component $\hh_1$ drives the diffusioneither of a certain substance or just paridity upon requests from $\ttr$ and $\ttr'$.
+$S_1$ could be a domotic system where the component $\hh_1$ drives the diffusion of a certain substance upon reception from $\ttr$ and $\ttr'$ of message $\msg[sbs]$.
+Participant $\hh_1$ can inform the other participants about the effects of the diffusion,
+by means of the message $\msg[sbs]$.
 System $S_2$, instead, could be a system for aromas diffusion where, upon $\hh_2$'s request
 (possibly driven by some sensors), 
-the component $\tts$ coordinates the diffusion of some aroma or of humidity.  
+the component $\tts$ coordinates the diffusion of some aromatic substance.
+ Participant $\hh_2$ can also receive some information about the effect.
  Looking at $\hh_2$ as an interface makes it the representation of an outer system with which
- $S_1$ can interact by sending messages $\msg[sbs]$ and $\msg[inf]$. S
- imilarly, we can look at $\hh_2$ as the
+ $S_1$ can interact by sending message $\msg[sbs]$ and receiving $\msg[inf]$.
+  Similarly, we can look at $\hh_2$ as the
  representation of an outer system with which
- $S_2$ can interact by receiving from it messages $\msg[sbs]$ and $\msg[inf]$.
+ $S_2$ can interact by receiving from it messages $\msg[sbs]$ and sending $\msg[inf]$.
  
- To get a more conservative composition, in~\cite{BdLH19} $\hh_1$ and $\hh_2$ are
-replaced by forwarders (that we dub ``gateways'') preserving the very same names.
-The gateway for $\hh$ now forwards to the gateway for $\hh_2$ the $\msg[req]$ received from either 
-$\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depicted in \cref{fig:bincomp}.  
+ The idea of PaI composition is that, once to participants are identified as interfaces according to
+ the current need, these are   
+replaced by forwarders (dubbed ``gateways'').
+The gateway for $\hh_1$ now forwards to the gateway for $\hh_2$ the $\msg[sbs]$ received from 
+other participants of $S_1$. Such a message, once received by  the gateway for $\hh_2$, is 
+ forwarded to $\tts$ in the present example.
+ The resulting composed system would hence look as follows.
 %\begin{figure}[h]
 %    \centering{\small
 %    $
 \begin{equation}
 \label{fig:bincomp}
 \begin{array}{l}
-\text{\large $S_1$}\!\mathtt{comp}\text{\large $S_2$}\\[22mm]
+\text{\large $S_1$}\!\stackrel{\hh_1{\leftrightarrow}\hh_2}{ \phantom{\mathtt{comp}}}\text{\large $S_2$}\\[22mm]
 \end{array}
  \dbox{ \hspace{28mm}
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
@@ -102,9 +105,18 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
 % \begin{figure}[h]
 %    \centering{\small
 %    $
+
+
+[*Complementarity, compatibility,safety results*]
+
+In the present paper we generalise the PaI approch, by allowing participants to be looked at
+as interpaces only partially.
+Let us consider the following example. (From now on we avoid, unless necessary, to represent 
+systems by dashed boxes and represent just the participants identified as interfaces.
+Their belonging to different systems is hinted at by the use of dashed vertical lines. 
 \begin{equation}
-\raisebox{10mm}{\text{\large $S_1$}\,\,}
-    \dbox{
+\raisebox{4mm}{\text{\large $S_1$}\,\,}
+%    \dbox{
 \hspace{10mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \node [state] (h-a) [above of = square-h, draw=none] {};
@@ -112,9 +124,17 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
         \draw [-stealth] (h-a) --  node[right] {$\msg[sbs]$} (square-h);
         \draw [stealth-] (h-c) --  node[above] {$\msg[inf]$} (square-h);
  \end{tikzpicture}
-            }
-\hspace{12mm}
-     \dbox{
+%            }
+\hspace{2mm}
+ \begin{array}{c}
+ \\[8mm]
+| \\
+| \\
+|\\
+|\\
+\end{array}
+\hspace{4mm}
+%     \dbox{
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
         \node [state] (k-b) [above of = square-k, draw=none] {};
@@ -122,24 +142,34 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
         %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
         \draw [-stealth] (square-k) --  node[above] {$\msg[sbs]$} (k-a);
         \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
- \end{tikzpicture} \hspace{24mm}
-             }
- \raisebox{12mm}{\text{\large $\,\,S_2$}}
+ \end{tikzpicture} \hspace{18mm}
+ %            }
+ \raisebox{2mm}{\text{\large $\,\,S_2$}}
  \end{equation}
+ 
+ System $S_1$ is as before, whereas $S_2$ is such that the participant $\hh_2$, 
+ besides sending $\msg[sbs]$, can also provide -- via message $\msg[par]$ -- some parameters
+ for properly adjusting the diffusion of the aromatic substance.
+ In such a case, PaI composition via gateways does not apply (unless we intend to possibly
+ broke in the composition the communication properties enjoyed by the systems). 
+ However, we could consider only the actions concerning message $\msg[sbs]$ as 
+ ``interface actions'', leaving the interpretation of the others as pertaining to their respective 
+ participants. 
+ Doing that we can replace the interface participants with {\em partial gateways} that
+ act as forwarders only for the messages in the interface actions. 
 % $\vspace{-2mm}
 % \caption{\label{fig:twoipnterfaces} Two interfaces participants belonging to, respectively, systems $S_1$ and $S_2$.}
 % }
 %\end{figure}
-
 
 %\begin{figure}[h]
 %    \centering{\small
 %    $
 \begin{equation}
 \begin{array}{l}
-\text{\large $S_1$}\!\mathtt{comp}\text{\large $S_2$}\\[22mm]
+%\text{\large $S_1$}\!\stackrel{\hh_1{\leftrightarrow}\hh_2}{ \mathtt{prt}}\text{\large $S_2$}\\[22mm]
 \end{array}
- \dbox{ \hspace{28mm}
+% \dbox{ \hspace{28mm}
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
@@ -155,7 +185,7 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
         \draw  [-stealth] (2.4,-0.2)   --  node [below] {$\msg[par]$} (3.25,-0.2); % carrying par outside h2
         \draw (1.6,0)[dotted,thick]  --  (2.4,0); % carrying sbs inside h2
  \end{tikzpicture}
-     }
+%     }
  \end{equation}
  \hspace{4mm}
 % $
@@ -163,42 +193,56 @@ $\ttr$ or $\ttr'$, whereas the gateway for $\hh'$ forwards it to $\tts$, as depi
 % }
 %\end{figure}
 
+We now elaborate a bit the partial-gateway idea by means of another example.
 Unlike the simple case used above, partial gateways are not, in general, uniquely determined
 by the participants we choose for a composition. 
 Let us consider the following example.
 
- \begin{figure}[h]
-    \centering{\small
-    $
-\raisebox{12mm}{\text{\large $S_1$}\,\,}
-    \dbox{
-\hspace{14mm}  \begin{tikzpicture}[node distance=1.5cm,scale=1]
-        \node (square-v) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_3$};
+% \begin{figure}[h]
+%    \centering{\small
+%    $
+\begin{equation}
+\label{fig:twointerfaces}
+\raisebox{6mm}{\text{\large $S_1$}\,\,}
+%    \dbox{
+\hspace{10mm}  
+\begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-v) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \node [state] (v-b) [left of = square-v, draw=none] {};
         \node [state] (v-a) [below of = square-v, draw=none] {};
+        \node [state] (w-b) [above right of = square-v, draw=none] {};
         \draw [-stealth] (v-a) --  node {$\msg[a]$} (square-v);
         \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
  \end{tikzpicture}
-            }
-\hspace{12mm}
-     \dbox{
+%            }
+\hspace{-6mm}
+ \begin{array}{c}
+| \\
+| \\
+|\\
+|\\
+\end{array}
+\hspace{5mm}
+%     \dbox{
   \begin{tikzpicture}[node distance=1.5cm,scale=1]
-        \node (square-w) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_4$};
+        \node (square-w) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
         \node [state] (w-c) [right of = square-w, draw=none] {};
         \node [state] (w-a) [below of = square-w, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
         \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
         \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
- \end{tikzpicture}
-             }
- \raisebox{12mm}{\text{\large $\,\,S_2$}}
- $\vspace{-2mm}
- \caption{\label{fig:twointerfaces} Two interface participants choosen for composing systems $S_1$ and $S_2$.}
- }
-\end{figure}
+ \end{tikzpicture} 
+\hspace{4mm}            
+%}
+ \raisebox{6mm}{\text{\large $\,\,S_2$}}
+ \end{equation}
+% $\vspace{-2mm}
+% \caption{\label{fig:twointerfaces} Two interface participants choosen for composing systems $S_1$ and $S_2$.}
+% }
+%\end{figure}
 
-Message $\msg[c]$ cannot be looked as part of an interface, but for what concerns 
+Message $\msg[c]$ can hardly be looked as part of an interface, but for what concerns 
 $\msg[a]$ and $\msg[b]$ we can decide, according to the current needs, whether 
 they are part of the behaviour of an interface or not.
 This sort of decision could be graphically described by using thicker lines for the actions
