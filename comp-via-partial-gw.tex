@@ -1153,73 +1153,6 @@ ${\qquad\qquad}M'_\ttp = \left\{ \begin{array}{ll}
                  \right.$
 \end{definition}
 
-The above is  a CFSM extended with $\varepsilon$ actions, an $\varepsilon$-FSA.   
-
-$
-     \begin{tikzpicture}[mycfsm]
-   \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 0]{$\hh_1$};
-   \node[state]            (1) [above of=0] {$1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (0)
-            (0)  edge                    node [above] {$\varepsilon$} (1) 
-            (1)  edge[bend left]    node [below] {$\ttr\hh_1?\msg[sbs]$} (2)
-            (1)  edge[bend right]    node [below] {$\ttr\hh_1?\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-$
-is ``equivalent'' to 
-$
-     \begin{tikzpicture}[mycfsm]
-   \node[state]            (1) [above of=0] {$1$};
-   \node[draw=none,fill=none] (start) [below left = 0.3cm  of 1]{$\hh_1$};
-   \node[state]            (2) [above left of=1, yshift=-4mm,xshift=2mm] {$2$};
-   \node[state]            (3) [above right of=1, yshift=-4mm,xshift=-2mm] {$3$};
-%
-   \path  (start) edge node {} (1)
-            (1)  edge[bend left]    node [below] {$\hh_1\hh_2!\msg[sbs]$} (2)
-            (1)  edge[bend right]    node [below] {$\hh_1\hh_2!\msg[hum]$} (3) 
-            ;
-       \end{tikzpicture}
-$
-
-whereas
-
-$ \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
-   \node[state]           (4) [right of=2] {$4$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\tts\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
-                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
-            (2)  edge                           node [above]  {$\varepsilon$} (4)
-                   ;
-       \end{tikzpicture}
-$
-is ``equivalent'' to
-$
-     \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)              {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
-  \node[state]            (1) [above right of=0] {$1$};
-   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
-   \node[state]           (3) [below right of=0] {$3$};
-   %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
-                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
-                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
-                   ;
-       \end{tikzpicture}
-$
-
 
 %We define $\noeps(M)$ as the CFSM obtained out of $M$ 
 %using the following version of the standard procedure to get a FSA without $\varepsilon$-transitions
@@ -1236,8 +1169,28 @@ $
 
 
 
+\begin{theorem}[Safety of PaI multicomposition via partial gateways]
+\label{th:paisafenesse}
+ Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to a set
+ $H$ %$ = \{\hh_i\}_{i \in I}$
+ of interfaces with no mixed states (cf.~\cref{def:interfaces}); and
+let $\cs$ be a connection policy for $H$. 
 
 
+Let $\mathcal{P}$ be
+either the property of {\em deadlock-freedom} or {\em reception-error-freedom} 
+or {\em progress}
+(as defined in \cref{def:safeness}).
+If $\mathcal{P}$ holds for each $S_i$ with $i \in I$ 
+and for $\cs$, 
+then $\mathcal{P}$ holds for $S  = \PC(\Set{S_i}_{i\in I}, \cs)$.
+Moreover, the above holds also if the no-mixed-state condition is removed and
+$\mathcal{P}$ is {\em orphan-message-freedom}.
+\end{theorem}
+
+The proof of the above theorem descends from the fact that any system obtained by 
+PaI multicomposition via partial gateways can be actually got by multiple application of
+(binary) partial-fusion composition. 
 
 
 \section{Partial-fusion Composition}
