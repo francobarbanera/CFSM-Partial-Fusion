@@ -278,7 +278,7 @@ when participant behaviours are formalised in terms of CFSM, is actually
         \node [state] (w-c) [right of = square-w, draw=none] {};
         \node [state] (w-a) [below of = square-w, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
-        \draw [-stealth] (w-c) --  node [above] {$\msg[c]$} (square-w);
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
         \draw [-stealth,line width=0.5mm] (square-w) --  node [right] {$\msg[a]$} (w-a);
         \draw [stealth-,line width=0.5mm] (square-w) --  node [above]{$\msg[b]$} (w-b);
 \end{tikzpicture}
@@ -290,7 +290,7 @@ when participant behaviours are formalised in terms of CFSM, is actually
         \node [state] (v-b) [left of = square-v, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \node [state] (v-a) [below of = square-v, draw=none] {};
-        \draw [-stealth] (v-a) --  node [right] {$\msg[a]$} (square-v); 
+        \draw [-stealth] (v-a) --  node  {$\msg[a]$} (square-v); 
         \draw [-stealth,line width=0.5mm] (square-v) --  node [above]{$\msg[b]$} (v-b);
  \end{tikzpicture}
 \hspace{-6mm}
@@ -307,8 +307,8 @@ when participant behaviours are formalised in terms of CFSM, is actually
         \node [state] (w-c) [right of = square-w, draw=none] {};
         \node [state] (w-a) [below of = square-w, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
-        \draw [-stealth] (w-c) --  node [above] {$\msg[c]$} (square-w);
-        \draw [-stealth] (square-w) --  node [right] {$\msg[a]$} (w-a);
+        \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
+        \draw [-stealth] (square-w) --  node {$\msg[a]$} (w-a);
         \draw [stealth-,line width=0.5mm] (square-w) --  node [above]{$\msg[b]$} (w-b);
 \end{tikzpicture}
 %
@@ -320,7 +320,7 @@ when participant behaviours are formalised in terms of CFSM, is actually
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \node [state] (v-a) [below of = square-v, draw=none] {};
         \draw [-stealth,line width=0.5mm] (v-a) --  node [right] {$\msg[a]$} (square-v); 
-        \draw [-stealth] (square-v) --  node [above] {$\msg[b]$} (v-b);
+        \draw [-stealth] (square-v) --  node {$\msg[b]$} (v-b);
  \end{tikzpicture}
 \hspace{-6mm}
  \begin{array}{c}
@@ -336,9 +336,9 @@ when participant behaviours are formalised in terms of CFSM, is actually
         \node [state] (w-c) [right of = square-w, draw=none] {};
         \node [state] (w-a) [below of = square-w, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
-        \draw [-stealth] (w-c) --  node [above] {$\msg[c]$} (square-w);
+        \draw [-stealth] (w-c) --  node  {$\msg[c]$} (square-w);
         \draw [-stealth,line width=0.5mm] (square-w) --  node [right] {$\msg[a]$} (w-a);
-        \draw [stealth-] (square-w) --  node [above]{$\msg[b]$} (w-b);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
 \end{tikzpicture}
  \end{equation}
 
@@ -349,7 +349,7 @@ It is possible also to make choices as the following one, that would hardly resu
         \node [state] (v-b) [left of = square-v, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \node [state] (v-a) [below of = square-v, draw=none] {};
-        \draw [-stealth] (v-a) --  node [right] {$\msg[a]$} (square-v); 
+        \draw [-stealth] (v-a) --  node  {$\msg[a]$} (square-v); 
         \draw [-stealth,line width=0.5mm] (square-v) --  node [above] {$\msg[b]$} (v-b);
  \end{tikzpicture}
 \hspace{-6mm}
@@ -368,7 +368,7 @@ It is possible also to make choices as the following one, that would hardly resu
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \draw [-stealth,line width=0.5mm] (w-c) --  node [above] {$\msg[c]$} (square-w);
         \draw [-stealth,line width=0.5mm] (square-w) --  node [right] {$\msg[a]$} (w-a);
-        \draw [stealth-] (square-w) --  node [above]{$\msg[b]$} (w-b);
+        \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
 \end{tikzpicture}
  \end{equation}
 
@@ -525,14 +525,16 @@ models.
 This approach to composition easily scales up to general multiple composition. 
 
 Let us consider an example from~\cite{BDGY23} having four systems $S_1$,  $S_2$, $S_3$ and $S_4$.
-As shown in~\cref{fig:four-ips}, we have selected for each system one participant
+As shown in (\ref{eq:four-ips}) below, we have selected for each system one participant
 as an interface, named respectively $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$.
  
 %\begin{wrapfigure}{r}{0.45\textwidth}
-\begin{figure}[h]
-    %\vspace{-8mm}
-     \centering{\small
-    $
+%\begin{figure}[h]
+%    %\vspace{-8mm}
+%     \centering{\small
+%    $
+\begin{equation}
+\label{eq:four-ips}
     \begin{array}{@{\hspace{0mm}}c@{\hspace{-2mm}}}
     \begin{array}{c@{\hspace{-2mm}}c}
     \text{\large $S_1$}
@@ -608,20 +610,23 @@ as an interface, named respectively $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$.
  \end{array}
  \\[-4mm]
  \end{array}
- $
- }
-\caption{\label{fig:four-ips}
-Four systems with their respective interface participants}
- \end{figure}
+ \end{equation}
+% $
+% }
+%\caption{\label{fig:four-ips}
+%Four systems with their respective interface participants}
+% \end{figure}
 % \vspace{-5mm}
 % \end{wrapfigure}
 
 We could take into account the following interface actions.
 
-\begin{figure}[h]
-    %\vspace{-8mm}
-     \centering{\small
-    $
+%\begin{figure}[h]
+%    %\vspace{-8mm}
+%     \centering{\small
+%    $
+\begin{equation}
+\label{eq:four-ips}
     \begin{array}{@{\hspace{0mm}}c@{\hspace{-2mm}}}
     \begin{array}{c@{\hspace{-2mm}}c}
     \text{\large $S_1$}
@@ -630,7 +635,7 @@ We could take into account the following interface actions.
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \node [state] (h-a) [above of = square-h, draw=none] {};
         \node [state] (h-c) [left of = square-h, draw=none] {};
-        \draw [-stealth,line width=0.5mm] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [-stealth,line width=0.5mm] (h-a) --  node [right] {$\msg[a]$} (square-h);
         \draw [-stealth] (square-h) --  node {$\msg[c]$} (h-c);
  \end{tikzpicture}
  \end{array}
@@ -649,8 +654,8 @@ We could take into account the following interface actions.
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
         \node [state] (k-b) [above of = square-k, draw=none] {};
         \node [state] (k-a) [right of = square-k, draw=none] {};
-        \draw [-stealth, line width=0.5mm] (k-b) --  node {$\msg[b]$} (square-k);
-        \draw [-stealth, line width=0.5mm] (square-k) --  node {$\msg[a]$} (k-a);
+        \draw [-stealth, line width=0.5mm] (k-b) --  node [right] {$\msg[b]$} (square-k);
+        \draw [-stealth, line width=0.5mm] (square-k) --  node [below] {$\msg[a]$} (k-a);
  \end{tikzpicture}
  &
  \text{\large $S_2$} 
@@ -665,8 +670,8 @@ We could take into account the following interface actions.
         \node (square-v) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_3$};
         \node [state] (v-b) [left of = square-v, draw=none] {};
         \node [state] (v-a) [below of = square-v, draw=none] {};
-        \draw [-stealth,line width=0.5mm] (v-a) --  node {$\msg[a]$} (square-v);
-        \draw [-stealth,line width=0.5mm] (square-v) --  node {$\msg[b]$} (v-b);
+        \draw [-stealth,line width=0.5mm] (v-a) --  node [right]   {$\msg[a]$} (square-v);
+        \draw [-stealth,line width=0.5mm] (square-v) --  node [below] {$\msg[b]$} (v-b);
  \end{tikzpicture}
  \end{array}
  \hspace{4mm}
@@ -686,7 +691,7 @@ We could take into account the following interface actions.
         \node [state] (w-a) [below of = square-w, draw=none] {};
         \node [state] (w-b) [above right of = square-w, draw=none] {};
         \draw [-stealth] (w-c) --  node {$\msg[c]$} (square-w);
-        \draw [-stealth,line width=0.5mm] (square-w) --  node {$\msg[a]$} (w-a);
+        \draw [-stealth,line width=0.5mm] (square-w) --  node [right] {$\msg[a]$} (w-a);
         \draw [stealth-] (square-w) --  node {$\msg[b]$} (w-b);
  \end{tikzpicture}
  \hspace{-6mm}
@@ -697,38 +702,38 @@ We could take into account the following interface actions.
  \end{array}
  \\[-4mm]
  \end{array}
- $
- }
-\caption{\label{fig:four-ips}
-Four interfaces with particular interface actions.}
- \end{figure}
+ \end{equation}
+% $
+% }
+%\caption{\label{fig:four-ips}
+%Four interfaces with particular interface actions.}
+% \end{figure}
 % \vspace{-5mm}
 % \end{wrapfigure}
 
-For what concerns  our example of \cref{fig:four-ips},
+Unlike the binary case, a connection policy is not uniquely determined the specification
+of which are the interface actions in the interface participants.
+
+For what concerns  the choice of interface actions highlighted in (\ref{eq:four-ips}),
  one could decide that message $\msg[a]$ received by $\hh_1$ has 
  to be forwarded
  to $\hh_4$; the $\msg[a]$ received by $\hh_3$
- to $\hh_2$; the $\msg[b]$ received by $\hh_2$ 
- or by $\hh_4$ to $\hh_3$; 
- the $\msg[c]$ received by $\hh_4$ to $\hh_1$.
- Another possible choice %(see policy B  in Figure~\ref{fig:twocm})) 
+ to $\hh_2$; the $\msg[b]$ received by $\hh_2$ to $\hh_3$.
+ Another possible choice 
 could be similar to the previous one but for the forwarding
 of the messages $\msg[a]$: the one received by $\HH_1$ could be forwarded now to $\hh_2$
 whereas the one received by $\hh_3$ could be forwarded to $\hh_4$. 
- Such different ``choices of partners'' can be represented 
- by the {\em connection models} $\cm_\mathrm{A}$ and $\cm_\mathrm{B}$ in \cref{fig:choicesAB} (we now avoid enclosing systems within dashed squares).
-  
-As previously mentioned, dotted names are used for ``virtual'' participants whose behaviours  represent 
- the forwarding policies of their undotted counterparts.
+So, it is possible to have the following two connection models, both coherent
+with the interface actions highlighted in (\ref{fig:four-ips}).  
  
 
 %%% CONNECTION MODELS
 % \begin{figure}[ht]
 %    \centering{
  \begin{equation}
-    \raisebox{15mm}{$\cm_\mathrm{A}$}
+    \raisebox{15mm}{$\cs_\mathrm{A}$}
     \begin{array}{c@{\qquad\qquad\qquad\qquad\qquad}c}
+\dbox{
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {\large $\hh_2$};
@@ -742,7 +747,9 @@ As previously mentioned, dotted names are used for ``virtual'' participants whos
         \draw [-stealth] (0.4,-1.9)  --  node {$\msg[a]$} (1.5,-0.4 ); % carrying a from v to k
         \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
  \end{tikzpicture}
+ }
 &
+\dbox{
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\HH_1$};
         \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm, right of = square-h] {{\large $\hh_2$}};
@@ -758,7 +765,8 @@ As previously mentioned, dotted names are used for ``virtual'' participants whos
         %\draw [-stealth]  (square-v)  to[out=45,in=-90]  node {$\msg[a]$} (square-k); % carrying a from h to k
         \draw [stealth-] (0,-1.5)  --  node {$\msg[b]$} (1.1,0); % carrying  b from k to v
  \end{tikzpicture}
- \raisebox{14.5mm}{$\,\,\,\,\cm_\mathrm{B}$}
+ }
+ \raisebox{14.5mm}{$\,\,\,\,\cs_\mathrm{B}$}
  \end{array}
   \end{equation}
 % $
@@ -768,14 +776,14 @@ As previously mentioned, dotted names are used for ``virtual'' participants whos
  
  \noindent
  The  architecture  of the resulting composed systems, according to the connection models is
-represented  by the diagrams  in~\cref{fig:multiconnection},  where the names $\hh_1, \hh_2, \hh_3$
-and $\hh_4$ now represent gateways.
+represented  by the diagrams  in (\ref{eq:multiconnection}),  where the names $\hh_1, \hh_2, \hh_3$
+and $\hh_4$ are now partial gateways.
 %\begin{figure}[h]%{c}{0.6\textwidth}
 %\vspace{-4mm}
 %    \centering{
 \vspace{-4mm} 
 \begin{equation}
- \label{fig:multiconnection}
+ \label{eq:multiconnection}
     \begin{array}{c@{\quad\qquad}c}
  \begin{tikzpicture}[node distance=1.5cm,scale=1]
         \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
@@ -874,9 +882,9 @@ and $\hh_4$ now represent gateways.
         \draw [-stealth]  (0.4,0)  to[out=-45,in=-90]  node [pos=0.6]  {$\msg[a]$} (1.5,-0.4 ); % carrying a from h to k
         \draw [stealth-]  (0,-1.5)  -- node  {$\msg[b]$}  (1.1,0); % carrying  b from k to v
  \end{tikzpicture}\\[-4mm]
- \text{\small (Using $\cm_\mathrm{A}$)}
+ \text{\small (Using $\cs_\mathrm{A}$)}
  &
- \text{\small (Using $\cm_\mathrm{B}$)}
+ \text{\small (Using $\cs_\mathrm{B}$)}
  \end{array}
   \end{equation}
  
