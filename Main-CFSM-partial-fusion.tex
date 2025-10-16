@@ -85,16 +85,17 @@
 \def \err {\end{color}}
 
  
-\author{Franco Barbanera\thanks{ Partially supported by 
-Project “National Center for HPC, Big Data e Quantum Computing”,  Programma M4C2, Investimento 1.3.}
-\institute{Dipartimento di Matematica e Informatica\\
-University of Catania}
-\email{franco.barbanera@unict.it}
-\and 
-Rolf Hennicker
-\institute{Institute for Informatics\\
-LMU Munich}
-\email{hennicke@pst.ifi.lmu.de}
+\author{
+%Franco Barbanera\thanks{ Partially supported by 
+%Project “National Center for HPC, Big Data e Quantum Computing”,  Programma M4C2, Investimento 1.3.}
+%\institute{Dipartimento di Matematica e Informatica\\
+%University of Catania}
+%\email{franco.barbanera@unict.it}
+%\and 
+%Rolf Hennicker
+%\institute{Institute for Informatics\\
+%LMU Munich}
+%\email{hennicke@pst.ifi.lmu.de}
 }
 
 
@@ -106,7 +107,7 @@ LMU Munich}
 % of Systems \\ of Communicating Finite State Machines
 %}
 
-\title{Partial Fusion
+\title{Title%Partial Fusion
 }
 
 \def\titlerunning{Partial Fusion}
@@ -124,24 +125,28 @@ Given a set of systems,
 one participant per system is chosen to play the role of an interface. When systems are composed, the %each CFSM
 % of an 
 interface participants are replaced by  \emph{gateways} which communicate to each other
-%gateways of other systems 
 by forwarding messages.
-The PaI-approach for 
-systems of asynchronous  communicating finite state machines (CFSMs)
-has been exploited in the literature for binary composition only, with
-a  (necessarily)  unique forwarding policy.
-In this paper we consider the case of multiple system composition
-when  forwarding gateways  are not uniquely determined and
-their interactions depend on specific {\em connection policies\/}  complying with a
-{\em connection model\/}.
-We represent connection policies as CFSM systems and prove that a bunch of relevant 
-communication properties (deadlock-freeness, reception-error-freeness, etc.) are preserved by {\em PaI multicomposition\/}, with the proviso that also the used connection policy does enjoy the communication property taken into account.
+We generalise the approach to 
+\emph{partial gateways}, where 
+gateways can forward only a choosen
+set of messages. 
+As for the standard PaI approach, we exploit such extended version for
+systems of asynchronous  communicating finite state machines (CFSMs).
+We prove that a bunch of relevant 
+communication properties (deadlock-freeness, reception-error-freeness, etc.) are preserved by {\em PaI composition via partial gateways\/} in case also the
+system representing the way we wish gateways interact with each other (connection policy) enjoys the same properties.
+Such a proof turns out to be just a corollary of a preservation result for a restricted
+and binary version of PaI composition, dubbed \emph{fusion-composition}.
+In fact any 
+PaI composition (binary, with multiple systems, orchestrated) simply reduces
+to a number of binary fusion compositions.
+Fusion-composition hence turns out to be at the heart of the PaI approach.
 \end{abstract}
 
 
 \input{Introduction}
-%\input{cfsm}
-%\input{comp-via-partial-gw}
+\input{cfsm}
+\input{comp-via-partial-gw}
 %\input{safeness-of-binary-partial-fusion}
 %\input{preservation-results}
 

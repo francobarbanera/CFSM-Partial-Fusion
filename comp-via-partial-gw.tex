@@ -1,8 +1,14 @@
 
 
-\section{Composition via partial gateways}
+\section{PaI composition via partial gateways}
 
-Running example
+In this section we formally describe the PaI composition via partial gateways.
+We do that just for the binary case for the sake of simplicity. 
+The definitions we provide scale up without much difficulties to PaI multicomposition 
+and PaI orchestrated multicomposition. 
+
+We use the following running example to introduce and discuss the main issues of 
+binary PaI composition via partial gateways.
 
 Let us consider the two following systems $S_1$ and $S_2$ with interfaces, respectively,
 $\hh_1$ and $\hh_2$.
@@ -84,9 +90,10 @@ $\hh_1$ and $\hh_2$.
 
 $S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
 
-Transforming $\hh_1$ and $\hh_2$ into gateways make the resulting composition non
+Transforming $\hh_1$ and $\hh_2$ into gateways, according to the standard
+PaI composition via gateways, makes the resulting composition non
 deadlock free.
-In fact, the (unique) connection policy is as below, and it is non deadlock free.
+In fact, the (unique) connection policy is as below, and it is non deadlock-free.
 
 $$
 \dbox{
@@ -122,11 +129,11 @@ $$
 }
 $$
 
-Instead of looking at a whole participant as an interface, we can 
+We notice, however, that instead of looking at a whole participant as an interface, we can 
 consider only specific edges as description of actions of an outer system.
-In our running example, for instance, we could still decide to compose $S_1$ and $S_2$ trough
+In the present example, for instance, we could still decide to compose $S_1$ and $S_2$ trough
 $\hh_1$ and $\hh_2$, proviso that only the edges in bold in the drawing below
-have to be interpreted as actions of the outer systems one intend to be connected to.  
+have to be interpreted as actions of the outer systems one intends to be connected to.  
 
 
 \begin{equation}
@@ -205,7 +212,7 @@ have to be interpreted as actions of the outer systems one intend to be connecte
 \end{array}
 \end{equation}
 
-The connection policy has now to be formed by CFSM describing the interactions 
+The connection policy has now to be formed by CFSMs describing just the interactions 
 between the ``interface'' parts of $\hh_1$ and $\hh_2$, which in our running examples 
 turn out to be simply as follows.
 
@@ -242,9 +249,10 @@ turn out to be simply as follows.
 
 Such a communicating system does enjoy all communication properties we considered.
 
-The partial gateways have to act as forwarders only for what concerns the interface parts,
-whereas non interface parts describe what is still in charge of the participants $\hh_1$ and $\hh_2$.
-A partial gateway is hence built out of an interface machine and its counterpart in the
+The partial gateways enabling the composition have now to act as forwarders only for what concerns the interface parts,
+whereas non interface parts keep on describing what is still in charge of the participants $\hh_1$ and $\hh_2$.
+Each partial gateway is hence built (similarly to the standard composition via gateways) out of 
+the CFSM identified as interface and of  its counterpart in the
 communication policy we intend to use for the composition. 
  \vspace{-1mm} In particular, out of the interface transition
 \raisebox{2mm}
@@ -284,12 +292,12 @@ communication policy we intend to use for the composition.
       ;
  \end{tikzpicture}
  }
-in the resulting partial gateway, where the $\widehat 1$ stated is specifically introduced 
+in the resulting partial gateway, where $\widehat 1$ is specifically introduced 
 by the partial gateway construction.
 Recall that, in order to enforce conservativity, gateways are given the same names as the
 corresponding interfaces.
 The above discussion applies, dually, for edges in the interface $\hh_1$ labelled with output actions.
-Non interface transitions are left unchanged by the partial gateway construction.
+Non interface transitions are instead left unchanged by the partial gateway construction.
 
 
 
@@ -373,15 +381,15 @@ $$
 \end{array}
 $$
 
-Our result will allow to infer that in this particular case the composition via partial gateways
+Our result will allow to infer that the above composition via partial gateways
 satisfies also the communication properties (but lock-freedom).
 
-Some care has however to be taken when, onece choosen the participants playing the roles of 
-partial interfaces,  we decide which are the interface edge.
-It is in fact not possible to consider any edge as an interface edge.
+Some care has however to be taken when, once choosen the participants playing the roles of 
+interfaces,  we decide which of their transitions we wish to consider as interface transitions.
+It is in fact not possible to consider any transition as an interface transition.
 
 Let us consider again our running example, and let us consider again $\hh_1$ and 
-$\hh_2$ as (partial) interfaces. However, let us consider now the following interface edges.
+$\hh_2$ as interfaces. However, let us consider now the following interface transitions.
 
 
 
@@ -494,8 +502,8 @@ $$
 $$
 This communicating system is orphan-message free.
 
- The composition obtaining by building partial gateways of such connection policy is then the 
- following communication system.
+ The composition obtained by building partial gateways out of such connection policy is then the 
+ following communicating system.
 
 \begin{equation}
 \label{eq:comprunex}
@@ -580,12 +588,68 @@ In fact the following configuration, made by final states only, is reachable:\\
 $s=((3_\ttr,3_{\hh_1},3_{\hh_2},3_\tts),\vec{w})$
 }
 where $\vec{w}\neq\vec{\varepsilon}$, in particular $w_{\hh_1\hh_2}=\langle\msg[hum]\rangle$.\\
-Hence $s$ is an orphan-message configuration.
+Hence $s$ is an orphan-message configuration.\\
 
-A similar choice of interface edges can disrupt progress preservation.
- 
+\smallskip
+We show now that unrestricted choice of interface transitions can disrupt progress preservation
+in composition via partial gateways.
 Let us consider the two following systems $S_1$ and $S_2$ with interfaces, respectively,
-$\hh_1$ and $\hh_2$. Both satisfying the progress property.
+$\hh_1$ and $\hh_2$. Both the systems satisfy the progress property.
+\begin{equation}
+\label{eq:pre3}
+\begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+    \begin{array}{cc}
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\hh_1\ttu?\msg[a]$} (1) ;
+       \end{tikzpicture}
+&
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_1$};
+  \node[state]            (1) [right of=0] {$1$};
+  %\node[state]           (2) [above right of=0] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge   node [below] {$\hh_1\ttu!\msg[a]$} (1);
+       \end{tikzpicture}
+    \end{array}
+       &
+       \begin{array}{c}
+       |\\
+       |\\
+       |\\
+       |
+       \end{array}
+       &
+       \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
+  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
+
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\ttv\hh_2?\msg[b]$} (1)
+            (0)   edge    [bend right]            node [above]  {$\ttv\hh_2?\msg[a]$} (2);
+       \end{tikzpicture}
+&
+      \begin{tikzpicture}[mycfsm]
+  \node[state]           (0)                        {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+
+   \path  (start) edge node {} (0)
+            (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
+       \end{tikzpicture}
+\end{array}
+\end{equation}
+
+We then make the following choice of interface transitions for the interface participants.
+
 \begin{equation}
 \label{eq:3}
 \begin{array}{c@{\qquad}c@{\hspace{1cm}}c@{\qquad}c}
@@ -822,40 +886,41 @@ $$
             (0)  edge    node [above] {$\ttv\hh_2!\msg[b]$} (1) ;
        \end{tikzpicture}
 $$
-In fact, some states in $s=(0_\ttu,0_{\hh_1},1_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. 
+In fact, some states in the configuration $s=(0_\ttu,0_{\hh_1},1_{\hh_2},1_\ttv)$ are not final, $s$ is reachable and $s\notlts{}$. \\
 
 
-The main problem is that a choice should depend on a single participant.
+Intuitively, the main problem in the two previous examples is that a choice among transitions
+in the composition, 
+does not depends on a single participant.
 In one of the previous examples, problems arise when a choice involves both
 $\hh_1$ and $\hh_2$.
-Problems also arise when a choice made by an interface is in conflict with what the other 
-interface does. 
+In onother example
+problems also arise when a choice made by an interface is in conflict with what the other 
+interface does. We need hence to avoid, possibly by syntactical means, such problems.
 
-We hence restrict outgoing interface transitions always to be single. (Claim: non necessary for deadlock-freedom).
-This restriction is formalised in the following definition, where $\intf$ is intended to identify
+We hence require outgoing interface transitions always to be single. (Claim: non necessary for deadlock-freedom).
+This restriction is required in the following definition, where we formalise the notion of
+interface transitions. In the following, the symbol $\intf$ is intended to identify
 interface transitions, whereas $\nintf$ the non interface transitions.
 
 \begin{definition}[CFSM with interface transitions]\label{def:cfsmie}
 \label{def:cfsmintftrans}
-A {\em CFSM with interface transitions} ($CFSM^{\mathsf{it}}$ for short) is a tuple $M=(Q,q_0,\mathbb{A},\bm{\delta})$ 
-where $Q$, $q_0$ and $\mathbb{A}$ are as in the definition of CFSM, whereas\\
+A {\em CFSM with interface transitions} ($CFSM^{\mathsf{it}}$ for short) is a tuple $M=(Q,q_0,\textit{Act},\bm{\delta})$ 
+where $Q$, $q_0$ and $\textit{Act}$ are as in the definition of CFSM, whereas\\
 \centerline{
-$\bm{\delta} \subseteq Q\times\textit{Act}_{\roles,\mathbb{A}}\times Q \times \Set{\intf,\nintf}$}
+$\bm{\delta} \subseteq Q\times\textit{Act}\times Q \times \Set{\intf,\nintf}$}
 \begin{tabular}{lc@{\hspace{4pt}}l}
 and such that & - & $(q_1,\elle,q_2,x),(q_1,\elle,q_2,y)\in\bm{\delta} \implies x=y$.\\
                      & - & $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$\\
                      &    & \hspace{51mm}  (and hence $z=\nintf$ by the previous item).
 \end{tabular}\\
-An element of $\bm{\delta}$ with the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
+An element of $\bm{\delta}$ of the form $(\_,\_,\_,\intf)$ is called {\em interface edge}.
 \end{definition}
 It is possible to check that $\hh_2$ in (\ref{eq:1}) above is a CFSM with interface transitions,
 whereas participants $\hh_2$ in (\ref{eq:2}), (\ref{eq:3}) and (\ref{eq:4}) are not.
-
-%The conditions on CFSMs with interface edges prevent the problems shown in \cref{ex:singleeps}.
-
-It is worth noticing that the usual PaI composition via gateway is a particular case 
+It is also worth noticing that the usual PaI composition via gateway is a particular case 
 of composition via partial gateways where all transitions are interface transitions.
-Absence of non interface transition makes conditions in \cref{def:cfsmintftrans}
+Absence of non interface transition makes conditions in \cref{def:cfsmintftrans} above
 vacuously satisfied.
 
 As done in the previous examples, we use the notation $q\lts{l}q'$ for $(q,l,q',\nintf)$ and
@@ -875,7 +940,7 @@ As done in the previous examples, we use the notation $q\lts{l}q'$ for $(q,l,q',
 We describe now step-by step the composition via partial gateways that we have
 roughly presented above.
 We use our running example to describe the various steps. 
-For each of them we provide the formal definitions.
+For each of them we provide the formal definitions of the notions we introduce.
 
 \paragraph{Indentifying the interface transitions in the interface participants.}
 Composition via partial gateways consists, first of all, in identifying two interface participants
