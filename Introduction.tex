@@ -775,6 +775,10 @@ with the interface actions highlighted in (\ref{fig:four-ips}).
 % \end{figure}
  
  \noindent
+  Similarly to the binary case, the PaI multicomposition via partial gateways of the four
+ systems consists in fact in replacing the participants  $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$, chosen  as
+interfaces, by gateways whose task stays the same for what concerns the non interface-actions,
+whereas messages of interfaces actions are simply forwarded.
  The  architecture  of the resulting composed systems, according to the connection models is
 represented  by the diagrams  in (\ref{eq:multiconnection}),  where the names $\hh_1, \hh_2, \hh_3$
 and $\hh_4$ are now partial gateways.
@@ -893,31 +897,141 @@ and $\hh_4$ are now partial gateways.
 %  \caption{Static description of two PaI multicompositions via partial gateways}
 %  \label{fig:multiconnection}
 % \end{figure}
- Similarly to the binary case, the PaI multicomposition of the four
- systems consists in fact in replacing the participants  $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$, chosen  as
-interfaces, by gateways whose uniform task is to forward messages.
-Unlike the binary case, however, in presence of more than two systems 
-the gateways are not uniquely determined.
-Moreover, taking into a specific connection model is not sufficient either.
-This can be illustrated by looking at message $\msg[b]$ and participant $\hh_3$.
-No matter whether we consider $\cm_\mathrm{A}$ or $\cm_\mathrm{B}$, it is
-not determined when the gateway for $\hh_3$ will accept $\msg[b]$ 
-from $\hh_2$ and when from $\hh_4$.
-For instance,  
-a message $\msg[b]$ from $\hh_4$ could be accepted by $\hh_3$ only after two $\msg[b]$'s are received from $\hh_2$.
-A connection model is hence not enough to consent, in general, the identification of the gateways. 
-A behavioural (i.e. dynamic) description of how the messages have to be
-forwarded by the gateways is needed.
 
+One of the main results of the paper is that a number of comminication properties
+are preserved by PaI multicomposition via partial gateways in case the very same
+properties are enjoied by the connection policy used for the composition.
+Such a result is actually obtained as a corollary of a preservation result for 
+a restricted form of binary PaI composition that we dub partial-fusion PaI composition.
+All forms of PaI composition for asynchronous CFSM can be obtained by a number
+of binary partial-fusion PaI composition, which can hence be considered as the 
+basis of the PaI approach.
 
+\paragraph{Partial Fusion PaI Composition}
 
+This particular form of PaI composition is binary.
+To get an intuitive idea of that, let us consider the following simple example, where
+both $S_1$ and $S_2$ possess a participant named $\hh$ that we choose as
+their respective interface participant.
 
-The composition via partial gateways scales up in the general multicomposition case.
-Partial connection policies are not uniquely determined by a choice of partners.
+\begin{equation}
+\label{eq:exps}
+\raisebox{2mm}{\text{\large $S_1$}\,\,}
+%    \dbox{
+\hspace{10mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+        \draw [stealth-] (h-c) --  node {$\msg[b]$} (square-h);
+ \end{tikzpicture}
+%            }
+\hspace{2mm}
+ \begin{array}{c}
+ \\[8mm]
+| \\
+| \\
+|\\
+|\\
+\end{array}
+\hspace{4mm}
+%     \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+       % \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
+ \end{tikzpicture} \hspace{18mm}
+ %            }
+ \raisebox{0mm}{\text{\large $\,\,S_2$}}
+ \end{equation}
+ 
+The composition method requires that some interaction actions are choosen in only one
+of the two interface participants.  
 
-[*Describe results*]
+\begin{equation}
+\label{eq:expsia}
+\begin{array}{c}
+\\[-18mm]
+\raisebox{2mm}{\text{\large $S_1$}\,\,}
+%    \dbox{
+\hspace{10mm} \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
+        \draw [-stealth,line width=0.5mm] (h-a) --  node[right] {$\msg[a]$} (square-h);
+        \draw [stealth-] (h-c) --  node {$\msg[b]$} (square-h);
+ \end{tikzpicture}
+%            }
+\hspace{2mm}
+ \begin{array}{c}
+ \\[8mm]
+| \\
+| \\
+|\\
+|\\
+\end{array}
+\hspace{4mm}
+%     \dbox{
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh$};
+        \node [state] (k-b) [above of = square-k, draw=none] {};
+        \node [state] (k-a) [right of = square-k, draw=none] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth] (square-k) --  node {$\msg[a]$} (k-a);
+       % \draw  [-stealth] (0.4,-0.2)   --  node [below] {$\msg[par]$} (1.2,-0.2);
+ \end{tikzpicture} \hspace{18mm}
+ %            }
+ \raisebox{0mm}{\text{\large $\,\,S_2$}}
+ \end{array}
+ \end{equation}
 
-\paragraph{Composition by partial fusion}
+We ``restrict'' now the behaviour of  $\hh$ in $S_1$ (the interface participant with interface actions)
+to its interface actions only.
+\begin{equation}
+\begin{array}{c}
+\\[-18mm]
+\begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh'$};
+        \node [state] (h-a) [above of = square-h, draw=none] {};
+        \node [state] (h-c) [left of = square-h, draw=none, xshift=-2mm] {};
+        \draw [-stealth] (h-a) --  node {$\msg[a]$} (square-h);
+ \end{tikzpicture}
+  \end{array}
+\end{equation}
+
+The composition can be carried on now, since $\hh'$ above and $\hh$ of $S_2$ in (\ref{eq:expsia}) 
+are dual (one has an input where the other has an output end vice versa).
+ Such a duality property enables to (partially) fuse together the $\hh$ in $S_1$ with the
+ $\hh$ in $S_2$ so obtaining a composed system.
+ The fusion makes $h$ a single gateway forwarding the messages pertaining to
+ interface actions and behaving as $\hh$ of $S_1$ for the non interface-actions.
+
+\begin{equation}
+\label{fig:bincomp}
+\begin{array}{l}
+\text{\large $S_1$}\!\stackrel{\hh_1{\leftrightarrow}\hh_2}{ \phantom{\mathtt{comp}}}\text{\large $S_2$}\\[22mm]
+\end{array}
+ \dbox{ \hspace{28mm}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-h) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_1$};
+        \draw [-stealth] (h-a) --  node [right] {$\msg[sbs]$} (square-h);
+         \node[draw=none,fill=none] (phantom2) [left = 10mm  of square-h]{};
+        \draw [-stealth] (square-k) --  node [above]{$\msg[sbs]$} (k-a);
+        \draw [stealth-] (phantom2) --  node [above]{$\msg[inf]$} (square-h);
+         %
+        \draw (0,0.4)[dotted,thick]  --  (0.4,0); % carrying sbs inside h 
+        \draw (-0.4,0)[dotted,thick]  --  (0.4,-0.2); % carrying par inside h 
+        \draw [-stealth] (0.4,0)  --  (1.6,0); % carrying sbs from h1 to h2
+        \draw [stealth-] (0.4,-0.2)  --  (1.6,-0.2); % carrying inf from h1 to h2
+        \draw (1.6,-0.2) [dotted,thick]  --  (2.4,-0.2); % carrying inf inside h2
+        \draw  [stealth-] (2.4,-0.2)   --  node [below] {$\msg[inf]$} (3.25,-0.2); % carrying inf outside h2
+        \draw (1.6,0)[dotted,thick]  --  (2.4,0); % carrying sbs inside h2
+ \end{tikzpicture}
+       }
+\end{equation}
 
 In the binary case the connection policy for \cref{fig:twoipnterfaces} is uniquely determined, and
 abstracting from choices and dynamic aspects can be represented by the following 
