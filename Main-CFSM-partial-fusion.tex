@@ -134,9 +134,10 @@ As for the standard PaI approach, we exploit such extended version for
 systems of asynchronous  communicating finite state machines (CFSMs).
 We prove that a bunch of relevant 
 communication properties (deadlock-freeness, reception-error-freeness, etc.) are preserved by {\em PaI composition via partial gateways\/} in case also the
-system representing the way we wish gateways interact with each other (connection policy) enjoys the same properties.
+connection policy (i.e. the system representing the way we wish gateways interact with each other) enjoys the same properties.
 Such a proof turns out to be just a corollary of a preservation result for a restricted
-and binary version of PaI composition, dubbed \emph{fusion-composition}.
+and binary version of PaI composition
+via partial gateways, dubbed \emph{fusion-composition}.
 In fact any 
 PaI composition (binary, with multiple systems, orchestrated) simply reduces
 to a number of binary fusion compositions.
@@ -147,8 +148,8 @@ Fusion-composition hence turns out to be at the heart of the PaI approach.
 \input{Introduction}
 \input{cfsm}
 \input{comp-via-partial-gw}
-%\input{safeness-of-binary-partial-fusion}
-%\input{preservation-results}
+\input{safeness-of-binary-partial-fusion}
+\input{preservation-results}
 
 %\paragraph*{\bf Acknowledgements}
 % We warmly thank the ICE'24 reviewers for their careful reading, their thoughtful comments/suggestions and the helpful discussion in the forum. We also thank Emilio Tuosto for his nice tikz style for automata.

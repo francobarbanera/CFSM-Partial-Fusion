@@ -519,11 +519,47 @@ models.
  \end{tikzpicture}
 \end{equation}
 
+In general, not any choice of interface actions makes sense. 
+Let consider an interface like $\hh_2$ below.
 
+\begin{equation}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above right of = square-k, draw=none] {};
+        \node [state] (k-a) [below right of = square-k, draw=none, xshift=2mm] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth] (0.4,0) --  node[right] {$\msg[a]$} (k-a);
+        \draw  [-stealth] (0.4,0)   --  node [right] {$\msg[b]$} (k-b);
+ \end{tikzpicture}
+\end{equation} 
+Let us also assume that there exists an actual branch for $\msg[a]$ and  $\msg[b]$ 
+in the the dynamic specification of $\hh_2$ (a CFSM communicating asynchronous by meas of channes).
+In such a case, the following choice of interface actions would not make sense.
 
+\begin{equation}
+ \begin{tikzpicture}[node distance=1.5cm,scale=1]
+        \node (square-k) [draw,minimum width=0.8cm,minimum height=0.8cm] {\large $\hh_2$};
+        \node [state] (k-b) [above right of = square-k, draw=none] {};
+        \node [state] (k-a) [below right of = square-k, draw=none, xshift=2mm] {};
+        %\draw [stealth-] (k-b) --  node[right] {$\msg[inf]$} (square-k);
+        \draw [-stealth,line width=0.5mm] (0.4,0) --  node[right] {$\msg[a]$} (k-a);
+        \draw  [-stealth] (0.4,0)   --  node [right] {$\msg[b]$} (k-b);
+ \end{tikzpicture}
+\end{equation}
+The above in fact implies that, when in a composition we substitute the interface $\hh_2$ with a 
+partial gateway, the latter should make a decision between acting as a forwarder
+or as the producer of a piece of information.
+In the latter case, the partial gateway would have no means to prevent other 
+gateways to insert a message $\msg[a]$ in a communication channel.
+So, it could occur that a message $\msg[a]$ stays forever in the channel,
+so disrupting some communication properties of the system obtained by composition.
+We shall require a syntactic condition to be satisfied in order issues like the one
+intuitively described above cannot occur.
 
-This approach to composition easily scales up to general multiple composition. 
+\bigskip
 
+The PaI approach to binary composition via partial gateways that we have described above 
+scales up to general multiple composition easily. 
 Let us consider an example from~\cite{BDGY23} having four systems $S_1$,  $S_2$, $S_3$ and $S_4$.
 As shown in (\ref{eq:four-ips}) below, we have selected for each system one participant
 as an interface, named respectively $\hh_1$, $\hh_2$, $\hh_3$ and $\hh_4$.

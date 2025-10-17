@@ -73,7 +73,7 @@ $$
 $$
 
 $S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
-  The system $\MC(\Set{S_1,S_2}, \cs)$  is the following one.
+  The system $\PC(\Set{S_1,S_2}, \cs)$  is the following one.
 $$
 \begin{array}{c@{\hspace{1cm}}c@{\hspace{1cm}}c@{\qquad}c}
       \begin{tikzpicture}[mycfsm]
@@ -128,198 +128,198 @@ The initial configuration is actually a deadlock,  and hence the composed system
 \finex
 \end{example}
 
-\begin{example}[Unique outcoming interface edges for deadlock-freedom and progress preservation]
-\label{ex:singleeps}
-\em
-Let us consider the two following systems $S_1$ and $S_2$ with interfaces
-$\hh$.
-$$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
-    \begin{array}{cc}
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
-       \end{tikzpicture}
-&
-       \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
-  \node[state]            (1) [right of=0] {$1$};
-  %\node[state]           (2) [above right of=0] {$2$};
-
-   \path  (start) edge node {} (0) 
-            (0)  edge      node [below] {$\hh\ttu!\msg[a]$} (1);
-       \end{tikzpicture}
-    \end{array}
-       &
-       \begin{array}{c}
-       |\\
-       |\\
-       |\\
-       |
-       \end{array}
-       &
-       \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
-  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
-  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
-
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
-            (0)   edge    [bend right, line width=0.5mm]            node [above]  {$\ttv\hh?\msg[a]$} (2);
-       \end{tikzpicture}
-&
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
-       \end{tikzpicture}
-\end{array}
-$$
-
-$S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
-Moreover $\emb{}{}{}{M^1_\hh}{M^2_\hh}$
-
-  The system $\fusioncomp_{\!\hh}(S_1,S_2)$  is the following one.
-$$
-\begin{array}{c@{\hspace{1cm}}c@{\qquad}c}
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
-       \end{tikzpicture}
-&
-             \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH$};
-  \node[state]            (2) [right of=hat0] {$2$};
-  \node[state]           (1) [above right of=0, yshift=-5mm] {$1$};
-  %\node[state]           (2) [right of=hat0'] {$2$};
-
-   \path  (start) edge node {} (0) 
-            (0)         edge   [bend right]        node [below] {${\ttv\hh}?{\msg[a]}$} (hat0)
-                         edge   [bend left]      node [above]  {${\ttv\hh}?{\msg[b]}$} (1)
-             (hat0)  edge        node [below] {${\HH\ttu}!{\msg[a]}$} (2);       
-             \end{tikzpicture}
-       &
-     \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
-       \end{tikzpicture}
-\end{array}
-$$
-The above system is actually non deadlock free,  and hence does also not enjoy progress.
-
-The same problem arises with
-$$
-\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
-    \begin{array}{cc}
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
-       \end{tikzpicture}
-&
-       \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
-  \node[state]            (1) [right of=0] {$1$};
-  %\node[state]           (2) [above right of=0] {$2$};
-
-   \path  (start) edge node {} (0) 
-            (0)  edge      node [below] {$\hh\ttu!\msg[a]$} (1);
-       \end{tikzpicture}
-    \end{array}
-       &
-       \begin{array}{c}
-       |\\
-       |\\
-       |\\
-       |
-       \end{array}
-       &
-       \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
-  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
-  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
-  \node[state]           (3) [right of=2] {$3$};
+%\begin{example}[Unique outcoming interface edges for deadlock-freedom and progress preservation]
+%\label{ex:singleeps}
+%\em
+%Let us consider the two following systems $S_1$ and $S_2$ with interfaces
+%$\hh$.
+%$$
+%\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+%    \begin{array}{cc}
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
 %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
-            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
-            (2)   edge    [line width=0.5mm]            node [above]  {$\ttv\hh?\msg[a]$} (3);
-       \end{tikzpicture}
-&
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
-       \end{tikzpicture}
-\end{array}
-$$
-
-$$
-\begin{array}{c@{\hspace{1cm}}c@{\qquad}c}
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
-       \end{tikzpicture}
-       &
-       \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
-  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
-  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
-  \node[state]           (2hat) [right of=2] {$\hat{2}$};
-  \node[state]           (3) [right of=2hat] {$3$};
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
+%       \end{tikzpicture}
+%&
+%       \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+%  \node[state]            (1) [right of=0] {$1$};
+%  %\node[state]           (2) [above right of=0] {$2$};
 %
-   \path  (start) edge node {} (0) 
-            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
-            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
-            (2)   edge           node [above]  {$\ttv\hh?\msg[a]$} (2hat)
-            (2hat)   edge      node [above]  {$\hh\ttu!\msg[a]$} (3)
-            ;
-       \end{tikzpicture}
-&
-      \begin{tikzpicture}[mycfsm]
-  \node[state]           (0)                        {$0$};
-   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
-   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
-
-   \path  (start) edge node {} (0)
-            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
-       \end{tikzpicture}
-\end{array}
-$$
-\finex
-\end{example}
+%   \path  (start) edge node {} (0) 
+%            (0)  edge      node [below] {$\hh\ttu!\msg[a]$} (1);
+%       \end{tikzpicture}
+%    \end{array}
+%       &
+%       \begin{array}{c}
+%       |\\
+%       |\\
+%       |\\
+%       |
+%       \end{array}
+%       &
+%       \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+%  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
+%  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
+%
+%   \path  (start) edge node {} (0) 
+%            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
+%            (0)   edge    [bend right, line width=0.5mm]            node [above]  {$\ttv\hh?\msg[a]$} (2);
+%       \end{tikzpicture}
+%&
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%
+%$S_1$ and $S_2$ are both deadlock free and both enjoy the progress property.
+%Moreover $\emb{}{}{}{M^1_\hh}{M^2_\hh}$
+%
+%  The system $\fusioncomp_{\!\hh}(S_1,S_2)$  is the following one.
+%$$
+%\begin{array}{c@{\hspace{1cm}}c@{\qquad}c}
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
+%       \end{tikzpicture}
+%&
+%             \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%  \node[state]           (hat0)          [below right of=0, yshift=5mm]              {$\widehat{0}$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\HH$};
+%  \node[state]            (2) [right of=hat0] {$2$};
+%  \node[state]           (1) [above right of=0, yshift=-5mm] {$1$};
+%  %\node[state]           (2) [right of=hat0'] {$2$};
+%
+%   \path  (start) edge node {} (0) 
+%            (0)         edge   [bend right]        node [below] {${\ttv\hh}?{\msg[a]}$} (hat0)
+%                         edge   [bend left]      node [above]  {${\ttv\hh}?{\msg[b]}$} (1)
+%             (hat0)  edge        node [below] {${\HH\ttu}!{\msg[a]}$} (2);       
+%             \end{tikzpicture}
+%       &
+%     \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%The above system is actually non deadlock free,  and hence does also not enjoy progress.
+%
+%The same problem arises with
+%$$
+%\begin{array}{c@{\qquad\qquad}c@{\hspace{1cm}}c@{\qquad}c}
+%    \begin{array}{cc}
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
+%       \end{tikzpicture}
+%&
+%       \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+%  \node[state]            (1) [right of=0] {$1$};
+%  %\node[state]           (2) [above right of=0] {$2$};
+%
+%   \path  (start) edge node {} (0) 
+%            (0)  edge      node [below] {$\hh\ttu!\msg[a]$} (1);
+%       \end{tikzpicture}
+%    \end{array}
+%       &
+%       \begin{array}{c}
+%       |\\
+%       |\\
+%       |\\
+%       |
+%       \end{array}
+%       &
+%       \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+%  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
+%  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
+%  \node[state]           (3) [right of=2] {$3$};
+%%
+%   \path  (start) edge node {} (0) 
+%            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
+%            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
+%            (2)   edge    [line width=0.5mm]            node [above]  {$\ttv\hh?\msg[a]$} (3);
+%       \end{tikzpicture}
+%&
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%
+%$$
+%\begin{array}{c@{\hspace{1cm}}c@{\qquad}c}
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttu$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\hh\ttu?\msg[a]$} (1) ;
+%       \end{tikzpicture}
+%       &
+%       \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh$};
+%  \node[state]            (1) [above right of=0,yshift=-5mm] {$1$};
+%  \node[state]           (2) [below right of=0,yshift=5mm] {$2$};
+%  \node[state]           (2hat) [right of=2] {$\hat{2}$};
+%  \node[state]           (3) [right of=2hat] {$3$};
+%%
+%   \path  (start) edge node {} (0) 
+%            (0)  edge     [bend left]      node [above] {$\ttv\hh?\msg[b]$} (1)
+%            (0)   edge    [bend right]            node [above]  {$\ttv\hh?\msg[c]$} (2)
+%            (2)   edge           node [above]  {$\ttv\hh?\msg[a]$} (2hat)
+%            (2hat)   edge      node [above]  {$\hh\ttu!\msg[a]$} (3)
+%            ;
+%       \end{tikzpicture}
+%&
+%      \begin{tikzpicture}[mycfsm]
+%  \node[state]           (0)                        {$0$};
+%   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\ttv$};
+%   \node[state]            (1) [below of=0, yshift=4mm] {$1$};
+%
+%   \path  (start) edge node {} (0)
+%            (0)  edge    node [above] {$\ttv\hh!\msg[b]$} (1) ;
+%       \end{tikzpicture}
+%\end{array}
+%$$
+%\finex
+%\end{example}
 
 
 \begin{lemma}[Projections of deadlocks are deadlocks]

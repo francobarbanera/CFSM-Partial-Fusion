@@ -943,8 +943,8 @@ We use our running example to describe the various steps.
 For each of them we provide the formal definitions of the notions we introduce.
 
 \paragraph{Indentifying the interface transitions in the interface participants.}
-Composition via partial gateways consists, first of all, in identifying two interface participants
-and then properly choosing some transitions in order to get a CFSM with
+PaI composition via partial gateways consists, first of all, in identifying two interface participants
+and then properly choosing some transitions in order to get two CFSMs with
 interface transitions. Given a CFSM $M$, an interface decoration is one of the possible
 CFSM with interface transition that we can get out of $M$. 
 
@@ -955,7 +955,11 @@ as the following set of CFSMs with interface transitions:
 $$\IDS(M) = \Set{(Q,q_0,\textit{Act},\bm{\delta}) \mid (Q,q_0,\textit{Act},\bm{\delta}) \text{ is a CFSM$^\mathsf{it}$ with } \proj{\bm{\delta'}}{Q\times\textit{Act}\times Q} =\delta}$$
 \end{definition}
 
-\paragraph{Extract the intended interface out of a choosen decoration.}
+\noindent
+By the above definition, $\hh_1$ and $\hh_2$ in (\ref{eq:1}) are interface decorations for the interface participants $\hh_1$ and $\hh_2$ in (\ref{eq:runex}).
+In the following we focus for simplicity just on the interface of $S_2$.
+
+\paragraph{Extract the intended interface behaviour out of a choosen decoration.}
 Given a CFSM with interface transitions, say $\hh_2$ in (\ref{eq:1}), these transitions identifies the behaviour of the external system intended for the composition.
 Such a behaviour should be the one described in terms of a particular CFSM, like
 \begin{equation}
@@ -977,7 +981,9 @@ Such a behaviour should be the one described in terms of a particular CFSM, like
        \end{tikzpicture}
 \end{equation}
 
-In order to formally get that, we use the following function.
+where the label $\varepsilon$ in interpreted as the silent action $\tau$ commonly used in concurrency theory. The use the $\varepsilon$ symbol since we manipulate it as the empty string in automata theory.
+
+To formally get (\ref{eq:epsrunex}) out of $\hh_2$ in (\ref{eq:1}), we use the following function.
 
 \begin{definition}[$\varepsilon(M)$]
 \label{def:epsfun}
@@ -987,7 +993,14 @@ $\varepsilon(M)$ as  the $\varepsilon$-FSA $(Q,q_0,\textit{Act}\cup\Set{\varepsi
 \centerline{
 $\delta' = \Set{(q,l,q') \mid (q,\varepsilon,q',\nintf) \in \bm{\delta}}\cup \Set{(q,\varepsilon,q') \mid (q,\elle,q',\intf) \in \bm{\delta}}$  }
 \end{definition}
-In this simple case such a behaviour does correspond to the proper CFSM
+
+From a $\varepsilon$-FSA like (\ref{eq:epsrunex}) we have now to get the CFSM
+corresponding to the behaviour of the interface participant restricted to what specified by the 
+interface transitions.
+We obtain such restricted behaviour out of the $\varepsilon$-FSA returned by the application of
+the function $\varepsilon(\_)$ on a CFSM with interface transitions.
+
+In our simple example such a behaviour for does correspond to the following CFSM.
 
 \begin{equation}
 \label{eq:cfsmnoeps}
@@ -1008,20 +1021,21 @@ In this simple case such a behaviour does correspond to the proper CFSM
        \end{tikzpicture}
 \end{equation}
 
-Since (\ref{eq:epsrunex}) above
-has been obtained out of a CFSM with interface transitions -- where, by definition, outgoing
-transitions are single whenever they are non-interface --  the CFSM  (\ref{eq:cfsmnoeps})
-can be obtained by simply making all the $\varepsilon$-transition ``collapse''.
+By the conditions in \cref{def:cfsmintftrans} outgoing transitions in a CFSM$^{\mathsf{it}}$
+are single whenever they are non-interface. So, single are also the $\varepsilon$ transitions,
+in the CFSM obtained by the application of $\varepsilon(\_)$.
+With such a restriction, the interface behaviour can be obtained 
+ by simply making all the $\varepsilon$-transition ``collapse''.
 Such transformation is a much simpler algorithm then the usual algorithm for 
 the elimination of $\varepsilon$-transitions in $\varepsilon$-FSA, due to the strong
 restriction we have on $\varepsilon$-transitions.
 In general, the CFSM describing the behaviour of the $\varepsilon$-FSA could be also 
-different from the one obtained with the mentioned algorithm, as far as  it is possible
+different from the one obtained with the above mentioned algorithm, as far as  it is possible
 to get a precise correspondence among the non-$\varepsilon$ transition in the 
 $\varepsilon$-FSA and the transitions of the CFSM.
-We hence introduce the following definition where we focus not on the particula algorithm
-but rather on the properties it has to satisfy.
-This definition will also prove more adapt when we shall deal with partial fusion (see XYZ).
+We hence introduce the following definition where we focus not on the particular algorithm
+for $\varepsilon$-transitions elimination, but rather on the properties its result has to satisfy.
+This definition will also prove more adapt when we shall deal later on with partial-fusion.
 
 \begin{definition}[$\noeps$-versions]
 \label{def:noepsver}
@@ -1043,7 +1057,16 @@ $p_1\LTS{\elle}p_2 \quad\text{implies}\quad f(p_1)\lts{\elle}f(p_2)$;
 $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
 \end{enumerate}
 \end{definition}
-(((i.e. $f$ is a weak bisimulation?)))
+((($f$ is a sort of weak bisimulation?)))
+
+\smallskip
+\noindent
+The CFSM in (\ref{eq:cfsmnoeps} is a $\noeps$-version of the $\varepsilon$-FSA in
+(\ref{eq:epsrunex}) where 
+\begin{equation}
+\label{eq:f}
+f:\Set{1,2,3,4}\to\Set{1,2,3} \text{ with } f(4)=3 \text{ and } f(q)=q \text{ for } q\in\Set{0,1,2,3}.
+\end{equation}
 
 \begin{remark}
 \label{rem:neccond}
@@ -1051,19 +1074,16 @@ $ f(p_1)\lts{\elle}f(p_2)\quad\text{implies}\quad p_1\LTS{\elle}p_2$.
 Notice that without the condition\\
 \centerline{
 $(q_1,\elle,q_2,\nintf), (q_1,\elle',q'_2,z)\in\bm{\delta} \implies (\elle=\elle' \text{ and } q_2=q'_2)$}
-in \cref{def:cfsmie}, the conditions involving $f$ in the above definition \cref{def:noepsver} would not be satisfiable. \finex
+in \cref{def:cfsmie}, the conditions involving $f$ in the above \cref{def:noepsver} would not be satisfiable. \finex
 }
 \end{remark}
 
-\begin{example}
-((*Example of how (\ref{eq:cfsmnoeps}) is a $\noeps$-version of (\ref{eq:epsrunex})*))
-\end{example}
 
-\paragraph{Describing the forwarding behaviour for the connection policy.}
+\paragraph{Describing the forwarding behaviour i.e. the connection policy.}
 Out of a $\noeps$-version $M'$ of an $\varepsilon$-FSA, 
 we can get an element for the intended connection policy by ``dualising'' the actions labelling the transitions and replacing the senders (of inputs) and receivers (of outputs) with
-the names of the other participants of the connection policy. (Recall that in the binary case
-such a replacement is uniquely determined.) 
+the names of the other participants of the connection policy. (Recall that, unlike the multiple systems
+composition, in the binary case such a replacement is uniquely determined.) 
 The role of the set of the names of the other participants in a connection policy
 is played by the set $\roles$ in the following definition of $\roles$-duality.
 
@@ -1115,6 +1135,8 @@ We say that $M''$ is {\em a $\roles$-dual of $M$} whenever $\delta'$ is a $\role
 \end{enumerate}
 \end{definition}
 
+\smallskip
+\noindent
 We have that $\hh_2$ in (\ref{eq:cp1}) is a $\Set{\hh_1}$-dual of (\ref{eq:cfsmnoeps}) (actually the
 unique $\Set{\hh_1}$-dual since we are in a binary setting).
 
@@ -1142,13 +1164,48 @@ We call $\varepsilon(M'_\hh)$ {\em the $\epsilon$-counterpart of $M^1_\hh$}
 We write simply $M^1_\hh \embd M^2_\hh$ whenever
 $\roles$, $\bm\delta$ and $f$ are clear from the context or ininfluent.
 
-A partial gateway is 
 
--- (\ref{eq:cfsmnoeps}) in our running example --
+In our simple example we have that 
+\begin{equation}
+\label{eq:emb}
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   %\node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_1\hh_2?\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_1\hh_2?\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_1\hh_2?\msg[mus]$} (3)
+            %(2)  edge                           node [above]  {$\varepsilon$} (4)
+                   ;
+       \end{tikzpicture}
+ \qquad
+\text{\LARGE $\embd$}_{\hspace{-2mm}(f,\roles,\bm{\delta})}
+\quad
+\begin{tikzpicture}[mycfsm]
+  \node[state]           (0)              {$0$};
+   \node[draw=none,fill=none] (start) [above left = 0.3cm  of 0]{$\hh_2$};
+  \node[state]            (1) [above right of=0] {$1$};
+   \node[state]           (2) [right of=0,xshift=-6mm] {$2$};
+   \node[state]           (3) [below right of=0] {$3$};
+   \node[state]           (4) [right of=2] {$4$};
+   %
+   \path  (start) edge node {} (0) 
+            (0)  edge     [bend left]      node [above] {$\hh_2\tts!\msg[sbs]$} (1)
+                   edge                          node [above]  {$\hh_2\tts!\msg[hum]$} (2)
+                   edge    [bend right]     node [below]  {$\hh_2\tts!\msg[mus]$} (3)
+            (2)  edge                           node [above]  {$\tts\hh_2?\msg[deg]$} (4)
+                   ;
+       \end{tikzpicture}
+\end{equation}
+where $f$ is as in (\ref{eq:f}), $\roles = \Set{\hh_1}$ and $\bm{\delta}$ is as for $\hh_2$ 
+in (\ref{eq:1}).
 
-which, in turn is used to identify one of the CFSMs of the connection policy (uniquely identified
-for the binary case), in particular the $\hh_2$ in the connection policy (\ref{eq:cp1})
-for our running example.
+We can now formally define the notion of connection policy.
 
  \begin{definition}[Connection policy]\label{def:cp}
  Let $S_i=(M^i_{\ttx})_{\ttx\in\roles_i}$ be two composable communicating systems such that $S_i=(M^i_{\ttx})_{\ttx\in\roles_i}$  with interfaces $\hh_i$ ($i=1,2$) . 
@@ -1158,8 +1215,11 @@ for our running example.
  for each $i\in\Set{1,2}$, for some $f_i$ and $\bm{\delta_i}$: \  $\emb{f_i}{H\setminus\Set{\hh_i}}{\bm{\delta_i}}{M^\cs_\hh}{M^i_\hh}$\\
 \end{definition}
 
+The comminicating system of (\ref{eq:cp1}) is hence a connection policy for our running example.
 
-The construction of partial gateways is formally defined as follows.
+PaI composition via partial qateways is obtained by replacing partial gateways for
+the interface participants. Such partial gateways are built out of the interface participants
+and elements of a connection policy, as formally described in the following definition.
 
 \begin{definition}[Partial Gateway]
 \label{def:gatewaycs} 
@@ -1183,10 +1243,11 @@ where &  $\bullet$  & $\widehat{Q} =\bigcup_{q\in Q}\Set{q^{(q, l,q')} \mid (q, 
 We refer to $\widehat\delta$ as $\widehat\delta_{\HH}$ whenever $\HH$ is not clear from the
 context; similarly for $\widehat Q$.
 \end{definition}
-  
-By extending the usual notion of gateway (*reference*) the interface participant $\hh_2$ in
-$S_2$ of our running example (\ref{eq:runex}) and the $\hh_2$ above  
-are the argument to build the partial gateway intended to be substituted for $\hh_2$ in the composition.
+ 
+ \smallskip
+ \noindent
+Using the interface participant $\hh_2$ in (\ref{eq:runex}) and $\hh_2$ in (\ref{eq:emb})  
+we can build the partial gateway intended to be substituted for $\hh_2$ in the composition.
 Namely $\hh_2$ in (\ref{eq:comprunex}).
 
  \begin{definition}[Composability]
@@ -1232,14 +1293,21 @@ ${\qquad\qquad}M'_\ttp = \left\{ \begin{array}{ll}
 
 %Notice that the states of $\I(M)$ and $M$ are the same.
 
+All the previous definitions can be extended in a natural way for the composition of
+an arbitrary number of systems where in each of them an interface participant is
+identified as interface.
 
+Before stating one of our main results, we recall the definition of mixed-state.
+We have to assume interfaces not to contain any mixed state. Their presence would otherwise
+falsify the following theorem. A counterexample, taken from [reference],
+is presented in \cref{ex:lackprogdfpres}.
 
 \begin{theorem}[Safety of PaI multicomposition via partial gateways]
 \label{th:paisafenesse}
  Let $\Set{S_i}_{i\in I}$ be a set of communicating systems composable with respect to a set
- $H$ %$ = \{\hh_i\}_{i \in I}$
- of interfaces with no mixed states (cf.~\cref{def:interfaces}); and
-let $\cs$ be a connection policy for $H$. 
+ $H$ 
+ of interfaces with no mixed states; %(cf.~\cref{def:interfaces});
+ and let $\cs$ be a connection policy for $H$. 
 
 
 Let $\mathcal{P}$ be
@@ -1254,7 +1322,7 @@ $\mathcal{P}$ is {\em orphan-message-freedom}.
 \end{theorem}
 
 The proof of the above theorem descends from the fact that any system obtained by 
-PaI multicomposition via partial gateways can be actually got by multiple application of
+PaI multicomposition via partial gateways can be actually got by multiple applications of
 (binary) partial-fusion composition. 
 
 
